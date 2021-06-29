@@ -1,3 +1,15 @@
+#main
+#ignore database file
+application/config/database.php
+
+#ignore cache folder file
+application/cache/*
+
+#ignore backup file
+assets/img/*
+assets/data/outgoing/*
+
+
 */config/development
 */logs/log-*.php
 !*/logs/index.html
