@@ -296,7 +296,7 @@
                      <!-- Purchase menu start -->
             <?php if($this->permission1->method('add_purchase','create')->access() || $this->permission1->method('manage_purchase','read')->access()){?>
             <li class="treeview <?php
-            if ($this->uri->segment('1') == ("add_purchase") || $this->uri->segment('1') == ("purchase_edit") || $this->uri->segment('1') == ("purchase_list") || $this->uri->segment('1') == ("purchase_details")) {
+            if ($this->uri->segment('1') == ("add_purchase") || $this->uri->segment('1') == ("purchase_edit") || $this->uri->segment('1') == ("purchase_list") || $this->uri->segment('1') == ("purchase_details") || $this->uri->segment('1') == ("add_purchase_order") || $this->uri->segment('1') == ("purchase_order_list") || $this->uri->segment('1') == ("po_details") || $this->uri->segment('1') == ("po_edit")) {
                 echo "active";
             } else {
                 echo " ";
@@ -326,7 +326,33 @@
                 echo " ";
             }
             ?>"><a href="<?php echo base_url('purchase_list') ?>"><?php echo display('manage_purchase') ?></a></li>
+            <?php } ?>
+
+            <!-- purchase order nav -->
+            <?php if($this->permission1->method('add_purchase_order','create')->access()){ ?>
+                    <li class="treeview <?php
+            if ($this->uri->segment('1') == ("add_purchase_order")) {
+                echo "active";
+            } else {
+                echo " ";
+            }
+            ?>"><a href="<?php echo base_url('add_purchase_order') ?>"><?php echo display('purchase_order') ?></a></li>
                        <?php } ?>
+
+                       <?php if($this->permission1->method('manage_purchase','read')->access()){ ?>
+                    <li class="treeview <?php
+            if ($this->uri->segment('1') == ("purchase_order_list")) {
+                echo "active";
+            } else {
+                echo " ";
+            }
+            ?>"><a href="<?php echo base_url('purchase_order_list') ?>"><?php echo display('manage_po') ?></a></li>
+            <?php } ?>
+
+
+
+
+                       
                 </ul>
             </li>
         <?php } ?>

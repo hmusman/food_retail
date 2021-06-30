@@ -1660,6 +1660,48 @@ CREATE TABLE IF NOT EXISTS `product_purchase_details` (
   KEY `product_id` (`product_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `purchase_order`
+--
+
+CREATE TABLE IF NOT EXISTS `purchase_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `po_id` bigint(20) NOT NULL,
+  `chalan_no` varchar(100) NOT NULL,
+  `supplier_id` bigint(20) NOT NULL,
+  `grand_total_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `paid_amount` decimal(10,2) DEFAULT 0.00,
+  `due_amount` decimal(10,2) DEFAULT 0.00,
+  `total_discount` decimal(10,2) DEFAULT NULL,
+  `po_date` varchar(50) DEFAULT NULL,
+  `po_details` text DEFAULT NULL,
+  `status` int(2) NOT NULL,
+  `bank_id` varchar(30) DEFAULT NULL,
+  `payment_type` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `po_id` (`po_id`),
+  KEY `supplier_id` (`supplier_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+--
+-- Table structure for table `purchase_order_details`
+--
+
+CREATE TABLE IF NOT EXISTS `purchase_order_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `po_detail_id` varchar(100) DEFAULT NULL,
+  `po_id` bigint(20) DEFAULT NULL,
+  `product_id` varchar(30) DEFAULT NULL,
+  `quantity` decimal(10,2) DEFAULT NULL,
+  `rate` decimal(10,2) DEFAULT NULL,
+  `total_amount` decimal(10,2) DEFAULT NULL,
+  `discount` float DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `po_id` (`po_id`),
+  KEY `product_id` (`product_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 --
