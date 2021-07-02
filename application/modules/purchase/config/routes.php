@@ -8,3 +8,6 @@ $route['purchase_list']        = "purchase/purchase/bdtask_purchase_list";
 $route['purchase_details/(:num)'] = 'purchase/purchase/bdtask_purchase_details/$1';
 $route['purchase_edit/(:num)'] = 'purchase/purchase/bdtask_purchase_edit_form/$1';
 
+// receipe_form
+$route['receipe_form'] = 'purchase/purchase/receipe_form';
+

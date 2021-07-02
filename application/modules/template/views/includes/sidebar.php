@@ -355,6 +355,16 @@
                                             ?>"><a href="<?php echo base_url('peoduction_form') ?>"><?php echo ('Production Form') ?></a></li>
                     <?php } ?>
 
+                    <?php if ($this->permission1->method('manage_purchase', 'read')->access()) { ?>
+                        <li class="treeview <?php
+                                            if ($this->uri->segment('1') == ("receipe_form")) {
+                                                echo "active";
+                                            } else {
+                                                echo " ";
+                                            }
+                                            ?>"><a href="<?php echo base_url('receipe_form') ?>"><?php echo ('Receipe Form') ?></a></li>
+                    <?php } ?>
+
                 </ul>
             </li>
         <?php } ?>
