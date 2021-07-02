@@ -1761,6 +1761,9 @@ CREATE TABLE IF NOT EXISTS `receipe` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `receipe_id` bigint(20) DEFAULT NULL,
   `receipe_name` varchar(100) DEFAULT NULL,
+  `expected_weight` varchar(100) DEFAULT NULL,
+  `no_plates` varchar(100) DEFAULT NULL,
+  `receipe` enum('inhouse','outdoor') NOT NULL,
   `r_date` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1779,6 +1782,7 @@ CREATE TABLE IF NOT EXISTS `receipe_detail` (
   KEY `receipe_id` (`receipe_id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 --
 -- Table structure for table `product_return`
 --
