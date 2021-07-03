@@ -496,6 +496,22 @@ class Purchase extends MX_Controller
         echo json_encode($json_product);
     }
 
+    //search reciepe
+    public function bdtask_product_search_by_receipe()
+    {
+        $product_name = $this->input->post('product_name', TRUE);
+        $product_info = $this->purchase_model->search_receipe($product_name);
+        if (!empty($product_info)) {
+            $list[''] = '';
+            foreach ($product_info as $value) {
+                $json_product[] = array('label' => $value['receipe_name'] . '(' . $value['expected_weight'] . 'kg)', 'value' => $value['receipe_id']);
+            }
+        } else {
+            $json_product[] = 'No Product Found';
+        }
+        echo json_encode($json_product);
+    }
+
     public function bdtask_retrieve_product_data()
     {
         $product_id  = $this->input->post('product_id', TRUE);
@@ -570,7 +586,7 @@ class Purchase extends MX_Controller
         $no_plates = $this->input->post('no_plates', TRUE);
         $receipe = $this->input->post('receipe', TRUE);
         $r_date = $this->input->post('r_date', TRUE);
-        $item_name = $this->input->post('product_id', TRUE);
+        $prod_id = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('desc', TRUE);
         // die(var_dump($item_name[0]));
         $data = array(
@@ -582,7 +598,7 @@ class Purchase extends MX_Controller
             'r_date' => $r_date
         );
 
-        $this->db->insert('receipe', $data);
+        // $this->db->insert('receipe', $data);
 
 
         $i = 0;

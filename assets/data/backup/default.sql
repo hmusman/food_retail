@@ -1660,6 +1660,37 @@ CREATE TABLE IF NOT EXISTS `product_purchase_details` (
   KEY `product_id` (`product_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+
+--
+-- Table structure for table `stock`
+--
+
+CREATE TABLE IF NOT EXISTS `stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stk_id` bigint(20) NOT NULL,
+  `stk_date` varchar(50) DEFAULT NULL,
+  `stock` enum('warehouse','retail') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stk_id` (`stk_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+--
+-- Table structure for table `stock_details`
+--
+
+CREATE TABLE IF NOT EXISTS `stock_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stk_id_detail_id` varchar(100) DEFAULT NULL,
+  `stk_id` bigint(20) DEFAULT NULL,
+  `product_id` varchar(30) DEFAULT NULL,
+  `quantity` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stk_id` (`stk_id`),
+  KEY `product_id` (`product_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 --
 -- Table structure for table `purchase_order`
 --

@@ -260,4 +260,15 @@ class Warehouse_model extends CI_Model
         }
         return false;
     }
+    public function stock_entry($recipe_id){
+        $this->db->select('b.*');
+        $this->db->from('receipe a');
+        $this->db->join('receipe_detail b', 'b.receipe_id  =a.receipe_id ');
+        $this->db->where('a.receipe_id', $recipe_id);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
 }

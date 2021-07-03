@@ -1,5 +1,5 @@
 
-<script src="<?php echo base_url()?>my-assets/js/admin_js/purchase.js" type="text/javascript"></script>
+<script src="<?php echo base_url()?>my-assets/js/admin_js/producttion_wh.js" type="text/javascript"></script>
 
 <div class="row">
     <div class="col-sm-12">
@@ -115,7 +115,6 @@
                         <thead>
                              <tr>
                                     <th class="text-center" width="20%"><?php echo display('item_information') ?><i class="text-danger">*</i></th> 
-                                    <th class="text-center"><?php echo display('stock_ctn') ?></th>
                                     <th class="text-center"><?php echo display('quantity') ?> <i class="text-danger">*</i></th>
                                     <th class="text-center"><?php echo display('rate') ?><i class="text-danger">*</i></th>
 
@@ -135,9 +134,7 @@
                                     <input type="hidden" class="sl" value="1">
                                 </td>
 
-                               <td class="wt">
-                                        <input type="text" id="available_quantity_1" class="form-control text-right stock_ctn_1" placeholder="0.00" readonly/>
-                                    </td>
+                               
                                 
                                     <td class="text-right">
                                         <input type="text" name="product_quantity[]" id="cartoon_1" required="" min="0" class="form-control text-right store_cal_1" onkeyup="calculate_store(1);" onchange="calculate_store(1);" placeholder="0.00" value=""  tabindex="6"/>
@@ -161,7 +158,7 @@
                         <tfoot>
                             <tr>
                                 
-                                <td class="text-right" colspan="4"><b><?php echo display('total') ?>:</b></td>
+                                <td class="text-right" colspan="3"><b><?php echo display('total') ?>:</b></td>
                                 <td class="text-right">
                                     <input type="text" id="Total" class="text-right form-control" name="total" value="0.00" readonly="readonly" />
                                 </td>
@@ -171,7 +168,7 @@
                             </tr>
                                 <tr>
                                
-                                <td class="text-right" colspan="4"><b><?php echo display('discounts') ?>:</b></td>
+                                <td class="text-right" colspan="3"><b><?php echo display('discounts') ?>:</b></td>
                                 <td class="text-right">
                                     <input type="text" id="discount" class="text-right form-control discount" onkeyup="calculate_store(1)" name="discount" placeholder="0.00" value="" />
                                 </td>
@@ -182,7 +179,7 @@
 
                                 <tr>
                                 
-                                <td class="text-right" colspan="4"><b><?php echo display('grand_total') ?>:</b></td>
+                                <td class="text-right" colspan="3"><b><?php echo display('grand_total') ?>:</b></td>
                                 <td class="text-right">
                                     <input type="text" id="grandTotal" class="text-right form-control" name="grand_total_price" value="0.00" readonly="readonly" />
                                 </td>
@@ -190,7 +187,7 @@
                             </tr>
                                  <tr>
                                 
-                                <td class="text-right" colspan="4"><b><?php echo display('paid_amount') ?>:</b></td>
+                                <td class="text-right" colspan="3"><b><?php echo display('paid_amount') ?>:</b></td>
                                 <td class="text-right">
                                     <input type="text" id="paidAmount" class="text-right form-control" onKeyup="invoice_paidamount()" name="paid_amount" value="" />
                                 </td>
@@ -200,7 +197,7 @@
                                 <td colspan="2" class="text-right">
                                      <input type="button" id="full_paid_tab" class="btn btn-warning" value="<?php echo display('full_paid') ?>" tabindex="16" onClick="full_paid()"/>
                                 </td>
-                                <td class="text-right" colspan="2"><b><?php echo display('due_amount') ?>:</b></td>
+                                <td class="text-right" colspan="1"><b><?php echo display('due_amount') ?>:</b></td>
                                 <td class="text-right">
                                     <input type="text" id="dueAmmount" class="text-right form-control" name="due_amount" value="0.00" readonly="readonly" />
                                 </td>
