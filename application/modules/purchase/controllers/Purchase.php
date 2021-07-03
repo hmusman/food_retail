@@ -40,7 +40,6 @@ class Purchase extends MX_Controller
         echo modules::run('template/layout', $data);
     }
 
-
     public function bdtask_purchase_details($purchase_id = null)
     {
         $purchase_detail = $this->purchase_model->purchase_details_data($purchase_id);
@@ -539,13 +538,14 @@ class Purchase extends MX_Controller
     public function receipe_form()
     {
         $data['title']      = ('Add Receipe');
-        $data['total_purhcase'] = $this->purchase_model->count_purchase();        
+        $data['total_purhcase'] = $this->purchase_model->count_purchase();
         $data['module']     = "purchase";
         $data['page']       = "add_receipe_form";
         echo modules::run('template/layout', $data);
     }
 
-    public function generator_number($lenth) {
+    public function generator_number($lenth)
+    {
         $number = array("1", "2", "3", "4", "5", "6", "7", "8", "9");
 
         for ($i = 0; $i < $lenth; $i++) {
@@ -561,7 +561,8 @@ class Purchase extends MX_Controller
         return $con;
     }
 
-    public function receipe_add(){
+    public function receipe_add()
+    {
 
         $receipe_name = $this->input->post('receipe_name', TRUE);
         $receipe_id = $this->generator_number(10);
@@ -571,7 +572,7 @@ class Purchase extends MX_Controller
         $r_date = $this->input->post('r_date', TRUE);
         $item_name = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('desc', TRUE);
-        // die(var_dump($receipe_id));
+        // die(var_dump($item_name[0]));
         $data = array(
             'receipe_name' => $receipe_name,
             'receipe_id' => $receipe_id,
@@ -583,24 +584,94 @@ class Purchase extends MX_Controller
 
         $this->db->insert('receipe', $data);
 
-        
 
-        foreach($item_name as $key =>$item_name){
-            $data = array(
+        $i = 0;
+        foreach ($item_name as $key => $item_name) {
+            $data_2 = array(
                 'receipe_id' => $receipe_id,
-                'product_id' => $item_name[$key],
-                'quantity' => $quantity[$key]
+                'product_id' => $item_name,
+                'quantity' => $quantity[$i]
             );
 
-            $this->db->insert('receipe_detail', $data);
+            $this->db->insert('receipe_detail', $data_2);
+            $i++;
         }
 
-        $data['title']      = display('Add Receipe');
-        // $data['all_supplier'] = $this->purchase_model->supplier_list();
-        $data['module']     = "purchase";
-        $data['page']       = "add_receipe_form";
-        echo modules::run('template/layout', $data);
-        
+        $this->session->set_flashdata('message', display('save_successfully'));
+        redirect("receipe_manage");
     }
 
+    public function receipe_manage()
+    {
+        $data['title']      = display('Manage Receipe');
+        $data['total_receipe'] = $this->purchase_model->manage_receipe();
+        $data['module']     = "purchase";
+        $data['page']       = "manage_receipe";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function del_receipe($id)
+    {
+        $this->db->where('receipe_id', $id);
+        $this->db->delete('receipe');
+        $this->db->where('receipe_id', $id);
+        $this->db->delete('receipe_detail');
+
+        $this->session->set_flashdata('message', ('Delete Successfully'));
+        redirect("receipe_manage");
+    }
+
+    public function edit_receipe($id)
+    {
+        $data['title']      = display('Manage Receipe');
+        $data['edit_receipe'] = $this->purchase_model->edit_receipe($id);
+        $data['module']     = "purchase";
+        $data['page']       = "edit_receipe";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function receipe_edit(){
+
+        $id = $this->input->post('id', TRUE);
+
+        $this->db->where('receipe_id', $id);
+        $this->db->delete('receipe_detail');
+
+        $receipe_name = $this->input->post('receipe_name', TRUE);
+        $receipe_id = $this->generator_number(10);
+        $expected_weight = $this->input->post('expected_weight', TRUE);
+        $no_plates = $this->input->post('no_plates', TRUE);
+        $receipe = $this->input->post('receipe', TRUE);
+        $r_date = $this->input->post('r_date', TRUE);
+        $item_name = $this->input->post('product_id', TRUE);
+        $quantity = $this->input->post('desc', TRUE);
+        // die(var_dump($item_name));
+        $data = array(
+            'receipe_name' => $receipe_name,
+            'receipe_id' => $id,
+            'expected_weight' => $expected_weight,
+            'no_plates' => $no_plates,
+            'receipe' => $receipe,
+            'r_date' => $r_date
+        );
+
+        $this->db->where('receipe_id', $id);
+        $this->db->update('receipe', $data);        
+
+        $i = 0;
+        foreach ($quantity as $key => $quantity) {
+            $data = array(
+                'receipe_id' => $id,
+                'product_id' => $item_name[$i],
+                'quantity' => $quantity
+            );
+
+            // $this->db->where('receipe_id', $id);
+            $this->db->insert('receipe_detail', $data);
+            $i++;
+        }
+
+        $this->session->set_flashdata('message', display('save_successfully'));
+        redirect("receipe_manage");
+    }
 }
