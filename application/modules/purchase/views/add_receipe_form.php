@@ -60,6 +60,7 @@ $user_id = $this->session->userdata('id'); ?>
                                 <thead>
                                     <tr>
                                         <th class="text-center product_field"><?php echo display('item_information') ?> <i class="text-danger">*</i></th>
+                                        <th class="text-center"><?php echo display('serial_no')?></th>
                                         <th class="text-center"><?php echo ('Quantity') ?></th>
                                         <th class="text-center"><?php echo ('Action') ?></th>
                                          
@@ -72,6 +73,11 @@ $user_id = $this->session->userdata('id'); ?>
                                             <input type="hidden" class="autocomplete_hidden_value product_id_1" name="product_id[]" id="SchoolHiddenId" />
 
                                             <input type="hidden" class="baseUrl" value="<?php echo base_url(); ?>" />
+                                        </td>
+                                        <td  class="invoice_fields">
+                                             <select class="form-control" id="serial_no_1" name="serial_no[]"   tabindex="7">
+                                                <option></option>
+                                            </select>
                                         </td>
                                         <td>
                                             <input type="text" name="desc[]" class="form-control text-right " tabindex="6" />

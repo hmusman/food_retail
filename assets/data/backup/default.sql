@@ -777,7 +777,7 @@ INSERT INTO `language` (`id`, `phrase`, `english`, `bangla`) VALUES
 (318, 'billing_date', 'Billing Date', NULL),
 (319, 'billing_to', 'Billing To', NULL),
 (320, 'billing_from', 'Billing From', NULL),
-(321, 'you_cant_delete_this_product', 'Sorry !!  You can\'t delete this product.This product already used in calculation system!', NULL),
+(321, 'you_cant_delete_this_product', 'Sorry !!  You can\"t delete this product.This product already used in calculation system!', NULL),
 (322, 'old_customer', 'Old Customer', NULL),
 (323, 'new_customer', 'New Customer', NULL),
 (324, 'new_supplier', 'New Supplier', NULL),
@@ -1002,7 +1002,7 @@ INSERT INTO `language` (`id`, `phrase`, `english`, `bangla`) VALUES
 (543, 'search_supplier', 'Search Supplier', NULL),
 (544, 'customer_id', 'Customer ID', NULL),
 (545, 'search_customer', 'Search Customer Invoice', NULL),
-(546, 'serial_no', 'SN', NULL),
+(546, 'serial_no', 'Type', NULL),
 (547, 'item_discount', 'Item Discount', NULL),
 (548, 'invoice_discount', 'Sale Discount', NULL),
 (549, 'add_unit', 'Add Unit', NULL),
@@ -1347,7 +1347,7 @@ INSERT INTO `language` (`id`, `phrase`, `english`, `bangla`) VALUES
 (888, 'do_you_want_to_print', 'Do You Want to Print', NULL),
 (889, 'yes', 'Yes', NULL),
 (890, 'no', 'No', NULL),
-(891, 'todays_sale', 'Today\'s Sales', NULL),
+(891, 'todays_sale', 'Today\"s Sales', NULL),
 (892, 'or', 'OR', NULL),
 (893, 'no_result_found', 'No Result Found', NULL),
 (894, 'add_service_quotation', 'Add Service Quotation', NULL),
@@ -1671,8 +1671,10 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `stk_id` bigint(20) NOT NULL,
   `stk_date` varchar(50) DEFAULT NULL,
   `stock` enum('warehouse','retail') NOT NULL,
+  `branch_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `stk_id` (`stk_id`)
+  KEY `stk_id` (`stk_id`),
+  KEY `branch_id` (`branch_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -1682,13 +1684,15 @@ CREATE TABLE IF NOT EXISTS `stock` (
 
 CREATE TABLE IF NOT EXISTS `stock_details` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `branch_id` int(11) NOT NULL,
   `stk_id_detail_id` varchar(100) DEFAULT NULL,
   `stk_id` bigint(20) DEFAULT NULL,
   `product_id` varchar(30) DEFAULT NULL,
   `quantity` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `stk_id` (`stk_id`),
-  KEY `product_id` (`product_id`)
+  KEY `product_id` (`product_id`),
+  KEY `branch_id` (`branch_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -1809,9 +1813,20 @@ CREATE TABLE IF NOT EXISTS `receipe_detail` (
   `receipe_id` bigint(20) DEFAULT NULL,
   `product_id` varchar(30) DEFAULT NULL,
   `quantity` decimal(10,2) DEFAULT NULL,
+  `prod_type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `receipe_id` (`receipe_id`),
   KEY `product_id` (`product_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `branches`
+--
+
+CREATE TABLE IF NOT EXISTS `branches` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `branch_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --

@@ -588,6 +588,7 @@ class Purchase extends MX_Controller
         $r_date = $this->input->post('r_date', TRUE);
         $prod_id = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('desc', TRUE);
+        $prod_type = $this->input->post('serial_no', TRUE);
         // die(var_dump($item_name[0]));
         $data = array(
             'receipe_name' => $receipe_name,
@@ -602,11 +603,12 @@ class Purchase extends MX_Controller
 
 
         $i = 0;
-        foreach ($item_name as $key => $item_name) {
+        foreach ($prod_id as $prod_id) {
             $data_2 = array(
                 'receipe_id' => $receipe_id,
-                'product_id' => $item_name,
-                'quantity' => $quantity[$i]
+                'product_id' => $prod_id,
+                'quantity' => $quantity[$i],
+                'prod_type' => $prod_type[$i]
             );
 
             $this->db->insert('receipe_detail', $data_2);

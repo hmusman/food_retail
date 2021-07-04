@@ -268,4 +268,18 @@ class Purchase_model extends CI_Model
         }
         return false;
     }
+
+       //search receipe
+       public function search_receipe($product_name) {
+        $query=$this->db->select('*')
+                  ->from('receipe a')
+                  ->like('a.receipe_name', $product_name, 'both')
+                  ->order_by('a.receipe_name','asc')
+                  ->limit(15)
+                  ->get();
+          if ($query->num_rows() > 0) {
+              return $query->result_array();  
+          }
+          return false;
+      }
 }
