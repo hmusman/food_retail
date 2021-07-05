@@ -14,7 +14,7 @@
                         
 
                         <div class="row">
-                            <div class="col-sm-6">
+                            <!-- <div class="col-sm-6">
                                <div class="form-group row">
                                     <label for="supplier_sss" class="col-sm-4 col-form-label"><?php echo display('supplier') ?>
                                         <i class="text-danger">*</i>
@@ -31,7 +31,7 @@
 
                                  
                                 </div> 
-                            </div>
+                            </div> -->
 
                              <div class="col-sm-6">
                                 <div class="form-group row">
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-sm-6">
+                            <!-- <div class="col-sm-6">
                                 <div class="form-group row">
                                     <label for="invoice_no" class="col-sm-4 col-form-label"><?php echo display('invoice_no') ?>
                                         <i class="text-danger">*</i>
@@ -58,7 +58,7 @@
                                         <input type="text" tabindex="3" class="form-control" name="chalan_no" placeholder="<?php echo display('invoice_no') ?>" id="invoice_no" required  value="<?php echo $chalan_no;?>" />
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="col-sm-6">
                                <div class="form-group row">
@@ -127,7 +127,9 @@
                                         </tr>
                                 </thead>
                                 <tbody id="addPurchaseItem">
-                                    <?php foreach($purchase_info as $purchases){?>
+                                    <?php 
+                                       
+                                    foreach($purchase_info as $purchases){?>
                                     <tr>
                                         <td class="span3 supplier">
                                            <input type="text" name="product_name" required class="form-control product_name productSelection" onkeypress="product_pur_or_list(<?php echo $purchases['sl']?>);" placeholder="<?php echo display('product_name') ?>" id="product_name_<?php echo $purchases['sl']?>" tabindex="5" value="<?php echo $purchases['product_name']?>"  >

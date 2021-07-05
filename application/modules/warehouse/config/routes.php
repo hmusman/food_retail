@@ -11,3 +11,4 @@ $route['po_edit/(:num)'] = 'warehouse/warehouse/bdtask_purchase_order_edit_form/
 $route['peoduction_form']        = "warehouse/warehouse/peoduction_form";
 
 $route['process_product/(:num)'] = 'warehouse/warehouse/bdtask_purchase_order_process_form/$1';
+$route['manage_production_orders'] = 'warehouse/warehouse/production_orders_list';

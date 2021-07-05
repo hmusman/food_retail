@@ -344,7 +344,15 @@
                                             }
                                             ?>"><a href="<?php echo base_url('purchase_order_list') ?>"><?php echo display('manage_po') ?></a></li>
                     <?php } ?>
-
+                    <?php if ($this->permission1->method('manage_production_orders', 'read')->access()) { ?>
+                        <li class="treeview <?php
+                                            if ($this->uri->segment('1') == ("manage_production_orders")) {
+                                                echo "active";
+                                            } else {
+                                                echo " ";
+                                            }
+                                            ?>"><a href="<?php echo base_url('manage_production_orders') ?>">manage production orders</a></li>
+                    <?php } ?>
                     <?php if ($this->permission1->method('manage_purchase', 'read')->access()) { ?>
                         <li class="treeview <?php
                                             if ($this->uri->segment('1') == ("production_form")) {
@@ -374,6 +382,8 @@
                                             }
                                             ?>"><a href="<?php echo base_url('receipe_manage') ?>"><?php echo ('Manage Receipe') ?></a></li>
                     <?php } ?>
+
+                    
 
                 </ul>
             </li>
