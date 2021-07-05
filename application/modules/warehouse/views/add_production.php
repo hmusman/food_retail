@@ -17,14 +17,14 @@
                 <div class="row">
                     <div class="col-sm-6">
                        <div class="form-group row">
-                            <label for="supplier_sss" class="col-sm-4 col-form-label"><?php echo display('supplier') ?>
+                            <label for="supplier_sss" class="col-sm-4 col-form-label"><?php echo display('transfer_to') ?>
                                 <i class="text-danger">*</i>
                             </label>
                             <div class="col-sm-6">
-                                <select name="supplier_id" id="supplier_id" class="form-control " required="" tabindex="1"> 
+                                <select name="branch_id" id="supplier_id" class="form-control " required="" tabindex="1"> 
                                     <option value=" "><?php echo display('select_one') ?></option>
-                                    <?php foreach($all_supplier as $suppliers){?>
-                                    <option value="<?php echo $suppliers['supplier_id']?>"><?php echo $suppliers['supplier_name']?></option>
+                                    <?php foreach($branches as $branche){?>
+                                    <option value="<?php echo $branche['id']?>"><?php echo $branche['branch_name']?></option>
                                     <?php }?>
                                 </select>
                             </div>
@@ -50,17 +50,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group row">
-                            <label for="invoice_no" class="col-sm-4 col-form-label"><?php echo display('invoice_no') ?>
-                                <i class="text-danger">*</i>
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" tabindex="3" class="form-control" name="chalan_no" placeholder="<?php echo display('invoice_no') ?>" id="invoice_no" required/>
-                            </div>
-                        </div>
-                    </div>
-
+                
                     <div class="col-sm-6">
                        <div class="form-group row">
                             <label for="adress" class="col-sm-4 col-form-label"><?php echo display('details') ?>
@@ -71,43 +61,7 @@
                         </div> 
                     </div>
                 </div>
-                     <div class="row">
-                      <div class="col-sm-6" id="payment_from_1">
-                        <div class="form-group row">
-                            <label for="payment_type" class="col-sm-4 col-form-label"><?php
-                                echo display('payment_type');
-                                ?> <i class="text-danger">*</i></label>
-                            <div class="col-sm-6">
-                                <select name="paytype" class="form-control" required="" onchange="bank_paymet(this.value)">
-                                    <option value="1"><?php echo display('cash_payment');?></option>
-                                    <option value="2"><?php echo display('bank_payment');?></option>
-                                  
-                                </select>
-                              
-
-                             
-                            </div>
-                         
-                        </div>
-                    </div>
-                     <div class="col-sm-6" id="bank_div">
-                    <div class="form-group row">
-                        <label for="bank" class="col-sm-4 col-form-label"><?php
-                            echo display('bank');
-                            ?> <i class="text-danger">*</i></label>
-                        <div class="col-sm-8">
-                           <select name="bank_id" class="form-control bankpayment"  id="bank_id">
-                                <option value="">Select Location</option>
-                                <?php foreach($bank_list as $bank){?>
-                                    <option value="<?php echo $bank['bank_id']?>"><?php echo $bank['bank_name'];?></option>
-                                <?php }?>
-                            </select>
-                         
-                        </div>
-                     
-                    </div>
-                </div>
-                </div>
+                    
 
 <br>
                 <div class="table-responsive">
@@ -118,7 +72,6 @@
                                     <th class="text-center"><?php echo display('quantity') ?> <i class="text-danger">*</i></th>
                                     <th class="text-center"><?php echo display('rate') ?><i class="text-danger">*</i></th>
 
-                                   
 
                                     <th class="text-center"><?php echo display('total') ?></th>
                                     <th class="text-center"><?php echo display('action') ?></th>

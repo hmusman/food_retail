@@ -127,20 +127,11 @@ class Warehouse extends MX_Controller
 
     public function bdtask_save_purchase_order()
     {
-        $this->form_validation->set_rules('supplier_id', display('supplier'), 'required|max_length[15]');
-        $this->form_validation->set_rules('paytype', display('payment_type'), 'required|max_length[20]');
-        $this->form_validation->set_rules('chalan_no', display('invoice_no'), 'required|max_length[20]|is_unique[product_purchase.chalan_no]');
-        $this->form_validation->set_rules('product_id[]', display('product'), 'required|max_length[20]');
-        $this->form_validation->set_rules('product_quantity[]', display('quantity'), 'required|max_length[20]');
-        $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
-
-        if ($this->form_validation->run() === true) {
+   
+     
             $purchase_id = date('YmdHis');
             $p_id        = $this->input->post('product_id', TRUE);
-            $supplier_id = $this->input->post('supplier_id', TRUE);
-            $supinfo     = $this->db->select('*')->from('supplier_information')->where('supplier_id', $supplier_id)->get()->row();
-            $sup_head    = $supinfo->supplier_id . '-' . $supinfo->supplier_name;
-            $sup_coa     = $this->db->select('*')->from('acc_coa')->where('HeadName', $sup_head)->get()->row();
+          
             $receive_by = $this->session->userdata('id');
             $receive_date = date('Y-m-d');
             $createdate  = date('Y-m-d H:i:s');
@@ -159,8 +150,8 @@ class Warehouse extends MX_Controller
 
             $data = array(
                 'po_id'        => $purchase_id,
-                'chalan_no'          => $this->input->post('chalan_no', TRUE),
-                'supplier_id'        => $this->input->post('supplier_id', TRUE),
+                // 'chalan_no'          => $this->input->post('chalan_no', TRUE),
+                // 'supplier_id'        => $this->input->post('supplier_id', TRUE),
                 'grand_total_amount' => $this->input->post('grand_total_price', TRUE),
                 'total_discount'     => $this->input->post('discount', TRUE),
                 'po_date'      => $this->input->post('purchase_date', TRUE),
@@ -168,8 +159,8 @@ class Warehouse extends MX_Controller
                 'paid_amount'        => $paid_amount,
                 'due_amount'         => $due_amount,
                 'status'             => 1,
-                'bank_id'            =>  $this->input->post('bank_id', TRUE),
-                'payment_type'       =>  $this->input->post('paytype', TRUE),
+                // 'bank_id'            =>  $this->input->post('bank_id', TRUE),
+                // 'payment_type'       =>  $this->input->post('paytype', TRUE),
             );
 
             $this->db->insert('purchase_order', $data);
@@ -204,11 +195,8 @@ class Warehouse extends MX_Controller
                 }
             }
             $this->session->set_flashdata('message', display('save_successfully'));
-            redirect("purchase_list");
-        } else {
-            $this->session->set_flashdata('exception', validation_errors());
-            redirect("add_purchase");
-        }
+            redirect("purchase_order_list");
+        
     }
 
 
@@ -357,7 +345,7 @@ class Warehouse extends MX_Controller
     public function peoduction_form()
     {
         $data['title']      = ('Production Form');
-        $data['all_supplier'] = $this->warehouse_model->supplier_list();
+        $data['branches'] = $this->warehouse_model->search_branches();
         $data['module']     = "warehouse";
         $data['page']       = "add_production";
         echo modules::run('template/layout', $data);
@@ -376,10 +364,8 @@ class Warehouse extends MX_Controller
         // if ($this->form_validation->run() === true) {
             $purchase_id = date('YmdHis');
             $recipe_id        = $this->input->post('product_id', TRUE);
-            $supplier_id = $this->input->post('supplier_id', TRUE);
-            $supinfo     = $this->db->select('*')->from('supplier_information')->where('supplier_id', $supplier_id)->get()->row();
-            $sup_head    = $supinfo->supplier_id . '-' . $supinfo->supplier_name;
-            $sup_coa     = $this->db->select('*')->from('acc_coa')->where('HeadName', $sup_head)->get()->row();
+            $branch_id = $this->input->post('branch_id', TRUE);
+            
             $receive_by = $this->session->userdata('id');
             $receive_date = date('Y-m-d');
             $createdate  = date('Y-m-d H:i:s');
@@ -387,6 +373,12 @@ class Warehouse extends MX_Controller
             $due_amount  = $this->input->post('due_amount', TRUE);
             $discount    = $this->input->post('discount', TRUE);
             $bank_id     = $this->input->post('bank_id', TRUE);
+
+            $rate     = $this->input->post('product_rate', TRUE);
+            $quantity = $this->input->post('product_quantity', TRUE);
+            $t_price  = $this->input->post('total_price', TRUE);
+            $discount = $this->input->post('discount', TRUE);
+
             $stock = [];
 
             if (!empty($bank_id)) {
@@ -401,7 +393,7 @@ class Warehouse extends MX_Controller
 
             $data = array(
                 'po_id'        => $purchase_id,
-                'chalan_no'          => $this->input->post('chalan_no', TRUE),
+                // 'chalan_no'          => $this->input->post('chalan_no', TRUE),
                 'supplier_id'        => $this->input->post('supplier_id', TRUE),
                 'grand_total_amount' => $this->input->post('grand_total_price', TRUE),
                 'total_discount'     => $this->input->post('discount', TRUE),
@@ -416,6 +408,7 @@ class Warehouse extends MX_Controller
 
             $stock_data = array(
                 'stk_id '        => $purchase_id,
+                'branch_id'     => $branch_id,
                 'stk_date'      => $this->input->post('purchase_date', TRUE),
                 'stock'         => 'warehouse'
             );
@@ -424,10 +417,7 @@ class Warehouse extends MX_Controller
 
 
 
-            $rate     = $this->input->post('product_rate', TRUE);
-            $quantity = $this->input->post('product_quantity', TRUE);
-            $t_price  = $this->input->post('total_price', TRUE);
-            $discount = $this->input->post('discount', TRUE);
+            
 
             for ($i = 0, $n = count($recipe_id); $i < $n; $i++) {
 
@@ -437,16 +427,24 @@ class Warehouse extends MX_Controller
                     
                     $stock_data2 = array(
                         'stk_id'           => $purchase_id,
+                        'branch_id'     => $branch_id,
                         'stk_id_detail_id'  => $this->generator(15),
                         'recipe_id '         => $stock[$j]['receipe_id'],
                         'product_id '         => $stock[$j]['product_id'],
-                        'quantity'           => $stock[$j]['quantity']
+                        'quantity'           => $stock[$j]['quantity'] * $quantity[$i]
                     );
                    
                     if($stock[$j]['receipe_id'] > 0){
                         $this->db->insert('stock_details', $stock_data2);
                     }
                 }
+                // $stock_data2 = array(
+                //     'stk_id'           => $purchase_id,
+                //     'stk_id_detail_id'  => $this->generator(15),
+                //     'recipe_id '         => $stock[$j]['receipe_id'],
+                //     'product_id '         => $stock[$j]['product_id'],
+                //     'quantity'           => $stock[$j]['quantity']
+                // );
                 // return print_r($stock_data2);
                
                 //end stock entry
@@ -486,8 +484,9 @@ class Warehouse extends MX_Controller
     {
 
         $purchase_detail = $this->warehouse_model->retrieve_purchase_process_editdata($purchase_id);
-        $supplier_id = $purchase_detail[0]['supplier_id'];
-        $supplier_list = $this->warehouse_model->supplier_list();
+        
+        // $supplier_id = $purchase_detail[0]['supplier_id'];
+        // $supplier_list = $this->warehouse_model->supplier_list();
 
         if (!empty($purchase_detail)) {
             $i = 0;
@@ -510,12 +509,14 @@ class Warehouse extends MX_Controller
             'total'         => number_format($purchase_detail[0]['grand_total_amount'] + (!empty($purchase_detail[0]['total_discount']) ? $purchase_detail[0]['total_discount'] : 0), 2),
             'bank_id'       =>  $purchase_detail[0]['bank_id'],
             'purchase_info' => $purchase_detail,
-            'supplier_list' => $supplier_list,
+            // 'supplier_list' => $supplier_list,
             'paid_amount'   => $purchase_detail[0]['paid_amount'],
             'due_amount'    => $purchase_detail[0]['due_amount'],
             'paytype'       => $purchase_detail[0]['payment_type'],
         );
 
+        
+        // return print_r($data);
         $data['module']     = "warehouse";
         $data['page']       = "production_process";
         echo modules::run('template/layout', $data);

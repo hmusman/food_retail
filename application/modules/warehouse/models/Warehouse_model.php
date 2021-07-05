@@ -244,14 +244,12 @@ class Warehouse_model extends CI_Model
                         b.*,
                         c.product_id,
                         c.product_name,
-                        c.product_model,
-                        d.supplier_id,
-                        d.supplier_name'
+                        c.product_model'
         );
         $this->db->from('purchase_order a');
         $this->db->join('purchase_order_details b', 'b.po_id =a.po_id');
         $this->db->join('product_information c', 'c.product_id =b.product_id');
-        $this->db->join('supplier_information d', 'd.supplier_id = a.supplier_id');
+        // $this->db->join('supplier_information d', 'd.supplier_id = a.supplier_id');
         $this->db->where('a.po_id', $purchase_id);
         $this->db->order_by('a.po_details', 'asc');
         $query = $this->db->get();
@@ -265,6 +263,15 @@ class Warehouse_model extends CI_Model
         $this->db->from('receipe a');
         $this->db->join('receipe_detail b', 'b.receipe_id  =a.receipe_id ');
         $this->db->where('a.receipe_id', $recipe_id);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
+    public function search_branches(){
+        $this->db->select('a.*');
+        $this->db->from('branches a');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
