@@ -598,7 +598,7 @@ class Purchase extends MX_Controller
             'r_date' => $r_date
         );
 
-        // $this->db->insert('receipe', $data);
+        $this->db->insert('receipe', $data);
 
 
         $i = 0;

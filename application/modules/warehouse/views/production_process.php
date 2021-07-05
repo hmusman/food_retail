@@ -14,30 +14,11 @@
 
 
                 <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group row">
-                            <label for="supplier_sss" class="col-sm-4 col-form-label"><?php echo display('supplier') ?>
-                                <i class="text-danger">*</i>
-                            </label>
-                            <div class="col-sm-6">
-                                <select name="supplier_id" id="supplier_id" class="form-control " required="">
-                                    <option value="">Select Supplier</option>
-                                    <?php foreach ($supplier_list as $suppliers) { ?>
-                                        <option value="<?php echo  $suppliers['supplier_id'] ?>" <?php if ($suppliers['supplier_id'] == $supplier_id) {
-                                                                                                    echo 'selected';
-                                                                                                } ?>><?php echo  $suppliers['supplier_name'] ?></option>
-                                    <?php } ?>
-
-                                </select>
-                            </div>
-
-
-                        </div>
-                    </div>
+                  
 
                     <div class="col-sm-6">
                         <div class="form-group row">
-                            <label for="date" class="col-sm-4 col-form-label"><?php echo display('purchase_date') ?>
+                            <label for="date" class="col-sm-4 col-form-label"><?php echo display('po_date') ?>
                                 <i class="text-danger">*</i>
                             </label>
                             <div class="col-sm-6">
@@ -45,19 +26,6 @@
                                 <input type="text" tabindex="2" class="form-control datepicker" name="purchase_date" value="<?php echo $purchase_date ?>" id="date" required />
                                 <input type="hidden" name="purchase_id" value="<?php echo $purchase_id ?>">
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group row">
-                            <label for="invoice_no" class="col-sm-4 col-form-label"><?php echo display('invoice_no') ?>
-                                <i class="text-danger">*</i>
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" tabindex="3" class="form-control" name="chalan_no" placeholder="<?php echo display('invoice_no') ?>" id="invoice_no" required value="<?php echo $chalan_no; ?>" />
                             </div>
                         </div>
                     </div>
@@ -71,52 +39,24 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
+
                 <div class="row">
-                    <div class="col-sm-6" id="payment_from_1">
+                    <div class="col-sm-6">
                         <div class="form-group row">
-                            <label for="payment_type" class="col-sm-4 col-form-label"><?php
-                                                                                        echo display('payment_type');
-                                                                                        ?> <i class="text-danger">*</i></label>
+                            <label for="invoice_no" class="col-sm-4 col-form-label"><?php echo display('po_num') ?>
+                                <i class="text-danger">*</i>
+                            </label>
                             <div class="col-sm-6">
-                                <select name="paytype" class="form-control" required="" onchange="bank_paymet(this.value)">
-                                    <option value="">Select Payment Option</option>
-                                    <option value="1" <?php if ($paytype == 1) {
-                                                            echo 'selected';
-                                                        } ?>><?php echo display('cash_payment') ?></option>
-                                    <option value="2" <?php if ($paytype == 2) {
-                                                            echo 'selected';
-                                                        } ?>><?php echo display('bank_payment') ?></option>
-
-                                </select>
-
-
-
+                                <input type="text" tabindex="3" class="form-control" name="chalan_no" placeholder="<?php echo display('invoice_no') ?>" id="invoice_no" required value="<?php echo $purchase_id; ?>" readonly/>
                             </div>
-
                         </div>
                     </div>
-                    <div class="col-sm-6" id="bank_div">
-                        <div class="form-group row">
-                            <label for="bank" class="col-sm-4 col-form-label"><?php
-                                                                                echo display('bank');
-                                                                                ?> <i class="text-danger">*</i></label>
-                            <div class="col-sm-6">
-                                <select name="bank_id" class="form-control bankpayment" id="bank_id">
-                                    <option value="">Select Location</option>
-                                    <?php foreach ($bank_list as $bank) { ?>
-                                        <option value="<?php echo $bank['bank_id'] ?>" <?php if ($bank['bank_id'] == $bank_id) {
-                                                                                            echo 'selected';
-                                                                                        } ?>><?php echo $bank['bank_name']; ?></option>
-                                    <?php } ?>
-                                </select>
-                                <input type="hidden" id="editpayment_type" value="<?php echo $paytype; ?>" name="">
 
-                            </div>
-
-                        </div>
-                    </div>
+                  
                 </div>
+                
 
                 <br>
                 <div class="table-responsive">
