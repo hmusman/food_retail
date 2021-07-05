@@ -22,14 +22,11 @@ class Purchase_model extends CI_Model
         return false;
     }
 
-    public function product_search_item($supplier_id, $product_name)
+    public function product_search_item($product_name)
     {
         $query = $this->db->select('*')
             ->from('supplier_product a')
             ->join('product_information b', 'a.product_id = b.product_id')
-            ->where('a.supplier_id', $supplier_id)
-            ->like('b.product_model', $product_name, 'both')
-            ->or_where('a.supplier_id', $supplier_id)
             ->like('b.product_name', $product_name, 'both')
             ->group_by('a.product_id')
             ->order_by('b.product_name', 'asc')
@@ -65,13 +62,12 @@ class Purchase_model extends CI_Model
         return false;
     }
 
-    public function get_total_product($product_id, $supplier_id)
+    public function get_total_product($product_id)
     {
         $this->db->select('SUM(a.quantity) as total_purchase,b.*');
         $this->db->from('product_purchase_details a');
         $this->db->join('supplier_product b', 'a.product_id=b.product_id');
         $this->db->where('a.product_id', $product_id);
-        $this->db->where('b.supplier_id', $supplier_id);
         $total_purchase = $this->db->get()->row();
 
         $this->db->select('SUM(b.quantity) as total_sale');
@@ -83,7 +79,6 @@ class Purchase_model extends CI_Model
         $this->db->from('product_information a');
         $this->db->join('supplier_product b', 'a.product_id=b.product_id');
         $this->db->where(array('a.product_id' => $product_id, 'a.status' => 1));
-        $this->db->where('b.supplier_id', $supplier_id);
         $product_information = $this->db->get()->row();
 
         $available_quantity = ($total_purchase->total_purchase - $total_sale->total_sale);

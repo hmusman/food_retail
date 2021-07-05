@@ -482,9 +482,9 @@ class Purchase extends MX_Controller
     }
     public function bdtask_product_search_by_supplier()
     {
-        $supplier_id = $this->input->post('supplier_id', TRUE);
+        // $supplier_id = $this->input->post('supplier_id', TRUE);
         $product_name = $this->input->post('product_name', TRUE);
-        $product_info = $this->purchase_model->product_search_item($supplier_id, $product_name);
+        $product_info = $this->purchase_model->product_search_item( $product_name);
         if (!empty($product_info)) {
             $list[''] = '';
             foreach ($product_info as $value) {
@@ -515,8 +515,7 @@ class Purchase extends MX_Controller
     public function bdtask_retrieve_product_data()
     {
         $product_id  = $this->input->post('product_id', TRUE);
-        $supplier_id = $this->input->post('supplier_id', TRUE);
-        $product_info = $this->purchase_model->get_total_product($product_id, $supplier_id);
+        $product_info = $this->purchase_model->get_total_product($product_id);
 
         echo json_encode($product_info);
     }

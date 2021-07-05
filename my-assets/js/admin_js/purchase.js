@@ -102,13 +102,10 @@ function deleteRow(e) {
 "use strict";
 function product_pur_or_list(sl) {
 
-  var supplier_id = $('#supplier_id').val();
+
   var base_url = $('#base_url').val();
   var csrf_test_name = $('[name="csrf_test_name"]').val();
-  if (supplier_id == 0) {
-    alert('Please select Supplier !');
-    return false;
-  }
+ 
 
   // Auto complete
   var options = {
@@ -121,7 +118,6 @@ function product_pur_or_list(sl) {
         dataType: "json",
         data: {
           term: request.term,
-          supplier_id: $('#supplier_id').val(),
           product_name: product_name,
           csrf_test_name: csrf_test_name
         },
@@ -140,9 +136,7 @@ function product_pur_or_list(sl) {
 
       var product_id = ui.item.value;
 
-      var supplier_id = $('#supplier_id').val();
-
-
+     
       var base_url = $('.baseUrl').val();
 
 
@@ -155,7 +149,7 @@ function product_pur_or_list(sl) {
       $.ajax({
         type: "POST",
         url: base_url + "purchase/purchase/bdtask_retrieve_product_data",
-        data: { product_id: product_id, supplier_id: supplier_id, csrf_test_name: csrf_test_name },
+        data: { product_id: product_id, csrf_test_name: csrf_test_name },
         cache: false,
         success: function (data) {
           console.log(data);
