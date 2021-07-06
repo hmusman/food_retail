@@ -77,6 +77,8 @@
 									<tr>
 										<th><?php echo display('sl') ?></th>
 										<th><?php echo display('product_name') ?></th>
+										<th>Purchase Order Id</th>
+										<th>Branch Name</th>
 										<th class="text-center"><?php echo display('quantity') ?></th>
 										<th class="text-center"><?php echo display('rate') ?></th>
 										<th class="text-center"><?php echo display('total_ammount') ?></th>
@@ -94,6 +96,8 @@
 										<?php echo $details['product_name']?>	
 											
 										</td>
+										<td><?php echo $details['purchase_order_id'] ?></td>
+										<td><?php echo $details['branch_name']?></td>
 										<td class="text-right"><?php echo $details['quantity']?></td>
 										<td class="text-right"><?php echo (($position==0)?$currency.' '.$details['rate']:$details['rate'].' '.$currency) ?></td>
 										<td class="text-right"><?php echo (($position==0)?$currency.' '.$details['total_amount']:$details['total_amount'].' '.$currency) ?></td>
@@ -105,28 +109,28 @@
 								</tbody>
 								<tfoot>
 									<tr>
-										<td class="text-right" colspan="4"><b><?php echo display('total') ?>:</b></td>
+										<td class="text-right" colspan="6"><b><?php echo display('total') ?>:</b></td>
 										<td  class="text-right"><b><?php echo (($position==0)?$currency.' '.$total:$total.' '.$currency) ?></b></td>
 									</tr>
 									 <?php if($discount > 0){?>
 									<tr>
-										<td class="text-right" colspan="4"><b><?php echo display('discounts') ?>:</b></td>
+										<td class="text-right" colspan="6"><b><?php echo display('discounts') ?>:</b></td>
 										<td  class="text-right"><b><?php echo (($position==0)?$currency.' '.$discount:$discount.' '.$currency) ?></b></td>
 									</tr>
 								<?php }?>
 									<tr>
-										<td class="text-right" colspan="4"><b><?php echo display('grand_total') ?>:</b></td>
+										<td class="text-right" colspan="6"><b><?php echo display('grand_total') ?>:</b></td>
 										<td  class="text-right"><b><?php echo (($position==0)?$currency.' '.$sub_total_amount:$sub_total_amount.' '. $currency) ?></b></td>
 									</tr>
 									 <?php if($paid_amount > 0){?>
 									<tr>
-										<td class="text-right" colspan="4"><b><?php echo display('paid_amount') ?>:</b></td>
+										<td class="text-right" colspan="6"><b><?php echo display('paid_amount') ?>:</b></td>
 										<td  class="text-right"><b><?php echo (($position==0)?$currency.' '.$paid_amount:$paid_amount.' '.$currency) ?></b></td>
 									</tr>
 								<?php }?>
                               <?php if($due_amount > 0){?>
 									<tr>
-										<td class="text-right" colspan="4"><b><?php echo display('due_amount') ?>:</b></td>
+										<td class="text-right" colspan="6"><b><?php echo display('due_amount') ?>:</b></td>
 										<td  class="text-right"><b><?php echo (($position==0)?$currency.' '.$due_amount:$due_amount.' '. $currency) ?></b></td>
 									</tr>
 								<?php }?>

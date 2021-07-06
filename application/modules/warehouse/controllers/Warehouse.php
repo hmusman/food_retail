@@ -624,6 +624,7 @@ class Warehouse extends MX_Controller
 
             $data = array(
                 'production_id'              => $purchase_id,
+                'purchase_order_id'              => $purchase_id,
                 // 'chalan_no'          => $this->input->post('chalan_no', TRUE),
                 // 'supplier_id'        => $this->input->post('supplier_id', TRUE),
                 'grand_total_amount' => $this->input->post('grand_total_price', TRUE),
@@ -690,6 +691,7 @@ class Warehouse extends MX_Controller
                 $data1 = array(
                     'production_detail_id'       => $this->generator(15),
                     'production_id'              => $purchase_id,
+                    'purchase_order_id'              => $purchase_id,
                     'product_id'         => $recipe_id[$key],
                     'quantity'           => $quantity[$key],
                     'rate'               => $rate[$key],

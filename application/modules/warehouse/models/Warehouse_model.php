@@ -352,10 +352,11 @@ class Warehouse_model extends CI_Model
     public function production_order_details_data($purchase_id){
 
         // return $purchase_id;
-        $this->db->select('a.*,c.*,d.receipe_name as product_name');
+        $this->db->select('a.*,c.*,d.receipe_name as product_name,e.branch_name');
         $this->db->from('production_order a');
         $this->db->join('production_order_details c', 'c.production_id = a.production_id');
         $this->db->join('receipe d', 'd.receipe_id = c.product_id');
+        $this->db->join('branches e', 'e.id = a.branch_id');
         $this->db->where('a.production_id', $purchase_id);
         $this->db->group_by('d.receipe_id');
         $query = $this->db->get();
