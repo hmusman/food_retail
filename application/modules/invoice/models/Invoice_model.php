@@ -42,6 +42,7 @@ class Invoice_model extends CI_Model {
       public function allproduct(){
         $this->db->select('*');
         $this->db->from('product_information');
+        $this->db->where('serial_no','finish_foods');
         $this->db->order_by('product_name','asc');
         $this->db->limit(30);
         $query   = $this->db->get();
@@ -794,7 +795,7 @@ if(!empty($this->input->post('paid_amount',TRUE))){
         if ($product_information != null) {
 
             $this->db->select('SUM(a.quantity) as total_purchase');
-            $this->db->from('product_purchase_details a');
+            $this->db->from('stock_details a');
             $this->db->where('a.product_id', $product_id);
             $total_purchase = $this->db->get()->row();
 
