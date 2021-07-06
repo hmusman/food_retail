@@ -605,10 +605,10 @@ class Purchase extends MX_Controller
         $i = 0;
         foreach ($prod_id as $prod_id) {
 
-            if ($prod_type[$i] != 'Finish') {
+            // if ($prod_type[$i] != 'Finish') {
                 
-                $prod_type[$i] = 'raw';
-            }
+            //     $prod_type[$i] = 'raw';
+            // }
             $data_2 = array(
                 'receipe_id' => $receipe_id,
                 'product_id' => $prod_id,
