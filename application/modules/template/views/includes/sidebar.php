@@ -292,7 +292,7 @@
         <!-- Purchase menu start -->
         <?php if ($this->permission1->method('add_purchase', 'create')->access() || $this->permission1->method('manage_purchase', 'read')->access()) { ?>
             <li class="treeview <?php
-                                if ($this->uri->segment('1') == ("add_purchase") || $this->uri->segment('1') == ("purchase_edit") || $this->uri->segment('1') == ("purchase_list") || $this->uri->segment('1') == ("purchase_details") || $this->uri->segment('1') == ("add_purchase_order") || $this->uri->segment('1') == ("purchase_order_list") || $this->uri->segment('1') == ("po_details") || $this->uri->segment('1') == ("po_edit")) {
+                                if ($this->uri->segment('1') == ("add_purchase") || $this->uri->segment('1') == ("purchase_edit") || $this->uri->segment('1') == ("purchase_list") || $this->uri->segment('1') == ("purchase_details") || $this->uri->segment('1') == ("add_purchase_order") || $this->uri->segment('1') == ("purchase_order_list") || $this->uri->segment('1') == ("po_details") || $this->uri->segment('1') == ("po_edit") || $this->uri->segment('1') == ("manage_production_orders") || $this->uri->segment('1') == ("peoduction_form") || $this->uri->segment('1') == ("receipe_form") || $this->uri->segment('1') == ("receipe_manage")) {
                                     echo "active";
                                 } else {
                                     echo " ";
@@ -344,7 +344,7 @@
                                             }
                                             ?>"><a href="<?php echo base_url('purchase_order_list') ?>"><?php echo display('manage_po') ?></a></li>
                     <?php } ?>
-                    <?php if ($this->permission1->method('manage_production_orders', 'read')->access()) { ?>
+                    
                         <li class="treeview <?php
                                             if ($this->uri->segment('1') == ("manage_production_orders")) {
                                                 echo "active";
@@ -352,7 +352,7 @@
                                                 echo " ";
                                             }
                                             ?>"><a href="<?php echo base_url('manage_production_orders') ?>">manage production orders</a></li>
-                    <?php } ?>
+                    
                     <?php if ($this->permission1->method('manage_purchase', 'read')->access()) { ?>
                         <li class="treeview <?php
                                             if ($this->uri->segment('1') == ("production_form")) {
