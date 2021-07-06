@@ -608,12 +608,16 @@ class Warehouse extends MX_Controller
 
 
 
-            
+            // print_r($recipe_id);
+            // return;
 
-            for ($i = 0, $n = count($recipe_id); $i < $n; $i++) {
-
+            // for ($i = 0, $n = count($recipe_id); $i < $n; $i++) {
+            foreach($recipe_id as $key => $recipe){
                 //stock entry
-                $stock = $this->warehouse_model->stock_entry($recipe_id[$i]);
+                // echo $key;
+                $stock = $this->warehouse_model->stock_entry($recipe);
+                
+                // print_r($stock[0]['quantity']);
 
                 
                 for ($j = 0, $n = count($stock); $j < $n; $j++) {
@@ -624,14 +628,17 @@ class Warehouse extends MX_Controller
                         'stk_id_detail_id'    => $this->generator(15),
                         'recipe_id'          => $stock[$j]['receipe_id'],
                         'product_id'         => $stock[$j]['product_id'],
-                        'quantity'            => $stock[$j]['quantity'] * $quantity[$i],
+                        'quantity'            => $stock[$j]['quantity'] * $quantity[$key],
                         'type'                => $stock[$j]['prod_type']
                     );
+
                    
-                    // if($stock[$j]['receipe_id'] > 0){
+                    if($stock[$j]['receipe_id'] > 0){
                         $this->db->insert('stock_details', $stock_data2);
-                    // }
+                    }
                 }
+
+                // print_r($stock_data2);
 
                 $product_quantity = $quantity[$i];
                 $product_rate     = $rate[$i];
@@ -642,19 +649,21 @@ class Warehouse extends MX_Controller
                 $data1 = array(
                     'production_detail_id'       => $this->generator(15),
                     'production_id'              => $purchase_id,
-                    'product_id'         => $product_id,
-                    'quantity'           => $product_quantity,
-                    'rate'               => $product_rate,
-                    'total_amount'       => $total_price,
-                    'discount'           => $disc,
+                    'product_id'         => $recipe_id[$key],
+                    'quantity'           => $quantity[$key],
+                    'rate'               => $rate[$key],
+                    'total_amount'       => $t_price[$key],
+                    'discount'           => $discount[$key],
                     'status'             => 1
                 );
-
+                
+                // print_r($data1);
                 if (!empty($quantity)) {
                     $this->db->insert('production_order_details', $data1);
                     
                 }
             }
+            
             $this->session->set_flashdata('message', display('save_successfully'));
             redirect("purchase_list");
     
