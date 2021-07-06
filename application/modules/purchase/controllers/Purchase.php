@@ -589,7 +589,6 @@ class Purchase extends MX_Controller
         $quantity = $this->input->post('desc', TRUE);
         $prod_type = $this->input->post('serial_no', TRUE);
 
-        print_r($prod_type);return;
         // die(var_dump($item_name[0]));
         $data = array(
             'receipe_name' => $receipe_name,

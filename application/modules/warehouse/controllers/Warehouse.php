@@ -139,12 +139,6 @@ class Warehouse extends MX_Controller
         $data = $this->warehouse_model->getPurchaseOrderList($postData);
         echo json_encode($data);
     }
-    public function CheckProductionOrderList(){
-
-        $postData = $this->input->post();
-        $data = $this->warehouse_model->getProductionOrderList($postData);
-        echo json_encode($data);
-    }
     public function bdtask_save_purchase_order()
     {
    
