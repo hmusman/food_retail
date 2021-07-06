@@ -665,7 +665,7 @@ class Warehouse extends MX_Controller
             }
             
             $this->session->set_flashdata('message', display('save_successfully'));
-            redirect("purchase_list");
+            redirect("manage_production_orders");
     
         } 
     }
