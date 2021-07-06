@@ -51,8 +51,8 @@
                                 <i class="text-danger">*</i>
                             </label>
                             <div class="col-sm-6">
-                                <select name="branch_id" id="supplier_id" class="form-control " required="" tabindex="1" required=""> 
-                                    <option value=" "><?php echo display('select_one') ?></option>
+                                <select name="branch_id" id="supplier_id" class="form-control " required="" tabindex="1"> 
+                                    <option value=""><?php echo display('select_one') ?></option>
                                     <?php foreach($branches as $branche){?>
                                     <option value="<?php echo $branche['id']?>"><?php echo $branche['branch_name']?></option>
                                     <?php }?>

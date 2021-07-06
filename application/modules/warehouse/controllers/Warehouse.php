@@ -46,8 +46,7 @@ class Warehouse extends MX_Controller
     {
         $data['title']      = display('manage_purchase');
         $data['total_purhcase'] = $this->warehouse_model->count_production_purchase_order();
-        // print_r($data['total_purhcase']);
-        // return;
+        // 
         $data['module']     = "warehouse";
         $data['page']       = "production_order_list";
         echo modules::run('template/layout', $data);
@@ -58,7 +57,8 @@ class Warehouse extends MX_Controller
     {
 
         $purchase_detail = $this->warehouse_model->purchase_order_details_data($purchase_id);
-
+// print_r($data['purchase_detail']);
+//         return;
 
         if (!empty($purchase_detail)) {
             $i = 0;
@@ -96,9 +96,7 @@ class Warehouse extends MX_Controller
     public function production_order_details($purchase_id = null){
         $purchase_detail = $this->warehouse_model->production_order_details_data($purchase_id);
 
-        // print_r($purchase_detail);
-        // return;
-
+        
 
         if (!empty($purchase_detail)) {
             $i = 0;
@@ -587,12 +585,13 @@ class Warehouse extends MX_Controller
         
         // $this->form_validation->set_rules('supplier_id', display('supplier'), 'required|max_length[15]');
         // $this->form_validation->set_rules('paytype', display('payment_type'), 'required|max_length[20]');
-        // $this->form_validation->set_rules('chalan_no', display('invoice_no'), 'required|max_length[20]|is_unique[product_purchase.chalan_no]');
+        $this->form_validation->set_rules('chalan_no', display('invoice_no'), 'required|max_length[20]|is_unique[product_purchase.chalan_no]');
         $this->form_validation->set_rules('product_id[]', display('product'), 'required|max_length[20]');
         $this->form_validation->set_rules('product_quantity[]', display('quantity'), 'required|max_length[20]');
         $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
 
         if ($this->form_validation->run() === true) {
+            $production_id = date('YmdHis');
             $purchase_id = $this->input->post('chalan_no', TRUE);
             $recipe_id        = $this->input->post('product_id', TRUE);
             $branch_id = $this->input->post('branch_id', TRUE);
@@ -623,7 +622,7 @@ class Warehouse extends MX_Controller
            
 
             $data = array(
-                'production_id'              => $purchase_id,
+                'production_id'              => $production_id,
                 'purchase_order_id'              => $purchase_id,
                 // 'chalan_no'          => $this->input->post('chalan_no', TRUE),
                 // 'supplier_id'        => $this->input->post('supplier_id', TRUE),
@@ -690,7 +689,7 @@ class Warehouse extends MX_Controller
 
                 $data1 = array(
                     'production_detail_id'       => $this->generator(15),
-                    'production_id'              => $purchase_id,
+                    'production_id'              => $production_id,
                     'purchase_order_id'              => $purchase_id,
                     'product_id'         => $recipe_id[$key],
                     'quantity'           => $quantity[$key],
