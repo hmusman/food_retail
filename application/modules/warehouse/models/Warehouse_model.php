@@ -335,14 +335,29 @@ class Warehouse_model extends CI_Model
     }
     public function purchase_order_details_data($purchase_id)
     {
-        $this->db->select('a.*,b.*,c.*,e.po_details,d.product_id,d.product_name,d.product_model');
+        $this->db->select('a.*,c.*,e.po_details,d.product_id,d.product_name,d.product_model');
         $this->db->from('purchase_order a');
-        $this->db->join('supplier_information b', 'b.supplier_id = a.supplier_id');
+        // $this->db->join('supplier_information b', 'b.supplier_id = a.supplier_id');
         $this->db->join('purchase_order_details c', 'c.po_id = a.po_id');
         $this->db->join('product_information d', 'd.product_id = c.product_id');
         $this->db->join('purchase_order e', 'e.po_id = c.po_id');
         $this->db->where('a.po_id', $purchase_id);
         $this->db->group_by('d.product_id');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
+    public function production_order_details_data($purchase_id){
+
+        // return $purchase_id;
+        $this->db->select('a.*,c.*,d.receipe_name as product_name');
+        $this->db->from('production_order a');
+        $this->db->join('production_order_details c', 'c.production_id = a.production_id');
+        $this->db->join('receipe d', 'd.receipe_id = c.product_id');
+        $this->db->where('a.production_id', $purchase_id);
+        $this->db->group_by('d.receipe_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();

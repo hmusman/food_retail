@@ -59,6 +59,7 @@ class Warehouse extends MX_Controller
 
         $purchase_detail = $this->warehouse_model->purchase_order_details_data($purchase_id);
 
+
         if (!empty($purchase_detail)) {
             $i = 0;
             foreach ($purchase_detail as $k => $v) {
@@ -88,6 +89,46 @@ class Warehouse extends MX_Controller
 
         $data['module']     = "warehouse";
         $data['page']       = "purchase_order_detail";
+        echo modules::run('template/layout', $data);
+    }
+
+    // 
+    public function production_order_details($purchase_id = null){
+        $purchase_detail = $this->warehouse_model->production_order_details_data($purchase_id);
+
+        // print_r($purchase_detail);
+        // return;
+
+
+        if (!empty($purchase_detail)) {
+            $i = 0;
+            foreach ($purchase_detail as $k => $v) {
+                $i++;
+                $purchase_detail[$k]['sl'] = $i;
+            }
+
+            foreach ($purchase_detail as $k => $v) {
+                $purchase_detail[$k]['convert_date'] = $purchase_detail[$k]['purchase_date'];
+            }
+        }
+
+        $data = array(
+            'title'            => display('purchase_details'),
+            'purchase_id'      => $purchase_detail[0]['purchase_id'],
+            'purchase_details' => $purchase_detail[0]['purchase_details'],
+            'supplier_name'    => $purchase_detail[0]['supplier_name'],
+            'final_date'       => $purchase_detail[0]['convert_date'],
+            'sub_total_amount' => number_format($purchase_detail[0]['grand_total_amount'], 2, '.', ','),
+            'chalan_no'        => $purchase_detail[0]['chalan_no'],
+            'total'            =>  number_format($purchase_detail[0]['grand_total_amount'] + (!empty($purchase_detail[0]['total_discount']) ? $purchase_detail[0]['total_discount'] : 0), 2),
+            'discount'         => number_format((!empty($purchase_detail[0]['total_discount']) ? $purchase_detail[0]['total_discount'] : 0), 2),
+            'paid_amount'      => number_format($purchase_detail[0]['paid_amount'], 2),
+            'due_amount'      => number_format($purchase_detail[0]['due_amount'], 2),
+            'purchase_all_data' => $purchase_detail,
+        );
+
+        $data['module']     = "warehouse";
+        $data['page']       = "production_order_detail";
         echo modules::run('template/layout', $data);
     }
 

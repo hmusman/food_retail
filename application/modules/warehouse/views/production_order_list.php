@@ -54,9 +54,9 @@
 		        								<td><?php echo $purchase['po_date'] ?></td>
 		        								<td><?php echo $purchase['grand_total_amount'] ?></td>
 		        								<td>
-		        									<a href="<?php echo $base_url; ?>" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="left" title="display('purchase_details')"><i class="fa fa-window-restore" aria-hidden="true"></i></a>
+		        									<a href="<?php echo $base_url."production_details/".$purchase['production_id']; ?>" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="left" title="Production Details"><i class="fa fa-window-restore" aria-hidden="true"></i></a>
 
-		        									<a href="<?php echo $base_url; ?>" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="left" title=" display('update')"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+		        									<!-- <a href="<?php echo $base_url; ?>" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="left" title=" display('update')"><i class="fa fa-pencil" aria-hidden="true"></i></a></td> -->
 		        							</tr>	
 		        							<?php } ?>
 		        						</tbody>
