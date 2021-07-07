@@ -281,6 +281,26 @@
 
                         </li>
                     <?php } ?>
+                    <?php if ($this->permission1->method('deal_form', 'read')->access()) { ?>
+                        <li class="<?php echo (($this->uri->segment(1) == "product_list") ? "active" : '') ?>">
+                            <a href="<?php echo base_url('deal_form') ?>">
+
+                                Add Deal
+
+                            </a>
+
+                        </li>
+                    <?php } ?>
+                    <?php if ($this->permission1->method('deal_manage', 'read')->access()) { ?>
+                        <li class="<?php echo (($this->uri->segment(1) == "product_list") ? "active" : '') ?>">
+                            <a href="<?php echo base_url('deal_manage') ?>">
+
+                                Manage Deal
+
+                            </a>
+
+                        </li>
+                    <?php } ?>
 
                 </ul>
 

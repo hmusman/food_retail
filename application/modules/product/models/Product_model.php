@@ -22,8 +22,31 @@ class Product_model extends CI_Model {
         return $this->db->insert('product_category',$data);
     }
  
+    // deal
+    public function manage_deal(){
 
-    
+        return $this->db->select('*')
+            ->from('product_deal')
+            ->get()
+            ->result();
+    }
+    // /
+    public function edit_deal($id){
+        $this->db->select('b.*,p.product_name,a.deal_name,a.deal_price');
+        $this->db->from('product_deal a');
+        $this->db->join('product_deal_details b', 'b.deal_id = a.deal_id');
+        $this->db->join('product_information p', 'b.product_id = p.product_id');
+        $this->db->where('a.deal_id', $id);
+        $this->db->order_by('a.id', 'desc');
+        $this->db->order_by('id', 'desc');
+        $query = $this->db->get();
+        
+        $last_query = $this->db->last_query();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
     public function update_category($data = [])
     {
         return $this->db->where('category_id',$data['category_id'])

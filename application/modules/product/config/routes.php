@@ -19,3 +19,12 @@ $route['qrcode/(:any)']        = "product/product/qrgenerator/$1";
 $route['bulk_products']        = "product/product/bdtask_csv_product";
 $route['product_details/(:any)']= "product/product/bdtask_product_details/$1";
 
+// Deals
+$route['deal_form'] = 'product/product/deal_form';
+$route['deal_add']  = 'product/product/add_deal';
+$route['deal_manage'] = 'product/product/deal_manage';
+$route['del_deal'] = 'product/product/del_deal/$1';
+$route['edit_deal/(:any)'] = 'product/product/edit_deal/$1';
+$route['update_deal'] = 'product/product/update_deal';
+
+

@@ -622,4 +622,124 @@ class Product extends MX_Controller
         }
         return $con;
     }
+
+    // deal
+
+    public function deal_form()
+    {
+        $data['title']      = ('Add Deal');
+        $data['module']     = "product";
+        $data['page']       = "add_deal";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function add_deal(){
+
+        $deal_id   = date('YmdHis');
+        $deal_name = $this->input->post('deal_name', TRUE);
+        $deal_price = $this->input->post('deal_price', TRUE);
+
+        $product_id = $this->input->post('product_id', TRUE);
+        $quantity = $this->input->post('quantity', TRUE);
+
+
+        $deal_detail_id =$this->generator(15);
+
+        $data = array(
+
+            'deal_id'    => $deal_id,
+            'deal_name'  => $deal_name,
+            'deal_price' => $deal_price
+        );
+        $this->db->insert('product_deal',$data);
+
+        for ($i = 0, $n = count($product_id); $i < $n; $i++) {
+
+            $productid = $product_id[$i];
+            $quantity   = $quantity[$i];
+            $data1 = array(
+
+                'deal_id' => $deal_id,
+                'deal_detail_id' => $deal_detail_id,
+                'product_id' => $productid,
+                'quantity'   => $quantity[$i]
+            );
+
+            $this->db->insert('product_deal_details',$data1);
+       }
+       $this->session->set_flashdata('message', display('save_successfully'));
+        redirect("deal_manage");
+    }
+
+    public function deal_manage()
+    {
+        $data['title']      = ('Manage Deal');
+        $data['total_deal'] = $this->product_model->manage_deal();
+        $data['module']     = "product";
+        $data['page']       = "manage_deal";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function del_deal($id)
+    {
+        $this->db->where('deal_id', $id);
+        $this->db->delete('product_deal');
+        $this->db->where('deal_id', $id);
+        $this->db->delete('product_deal_details');
+
+        $this->session->set_flashdata('message', ('Delete Successfully'));
+        redirect("deal_manage");
+    }
+
+    public function edit_deal($id)
+    {
+        $data['title']      = ('Manage Deal');
+        $data['edit_deal'] = $this->product_model->edit_deal($id);
+        $data['module']     = "product";
+        $data['page']       = "edit_deal";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function update_deal(){
+
+        $deal_id   = $this->input->post('id', TRUE);
+        $deal_name = $this->input->post('deal_name', TRUE);
+        $deal_price = $this->input->post('deal_price', TRUE);
+
+        $product_id = $this->input->post('product_id', TRUE);
+        $quantity = $this->input->post('quantity', TRUE);
+
+
+        $deal_detail_id =$this->generator(15);
+
+        $data = array(
+
+            'deal_name'  => $deal_name,
+            'deal_price' => $deal_price
+        );
+        $this->db->where('deal_id', $deal_id);
+        $this->db->update('product_deal',$data);
+        $this->db->where('deal_id', $deal_id);
+        $this->db->delete('product_deal_details');
+
+        for ($i = 0, $n = count($product_id); $i < $n; $i++) {
+
+            $productid = $product_id[$i];
+            // $quantity   = $quantity[$i];
+            $data1 = array(
+
+                'deal_id' => $deal_id,
+                'deal_detail_id' => $deal_detail_id,
+                'product_id' => $productid,
+                'quantity'   => $quantity[$i]
+            );
+
+            // print_r($data1);
+            // return;
+            $this->db->insert('product_deal_details',$data1);
+       }
+       $this->session->set_flashdata('message', display('save_successfully'));
+        redirect("deal_manage");
+
+    }
 }
