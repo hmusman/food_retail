@@ -635,13 +635,25 @@ class Product extends MX_Controller
 
     public function add_deal(){
 
+        $categoryId = $this->product_model->category_Id();
         $deal_id   = date('YmdHis');
+        $productId = $this->generator(8);
         $deal_name = $this->input->post('deal_name', TRUE);
         $deal_price = $this->input->post('deal_price', TRUE);
 
         $product_id = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('quantity', TRUE);
 
+        $productArray = array(
+
+            'product_id'   => $productId,
+            'deal_id'      => $deal_id,
+            'product_name' => $deal_name,
+            'price'        => $deal_price,
+            'category_id'  => $categoryId
+        );
+
+        $this->db->insert('product_information',$productArray);
 
         $deal_detail_id =$this->generator(15);
 
@@ -685,6 +697,8 @@ class Product extends MX_Controller
         $this->db->where('deal_id', $id);
         $this->db->delete('product_deal');
         $this->db->where('deal_id', $id);
+        $this->db->delete('product_information');
+        $this->db->where('deal_id', $id);
         $this->db->delete('product_deal_details');
 
         $this->session->set_flashdata('message', ('Delete Successfully'));
@@ -702,6 +716,8 @@ class Product extends MX_Controller
 
     public function update_deal(){
 
+        $categoryId = $this->product_model->category_Id();
+        $productId = $this->generator(8);
         $deal_id   = $this->input->post('id', TRUE);
         $deal_name = $this->input->post('deal_name', TRUE);
         $deal_price = $this->input->post('deal_price', TRUE);
@@ -709,6 +725,17 @@ class Product extends MX_Controller
         $product_id = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('quantity', TRUE);
 
+        $productArray = array(
+
+            'product_id'   => $productId,
+            'deal_id'      => $deal_id,
+            'product_name' => $deal_name,
+            'price'        => $deal_price,
+            'category_id'  => $categoryId
+        );
+
+        $this->db->where('deal_id', $deal_id);
+        $this->db->update('product_information',$productArray);
 
         $deal_detail_id =$this->generator(15);
 

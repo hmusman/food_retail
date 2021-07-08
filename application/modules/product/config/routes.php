@@ -23,7 +23,7 @@ $route['product_details/(:any)']= "product/product/bdtask_product_details/$1";
 $route['deal_form'] = 'product/product/deal_form';
 $route['deal_add']  = 'product/product/add_deal';
 $route['deal_manage'] = 'product/product/deal_manage';
-$route['del_deal'] = 'product/product/del_deal/$1';
+$route['del_deal/(:any)'] = 'product/product/del_deal/$1';
 $route['edit_deal/(:any)'] = 'product/product/edit_deal/$1';
 $route['update_deal'] = 'product/product/update_deal';
 

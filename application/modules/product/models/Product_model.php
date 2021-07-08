@@ -16,7 +16,12 @@ class Product_model extends CI_Model {
       ->result();
      }
 
-
+    public function category_Id(){
+        return $this->db->select('*')
+      ->from('product_category')
+      ->get()
+      ->row()->category_id;
+     }
     public function create_category($data = [])
     {    
         return $this->db->insert('product_category',$data);
