@@ -42,7 +42,7 @@ class Invoice_model extends CI_Model {
       public function allproduct(){
         $this->db->select('*');
         $this->db->from('product_information');
-        $this->db->where('serial_no','finish_foods');
+        $this->db->where_in('serial_no',['finish_foods','deals']);
         $this->db->order_by('product_name','asc');
         $this->db->limit(30);
         $query   = $this->db->get();
@@ -257,6 +257,7 @@ public function invoice_taxinfo($invoice_id){
         $createby            = $this->session->userdata('id');
         $createdate          = date('Y-m-d H:i:s');
         $product_id          = $this->input->post('product_id');
+        $deals_id          = $this->input->post('deals_id');
         $currency_details    = $this->db->select('*')->from('web_setting')->get()->result_array();
         $quantity            = $this->input->post('product_quantity',TRUE);
         $invoice_no_generated= $this->input->post('invoic_no');
@@ -483,6 +484,7 @@ public function invoice_taxinfo($invoice_id){
             $product_quantity = $quantity[$i];
             $product_rate     = $rate[$i];
             $product_id       = $p_id[$i];
+            $deal_id          = $deals_id[$i];
             $serial_no        = (!empty($serial_n[$i])?$serial_n[$i]:null);
             $total_price      = $total_amount[$i];
             $supplier_rate    = $this->supplier_price($product_id);
@@ -496,6 +498,7 @@ public function invoice_taxinfo($invoice_id){
                 'invoice_id'         => $invoice_id,
                 'product_id'         => $product_id,
                 'serial_no'          => $serial_no,
+                'deal_id'            => '20210707093622',
                 'quantity'           => $product_quantity,
                 'rate'               => $product_rate,
                 'discount'           => $discount,
@@ -818,6 +821,7 @@ if(!empty($this->input->post('paid_amount',TRUE))){
                         'tax'            => $product_information->tax,
                         'image'          => $product_information->image,
                         'serial_no'      => $product_information->serial_no,
+                        'deal_id'      => $product_information->deal_id,
             );
 
         

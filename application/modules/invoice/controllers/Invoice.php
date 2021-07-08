@@ -767,6 +767,7 @@ class Invoice extends MX_Controller {
                             <input type=\"text\" name=\"product_name\" onkeypress=\"invoice_productList('" . $product_details->product_id . "');\" class=\"form-control productSelection \" value='" . $product_details->product_name . "- (" . $product_details->product_model . ")" . "' placeholder='" . display('product_name') . "' required=\"\"  tabindex=\"\" readonly>
 
                             <input type=\"hidden\" class=\"form-control autocomplete_hidden_value product_id_" . $product_details->product_id . "\" name=\"product_id[]\" id=\"SchoolHiddenId_" . $product_details->product_id . "\" value = \"$product_details->product_id\"/>
+                            <input type=\"hidden\" class=\"form-control autocomplete_hidden_value deals_id" . $product_details->deal_id . "\" name=\"deals_id[]\" id=\"deals_id_" . $product_details->deal_id . "\" value = \"$product_details->deal_id\"/>
                         </td>
                         <td>".$html."</td>
                         <td>

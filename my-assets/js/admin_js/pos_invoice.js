@@ -46,9 +46,16 @@ function addInputField(t) {
 }
 //Quantity calculat
     "use strict";
-function quantity_calculate(item) {
+function quantity_calculate(item,type = null) {
+    console.log(type + " this is our type");
     var quantity           = $("#total_qntt_" + item).val();
-    var available_quantity = $(".available_quantity_" + item).val();
+    if(type == "deals"){
+        var available_quantity = $(".available_quantity_" + item).val(2);
+    }
+    else{
+        var available_quantity = $(".available_quantity_" + item).val();
+    }
+    
     var price_item         = $("#price_item_" + item).val();
     var invoice_discount   = $("#invoice_discount").val();
     var discount           = $("#discount_" + item).val();
@@ -56,7 +63,7 @@ function quantity_calculate(item) {
     var total_discount     = $("#total_discount_" + item).val();
     var taxnumber          = $("#txfieldnum").val();
     var dis_type           = $("#discount_type").val();
-    if (parseInt(available_quantity) == 0 && parseInt(quantity) > parseInt(available_quantity)) {
+    if (parseInt(available_quantity) == 0 && parseInt(quantity) > parseInt(available_quantity) && type !='deals') {
         var message = "This Item is Out of Stock";
          toastr["error"](message);
          $('table#addinvoice tr#row_'+item).remove();
@@ -70,14 +77,14 @@ function quantity_calculate(item) {
         $("#total_price_" + item).val(0);
         for(var i=0;i<taxnumber;i++){
         $("#all_tax"+i+"_" + item).val(0);
-           quantity_calculate(item);
+           quantity_calculate(item,type);
     }
     }
      if (parseInt(available_quantity) > 0 && parseInt(quantity) > parseInt(available_quantity)) {
         var message = "You can Sale maximum " + available_quantity + " Items";
          toastr["error"](message);
         $("#total_qntt_" + item).val(available_quantity);
-        quantity_calculate(item);
+        quantity_calculate(item,type);
      }
 
 if (quantity > 0 || discount > 0) {
@@ -511,17 +518,17 @@ var count = 2,
 
 
     "use strict";
- function onselectimage(id){
+ function onselectimage(id,type = null){
          var product_id = id;
          var base_url   = $('#base_url').val();
          var csrf_test_name = $('[name="csrf_test_name"]').val();
          var exist      = $("#SchoolHiddenId_" + product_id).val();
          var qty        = $("#total_qntt_" + product_id).val();
          var add_qty   = parseInt(qty)+1;
-     
+        //  console.log(type + " this is our type");
          if(product_id == exist){
             $("#total_qntt_" + product_id).val(add_qty);
-           quantity_calculate(product_id);
+           quantity_calculate(product_id,type);
             calculateSum();
             invoice_paidamount();
             image_activation(product_id);
@@ -538,7 +545,7 @@ var count = 2,
                         alert('This Product Not Found !');
                         document.getElementById('add_item').value = '';
                         document.getElementById('add_item').focus();
-                        quantity_calculate(product_id);
+                        quantity_calculate(product_id,type);
                          calculateSum();
                         invoice_paidamount();
                          image_activation(product_id);
@@ -547,7 +554,7 @@ var count = 2,
                         document.getElementById('add_item').value = '';
                         document.getElementById('add_item').focus();
                         $('#addinvoice tbody').append(data);
-                        quantity_calculate(product_id);
+                        quantity_calculate(product_id,type);
                         calculateSum();
                         invoice_paidamount();
                          image_activation(product_id);

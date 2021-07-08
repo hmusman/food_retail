@@ -650,12 +650,22 @@ class Product extends MX_Controller
             'deal_id'      => $deal_id,
             'product_name' => $deal_name,
             'price'        => $deal_price,
-            'category_id'  => $categoryId
+            'category_id'  => $categoryId,
+            'serial_no'   => 'deals'
         );
 
         $this->db->insert('product_information',$productArray);
 
+        $productSuplArray = array(
+
+            'product_id'   => $productId,
+            'supplier_id '      => 1,
+            'supplier_price'   => $deal_price
+        );
+
         $deal_detail_id =$this->generator(15);
+
+        $this->db->insert('supplier_product',$productSuplArray);
 
         $data = array(
 
