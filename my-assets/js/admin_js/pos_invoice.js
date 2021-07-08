@@ -50,7 +50,7 @@ function quantity_calculate(item,type = null) {
     console.log(type + " this is our type");
     var quantity           = $("#total_qntt_" + item).val();
     if(type == "deals"){
-        var available_quantity = $(".available_quantity_" + item).val(2);
+        var available_quantity = $(".available_quantity_" + item).val(100);
     }
     else{
         var available_quantity = $(".available_quantity_" + item).val();
