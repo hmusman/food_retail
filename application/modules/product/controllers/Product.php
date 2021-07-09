@@ -731,9 +731,10 @@ class Product extends MX_Controller
         $deal_id   = $this->input->post('id', TRUE);
         $deal_name = $this->input->post('deal_name', TRUE);
         $deal_price = $this->input->post('deal_price', TRUE);
-
+        
         $product_id = $this->input->post('product_id', TRUE);
         $quantity = $this->input->post('quantity', TRUE);
+        // die(var_dump($quantity));
 
         $productArray = array(
 
