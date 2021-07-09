@@ -717,6 +717,7 @@ class Product extends MX_Controller
 
     public function edit_deal($id)
     {
+        // die(var_dump($this->product_model->edit_deal($id)[0]));
         $data['title']      = ('Manage Deal');
         $data['edit_deal'] = $this->product_model->edit_deal($id);
         $data['module']     = "product";

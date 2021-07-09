@@ -37,7 +37,7 @@ class Product_model extends CI_Model {
     }
     // /
     public function edit_deal($id){
-        $this->db->select('b.*,p.product_name,a.deal_name,a.deal_price');
+        $this->db->select('b.*,p.product_name,a.deal_name,a.deal_price,p.serial_no');
         $this->db->from('product_deal a');
         $this->db->join('product_deal_details b', 'b.deal_id = a.deal_id');
         $this->db->join('product_information p', 'b.product_id = p.product_id');

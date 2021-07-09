@@ -54,7 +54,7 @@ $user_id = $this->session->userdata('id'); ?>
                                             </td>
                                             <td class="invoice_fields">
                                                 <select class="form-control" id="serial_no_1" name="serial_no[]" tabindex="7">
-                                                    <option></option>
+                                                    <option value="<?php echo $edit_receipe_val['serial_no']; ?>"><?php echo $edit_receipe_val['serial_no']; ?></option>
                                                 </select>
                                             </td>
                                             <td>
