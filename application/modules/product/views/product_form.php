@@ -36,7 +36,11 @@
                                 <div class="form-group row">
                                     <label for="serial_no" class="col-sm-4 col-form-label"><?php echo display('serial_no') ?> </label>
                                     <div class="col-sm-8">
-                                        <input type="text" tabindex="" class="form-control " id="serial_no" name="serial_no" placeholder="111,abc,XYz"  value="<?php echo $product->serial_no?>" />
+                                        <select class="form-control" id="serial_no" name="serial_no">
+                                            <option value="raw_material" <?php if($product->serial_no == 'raw_material' ){echo 'selected';}?>>Raw Material</option>
+                                            <option value="finish_foods" <?php if($product->serial_no == 'finish_foods' ){echo 'selected';}?>>Fast Food</option>
+                                            <option value="deals" <?php if($product->serial_no == 'deals' ){echo 'selected';}?>>Deals</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
