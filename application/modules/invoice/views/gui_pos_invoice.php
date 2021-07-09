@@ -16,6 +16,9 @@
         <li class="onprocessg"><a href="#saleList" role="tab" data-toggle="tab" class="ongord" id="todays_salelist">
         Todays sale                               </a>
         </li>
+        <li class="onprocessg"><a href="<?php echo base_url('userwise_sales_report') ?>"class="ongord" id="todays_salelist">
+        userwise sale Report                               </a>
+        </li>
     </ul>
       <div class="tgbar d-flex">
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"> <!-- Sidebar toggle button-->
