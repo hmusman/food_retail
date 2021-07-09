@@ -498,7 +498,7 @@ public function invoice_taxinfo($invoice_id){
                 'invoice_id'         => $invoice_id,
                 'product_id'         => $product_id,
                 'serial_no'          => $serial_no,
-                'deal_id'            => '20210707093622',
+                'deal_id'            => $deal_id ,
                 'quantity'           => $product_quantity,
                 'rate'               => $product_rate,
                 'discount'           => $discount,
