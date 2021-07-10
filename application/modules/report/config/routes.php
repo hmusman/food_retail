@@ -23,3 +23,6 @@ $route['supplier_returns']      = "report/report/bdtask_supplier_return";
 $route['tax_report']           = "report/report/bdtask_tax_report";
 $route['profit_report']        = "report/report/bdtask_profit_report";
 
+$route['rawMaterialStock']        = "report/report/rawMaterialStock";
+$route['finishFoodStock']        = "report/report/finishFoodStock";
+

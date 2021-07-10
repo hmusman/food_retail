@@ -740,6 +740,23 @@
                                                 echo " ";
                                             } ?>"><a href="<?php echo base_url('profit_report') ?>"><?php echo display('profit_report') ?></a></li>
                     <?php } ?>
+
+                    <?php if ($this->permission1->method('profit_report', 'read')->access()) { ?>
+                        <li class="treeview <?php if ($this->uri->segment('1') == ("profit_report")) {
+                                                echo "active";
+                                            } else {
+                                                echo " ";
+                                            } ?>"><a href="<?php echo base_url('rawMaterialStock') ?>"><?php echo ('Raw Matirail Report') ?></a></li>
+                    <?php } ?>
+
+                    <?php if ($this->permission1->method('profit_report', 'read')->access()) { ?>
+                        <li class="treeview <?php if ($this->uri->segment('1') == ("profit_report")) {
+                                                echo "active";
+                                            } else {
+                                                echo " ";
+                                            } ?>"><a href="<?php echo base_url('finishFoodStock') ?>"><?php echo ('Finish Food Stock') ?></a></li>
+                    <?php } ?>
+
                 </ul>
             </li>
         <?php } ?>
