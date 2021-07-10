@@ -12,6 +12,7 @@ $route['todays_customerwise_received']  = "report/report/bdtask_customerwise_rec
 $route['sales_report']  = "report/report/bdtask_todays_sales_report";
 $route['datewise_sales_report']  = "report/report/bdtask_datewise_sales_report";
 $route['userwise_sales_report']  = "report/report/bdtask_userwise_sales_report";
+$route['users_sales_report']  = "report/report/bdtask_users_sales_report";
 $route['invoice_wise_due_report']= "report/report/bdtask_invoice_wise_due_report";
 $route['shipping_cost_report']= "report/report/bdtask_shippingcost_report";
 $route['purchase_report']     = "report/report/bdtask_purchase_report";
