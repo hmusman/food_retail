@@ -77,12 +77,12 @@ function calculate_store_waste(sl) {
     vendor_rate = parseInt(vendor_rate);
 
 
-    var available_quantity_1 = $("#available_quantity_1").val();
+    var available_quantity_1 = $("#available_quantity_" + sl).val();
 
     // var total_price = item_ctn_qty * vendor_rate;
     // alert();
     var total_price = available_quantity_1 - (item_ctn_qty + vendor_rate);
-    // alert(item_ctn_qty + vendor_rate);
+    // alert(available_quantity_1);
     $("#total_price_" + sl).val(total_price.toFixed(2));
 
     //Total Price

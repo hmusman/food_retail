@@ -723,7 +723,7 @@ class Purchase extends MX_Controller
         $product_rate = $this->input->post('product_rate', TRUE);
         $total_price = $this->input->post('total_price', TRUE);
         $purchase_date = $this->input->post('purchase_date', TRUE);
-        $waste_id = $this->generator_number(10);
+        $waste_id = $this->generator_number(15);
         $quty = $this->input->post('quty', TRUE);
 
         // die(var_dump($quty));
@@ -733,6 +733,15 @@ class Purchase extends MX_Controller
         );
         
         $this->db->insert('waste', $data1);
+
+        $data = array(
+            'branch_id' => 1,
+            'stk_id' => $waste_id,
+            'stk_date' => $purchase_date,
+            'stock' => 'warehouse',
+
+        );
+        $this->db->insert('stock', $data);
         
         foreach($product_id as $i => $product_id) {
             
@@ -742,12 +751,20 @@ class Purchase extends MX_Controller
                 'quantity' => $quty[$i],
                 'waste'         => $product_rate[$i],
                 'lose'           => $product_quantity[$i],
-                'total'               => $total_price[$i],
+                'remaining'               => $total_price[$i],
                 
             );
             
-            (var_dump($data1));
             $this->db->insert('waste_detail', $data1);
+
+            $data1 = array(
+                'stk_id' => $waste_id,
+                'branch_id' => 1,
+                'product_id' => $product_id,
+                'quantity' => -$total_price[$i],
+            );
+            
+            $this->db->insert('stock_details', $data1);
         }
         $this->session->set_flashdata('message', display('save_successfully'));
         redirect("wastage_form");
