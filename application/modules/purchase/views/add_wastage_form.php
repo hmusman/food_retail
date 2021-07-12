@@ -11,7 +11,7 @@
             </div>
 
             <div class="panel-body">
-                <?php echo form_open_multipart('purchase/purchase/bdtask_save_purchase', array('class' => 'form-vertical', 'id' => 'insert_purchase', 'name' => 'insert_purchase')) ?>
+                <?php echo form_open_multipart('purchase/purchase/save_waste_data', array('class' => 'form-vertical', 'id' => 'insert_purchase', 'name' => 'insert_purchase')) ?>
 
 
                 <div class="row">
@@ -134,7 +134,8 @@
                                 </td>
 
                                 <td class="wt">
-                                    <input type="text" id="available_quantity_1" class="form-control text-right stock_ctn_1" placeholder="0.00" readonly />
+                                    <input type="text" id="available_quantity_1" name="quty[]" class="form-control text-right stock_ctn_1" placeholder="0.00" readonly />
+                                    <!-- <input type="text" name="quantity" id="available_quantity_1" class="stock_ctn_1"> -->
                                 </td>
 
                                 <td class="text-right">
@@ -148,9 +149,6 @@
                                     <input class="form-control total_price text-right" type="text" name="total_price[]" id="total_price_1" value="0.00" readonly="readonly" />
                                 </td>
                                 <td>
-
-
-
                                     <button class="btn btn-danger text-right red" type="button" value="<?php echo display('delete') ?>" onclick="deleteRow(this)" tabindex="8"><i class="fa fa-close"></i></button>
                                 </td>
                             </tr>

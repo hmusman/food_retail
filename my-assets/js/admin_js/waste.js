@@ -22,7 +22,7 @@ function addPurchaseOrderField1(divName) {
 
 
 
-        newdiv.innerHTML = '<td class="span3 supplier"><input type="text" name="product_name" required="" class="form-control product_name productSelection" onkeypress="product_pur_or_list_west(' + count + ');" placeholder="Product Name" id="product_name_' + count + '" tabindex="' + tab1 + '" > <input type="hidden" class="autocomplete_hidden_value product_id_' + count + '" name="product_id[]" id="SchoolHiddenId"/>  <input type="hidden" class="sl" value="' + count + '">  </td>  <td class="wt"> <input type="text" id="available_quantity_' + count + '" class="form-control text-right stock_ctn_' + count + '" placeholder="0.00" readonly/> </td><td class="text-right"><input type="text" name="product_quantity[]" tabindex="' + tab2 + '" required  id="cartoon_' + count + '" class="form-control text-right store_cal_' + count + '" onkeyup="calculate_store_waste(' + count + ');" onchange="calculate_store_waste(' + count + ');" placeholder="0.00" value="" min="0"/>  </td><td class="test"><input type="text" name="product_rate[]" onkeyup="calculate_store_waste(' + count + ');" onchange="calculate_store_waste(' + count + ');" id="product_rate_' + count + '" class="form-control product_rate_' + count + ' text-right" placeholder="0.00" value="" min="0" tabindex="' + tab3 + '"/></td><td class="text-right"><input class="form-control total_price text-right total_price_' + count + '" type="text" name="total_price[]" id="total_price_' + count + '" value="0.00" readonly="readonly" /> </td><td> <input type="hidden" id="total_discount_1" class="" /><input type="hidden" id="all_discount_1" class="total_discount" /><button style="text-align: right;" class="btn btn-danger red" type="button"  onclick="deleteRow(this)" tabindex="8"><i class="fa fa-close"></i></button></td>';
+        newdiv.innerHTML = '<td class="span3 supplier"><input type="text" name="product_name" required="" class="form-control product_name productSelection" onkeypress="product_pur_or_list_west(' + count + ');" placeholder="Product Name" id="product_name_' + count + '" tabindex="' + tab1 + '" > <input type="hidden" class="autocomplete_hidden_value product_id_' + count + '" name="product_id[]" id="SchoolHiddenId"/>  <input type="hidden" class="sl" value="' + count + '">  </td>  <td class="wt"> <input type="text" name="quty[]" id="available_quantity_' + count + '" class="form-control text-right stock_ctn_' + count + '" placeholder="0.00" readonly/> </td><td class="text-right"><input type="text" name="product_quantity[]" tabindex="' + tab2 + '" required  id="cartoon_' + count + '" class="form-control text-right store_cal_' + count + '" onkeyup="calculate_store_waste(' + count + ');" onchange="calculate_store_waste(' + count + ');" placeholder="0.00" value="" min="0"/>  </td><td class="test"><input type="text" name="product_rate[]" onkeyup="calculate_store_waste(' + count + ');" onchange="calculate_store_waste(' + count + ');" id="product_rate_' + count + '" class="form-control product_rate_' + count + ' text-right" placeholder="0.00" value="" min="0" tabindex="' + tab3 + '"/></td><td class="text-right"><input class="form-control total_price text-right total_price_' + count + '" type="text" name="total_price[]" id="total_price_' + count + '" value="0.00" readonly="readonly" /> </td><td> <input type="hidden" id="total_discount_1" class="" /><input type="hidden" id="all_discount_1" class="total_discount" /><button style="text-align: right;" class="btn btn-danger red" type="button"  onclick="deleteRow(this)" tabindex="8"><i class="fa fa-close"></i></button></td>';
         document.getElementById(divName).appendChild(newdiv);
         document.getElementById(tabin).focus();
         document.getElementById("add_invoice_item").setAttribute("tabindex", tab5);
@@ -73,11 +73,16 @@ function calculate_store_waste(sl) {
     var item_ctn_qty = $("#cartoon_" + sl).val();
     var vendor_rate = $("#product_rate_" + sl).val();
 
+    item_ctn_qty = parseInt(item_ctn_qty);
+    vendor_rate = parseInt(vendor_rate);
+
+
     var available_quantity_1 = $("#available_quantity_1").val();
 
     // var total_price = item_ctn_qty * vendor_rate;
     // alert();
     var total_price = available_quantity_1 - (item_ctn_qty + vendor_rate);
+    // alert(item_ctn_qty + vendor_rate);
     $("#total_price_" + sl).val(total_price.toFixed(2));
 
     //Total Price

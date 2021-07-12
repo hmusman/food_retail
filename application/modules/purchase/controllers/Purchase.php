@@ -715,4 +715,41 @@ class Purchase extends MX_Controller
 
         echo json_encode($product_info);
     }
+
+    public function save_waste_data()
+    {
+        $product_id = $this->input->post('product_id', TRUE);
+        $product_quantity = $this->input->post('product_quantity', TRUE);
+        $product_rate = $this->input->post('product_rate', TRUE);
+        $total_price = $this->input->post('total_price', TRUE);
+        $purchase_date = $this->input->post('purchase_date', TRUE);
+        $waste_id = $this->generator_number(10);
+        $quty = $this->input->post('quty', TRUE);
+
+        // die(var_dump($quty));
+        $data1 = array(
+            'waste_id' => $waste_id,
+            'date' => $purchase_date,
+        );
+        
+        $this->db->insert('waste', $data1);
+        
+        foreach($product_id as $i => $product_id) {
+            
+            $data1 = array(
+                'waste_id' => $waste_id,
+                'product_id' => $product_id,
+                'quantity' => $quty[$i],
+                'waste'         => $product_rate[$i],
+                'lose'           => $product_quantity[$i],
+                'total'               => $total_price[$i],
+                
+            );
+            
+            (var_dump($data1));
+            $this->db->insert('waste_detail', $data1);
+        }
+        $this->session->set_flashdata('message', display('save_successfully'));
+        redirect("wastage_form");
+    }
 }
