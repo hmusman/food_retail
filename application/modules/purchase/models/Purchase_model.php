@@ -239,7 +239,7 @@ class Purchase_model extends CI_Model
         // $this->db->order_by('a.id', 'desc');
         // $this->db->order_by('id', 'desc');
         $query = $this->db->get();
-        
+
         $last_query = $this->db->last_query();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -247,7 +247,8 @@ class Purchase_model extends CI_Model
         return false;
     }
 
-    public function edit_receipe($id){
+    public function edit_receipe($id)
+    {
         $this->db->select('b.*,p.product_name,a.receipe_name,a.expected_weight,a.no_plates,a.receipe,a.r_date');
         $this->db->from('receipe a');
         $this->db->join('receipe_detail b', 'b.receipe_id = a.receipe_id');
@@ -256,7 +257,7 @@ class Purchase_model extends CI_Model
         $this->db->order_by('a.id', 'desc');
         $this->db->order_by('id', 'desc');
         $query = $this->db->get();
-        
+
         $last_query = $this->db->last_query();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -264,17 +265,84 @@ class Purchase_model extends CI_Model
         return false;
     }
 
-       //search receipe
-       public function search_receipe($product_name) {
-        $query=$this->db->select('*')
-                  ->from('receipe a')
-                  ->like('a.receipe_name', $product_name, 'both')
-                  ->order_by('a.receipe_name','asc')
-                  ->limit(15)
-                  ->get();
-          if ($query->num_rows() > 0) {
-              return $query->result_array();  
-          }
-          return false;
-      }
+    //search receipe
+    public function search_receipe($product_name)
+    {
+        $query = $this->db->select('*')
+            ->from('receipe a')
+            ->like('a.receipe_name', $product_name, 'both')
+            ->order_by('a.receipe_name', 'asc')
+            ->limit(15)
+            ->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
+
+    public function get_wast_stock($product_id)
+    {
+        $this->db->select('SUM(a.quantity) as total_purchase,b.*');
+        $this->db->from('product_purchase_details a');
+        $this->db->join('supplier_product b', 'a.product_id=b.product_id');
+        $this->db->where('a.product_id', $product_id);
+        $total_purchase = $this->db->get()->row();
+
+        $this->db->select('SUM(b.quantity) as total_sale');
+        $this->db->from('invoice_details b');
+        $this->db->where('b.product_id', $product_id);
+        $total_sale = $this->db->get()->row();
+
+        $this->db->select('a.*,b.*');
+        $this->db->from('product_information a');
+        $this->db->join('supplier_product b', 'a.product_id=b.product_id');
+        $this->db->where(array('a.product_id' => $product_id, 'a.status' => 1));
+        $product_information = $this->db->get()->row();
+
+        $available_quantity = ($total_purchase->total_purchase - $total_sale->total_sale);
+
+        $data2 = array(
+            'total_product'  => $available_quantity,
+            'supplier_price' => $product_information->supplier_price,
+            'price'          => $product_information->price,
+            'supplier_id'    => $product_information->supplier_id,
+            'unit'           => $product_information->unit,
+        );
+
+        return $data2;
+    }
+
+    public function get_total_product_west($product_id)
+    {
+        $this->db->select('a.quantity as total_purchase');
+        $this->db->from('stock_details a');
+        // $this->db->join('supplier_product b', 'a.product_id=b.product_id');
+        $this->db->where('a.product_id', $product_id);
+        $total_purchase = $this->db->get()->row();
+
+        // die(var_dump($total_purchase));
+
+        $this->db->select('SUM(b.quantity) as total_sale');
+        $this->db->from('invoice_details b');
+        $this->db->where('b.product_id', $product_id);
+        $total_sale = $this->db->get()->row();
+
+        $this->db->select('a.*,b.*');
+        $this->db->from('product_information a');
+        $this->db->join('supplier_product b', 'a.product_id=b.product_id');
+        $this->db->where(array('a.product_id' => $product_id, 'a.status' => 1));
+        $product_information = $this->db->get()->row();
+
+        $available_quantity = ($total_purchase->total_purchase - $total_sale->total_sale);
+        // $available_quantity = $total_purchase;
+        $data2 = array(
+            'total_product'  => $available_quantity,
+            'supplier_price' => $product_information->supplier_price,
+            'price'          => $product_information->price,
+            'supplier_id'    => $product_information->supplier_id,
+            'unit'           => $product_information->unit,
+        );
+
+        return $data2;
+    }
 }

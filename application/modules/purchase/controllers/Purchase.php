@@ -484,7 +484,7 @@ class Purchase extends MX_Controller
     {
         // $supplier_id = $this->input->post('supplier_id', TRUE);
         $product_name = $this->input->post('product_name', TRUE);
-        $product_info = $this->purchase_model->product_search_item( $product_name);
+        $product_info = $this->purchase_model->product_search_item($product_name);
         if (!empty($product_info)) {
             $list[''] = '';
             foreach ($product_info as $value) {
@@ -606,7 +606,7 @@ class Purchase extends MX_Controller
         foreach ($prod_id as $prod_id) {
 
             // if ($prod_type[$i] != 'Finish') {
-                
+
             //     $prod_type[$i] = 'raw';
             // }
             $data_2 = array(
@@ -653,7 +653,8 @@ class Purchase extends MX_Controller
         echo modules::run('template/layout', $data);
     }
 
-    public function receipe_edit(){
+    public function receipe_edit()
+    {
 
         $id = $this->input->post('id', TRUE);
 
@@ -679,7 +680,7 @@ class Purchase extends MX_Controller
         );
 
         $this->db->where('receipe_id', $id);
-        $this->db->update('receipe', $data);        
+        $this->db->update('receipe', $data);
 
         $i = 0;
         foreach ($quantity as $key => $quantity) {
@@ -696,5 +697,22 @@ class Purchase extends MX_Controller
 
         $this->session->set_flashdata('message', display('save_successfully'));
         redirect("receipe_manage");
+    }
+
+    public function wastage_form()
+    {
+        $data['title']      =  ('wastage form');
+        $data['all_supplier'] = $this->purchase_model->supplier_list();
+        $data['module']     = "purchase";
+        $data['page']       = "add_wastage_form";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function bdtask_retrieve_product_data_west()
+    {
+        $product_id  = $this->input->post('product_id', TRUE);
+        $product_info = $this->purchase_model->get_total_product_west($product_id);
+
+        echo json_encode($product_info);
     }
 }
