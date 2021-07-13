@@ -1211,5 +1211,16 @@ if(!empty($this->input->post('paid_amount',TRUE))){
         }
         return false;
     }
+
+    public function employ_data(){
+        $this->db->select('first_name, id');
+        $this->db->from('employee_history');
+        $query = $this->db->get();
+        // die($query);
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
 }
 

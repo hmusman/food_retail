@@ -13,3 +13,6 @@ $route['download_invoice/(:num)']  = 'invoice/invoice/bdtask_download_invoice/$1
 $route['invoice_edit/(:num)'] = 'invoice/invoice/bdtask_edit_invoice/$1';
 $route['invoice_print'] = 'invoice/invoice/invoice_inserted_data_manual';
 
+$route['add_expences'] = 'invoice/invoice/add_expence';
+
+$route['get_employ'] = 'invoice/invoice/get_employ';

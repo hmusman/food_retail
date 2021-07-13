@@ -1,5 +1,6 @@
 //Add Input Field Of Row
 "use strict";
+
 function addInputField_invoice(t) {
     var row = $("#normalinvoice tbody tr").length;
     var count = row + 1;
@@ -55,6 +56,7 @@ function addInputField_invoice(t) {
 }
 //Quantity calculat
 "use strict";
+
 function bdtask_invoice_quantity_calculate(item) {
     var quantity = $("#total_qntt_" + item).val();
     var available_quantity = $(".available_quantity_" + item).val();
@@ -138,6 +140,7 @@ function bdtask_invoice_quantity_calculate(item) {
 }
 //Calculate Sum
 "use strict";
+
 function invoice_calculateSum() {
     var taxnumber = $("#txfieldnum").val();
     var t = 0,
@@ -155,29 +158,29 @@ function invoice_calculateSum() {
     for (var i = 0; i < taxnumber; i++) {
 
         var j = 0;
-        $(".total_tax" + i).each(function () {
+        $(".total_tax" + i).each(function() {
             isNaN(this.value) || 0 == this.value.length || (j += parseFloat(this.value))
         });
         $("#total_tax_ammount" + i).val(j.toFixed(2, 2));
 
     }
     //Total Discount
-    $(".total_discount").each(function () {
-        isNaN(this.value) || 0 == this.value.length || (p += parseFloat(this.value))
-    }),
+    $(".total_discount").each(function() {
+            isNaN(this.value) || 0 == this.value.length || (p += parseFloat(this.value))
+        }),
         $("#total_discount_ammount").val(p.toFixed(2, 2)),
 
-        $(".totalTax").each(function () {
+        $(".totalTax").each(function() {
             isNaN(this.value) || 0 == this.value.length || (f += parseFloat(this.value))
         }),
         $("#total_tax_amount").val(f.toFixed(2, 2)),
 
         //Total Price
-        $(".total_price").each(function () {
+        $(".total_price").each(function() {
             isNaN(this.value) || 0 == this.value.length || (t += parseFloat(this.value))
         }),
 
-        $(".dppr").each(function () {
+        $(".dppr").each(function() {
             isNaN(this.value) || 0 == this.value.length || (ad += parseFloat(this.value))
         }),
 
@@ -186,7 +189,7 @@ function invoice_calculateSum() {
         tx = f.toFixed(2, 2),
         ds = p.toFixed(2, 2);
 
-    var test = +tx + +s_cost + +e + -ds + + ad;
+    var test = +tx + +s_cost + +e + -ds + +ad;
     $("#grandTotal").val(test.toFixed(2, 2));
 
 
@@ -204,6 +207,7 @@ function invoice_calculateSum() {
 
 //Invoice Paid Amount
 "use strict";
+
 function invoice_paidamount() {
     var prb = parseFloat($("#previous").val(), 10);
     var pr = 0;
@@ -240,6 +244,7 @@ function invoice_paidamount() {
 
 //Stock Limit
 "use strict";
+
 function stockLimit(t) {
     var a = $("#total_qntt_" + t).val(),
         e = $(".product_id_" + t).val(),
@@ -252,7 +257,7 @@ function stockLimit(t) {
             product_id: e
         },
         cache: !1,
-        success: function (e) {
+        success: function(e) {
             alert(e);
             if (a > Number(e)) {
                 var o = "You can Sale maximum " + e + " Items";
@@ -265,6 +270,7 @@ function stockLimit(t) {
 
 //Invoice full paid
 "use strict";
+
 function invoicee_full_paid() {
     var grandTotal = $("#n_total").val();
     $("#paidAmount").val(grandTotal);
@@ -274,6 +280,7 @@ function invoicee_full_paid() {
 
 //Delete a row of table
 "use strict";
+
 function deleteRow_invoice(t) {
     var a = $("#normalinvoice > tbody > tr").length;
     if (1 == a)
@@ -284,33 +291,33 @@ function deleteRow_invoice(t) {
             invoice_calculateSum();
         invoice_paidamount();
         var current = 1;
-        $("#normalinvoice > tbody > tr td input.productSelection").each(function () {
+        $("#normalinvoice > tbody > tr td input.productSelection").each(function() {
             current++;
             $(this).attr('id', 'product_name' + current);
         });
         var common_qnt = 1;
-        $("#normalinvoice > tbody > tr td input.common_qnt").each(function () {
+        $("#normalinvoice > tbody > tr td input.common_qnt").each(function() {
             common_qnt++;
             $(this).attr('id', 'total_qntt_' + common_qnt);
             $(this).attr('onkeyup', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
             $(this).attr('onchange', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
         });
         var common_rate = 1;
-        $("#normalinvoice > tbody > tr td input.common_rate").each(function () {
+        $("#normalinvoice > tbody > tr td input.common_rate").each(function() {
             common_rate++;
             $(this).attr('id', 'price_item_' + common_rate);
             $(this).attr('onkeyup', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
             $(this).attr('onchange', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
         });
         var common_discount = 1;
-        $("#normalinvoice > tbody > tr td input.common_discount").each(function () {
+        $("#normalinvoice > tbody > tr td input.common_discount").each(function() {
             common_discount++;
             $(this).attr('id', 'discount_' + common_discount);
             $(this).attr('onkeyup', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
             $(this).attr('onchange', 'bdtask_invoice_quantity_calculate(' + common_qnt + ');');
         });
         var common_total_price = 1;
-        $("#normalinvoice > tbody > tr td input.common_total_price").each(function () {
+        $("#normalinvoice > tbody > tr td input.common_total_price").each(function() {
             common_total_price++;
             $(this).attr('id', 'total_price_' + common_total_price);
         });
@@ -326,6 +333,7 @@ var count = 2,
 
 
 "use strict";
+
 function bank_info_show(payment_type) {
     if (payment_type.value == "1") {
         document.getElementById("bank_info_hide").style.display = "none";
@@ -337,11 +345,12 @@ function bank_info_show(payment_type) {
 
 
 
-window.onload = function () {
+window.onload = function() {
     $('body').addClass("sidebar-mini sidebar-collapse");
 }
 
 "use strict";
+
 function bank_paymet(val) {
     if (val == 2) {
         var style = 'block';
@@ -354,13 +363,14 @@ function bank_paymet(val) {
     document.getElementById('bank_div').style.display = style;
 }
 
-$(document).ready(function () {
-    $('#normalinvoice .toggle').on('click', function () {
+$(document).ready(function() {
+    $('#normalinvoice .toggle').on('click', function() {
         $('#normalinvoice .hideableRow').toggleClass('hiddenRow');
     })
 });
 
 "use strict";
+
 function customer_due(id) {
     var csrf_test_name = $('[name="csrf_test_name"]').val();
     var base_url = $("#base_url").val();
@@ -368,11 +378,11 @@ function customer_due(id) {
         url: base_url + 'invoice/invoice/previous',
         type: 'post',
         data: { customer_id: id, csrf_test_name: csrf_test_name },
-        success: function (msg) {
+        success: function(msg) {
 
             $("#previous").val(msg);
         },
-        error: function (xhr, desc, err) {
+        error: function(xhr, desc, err) {
             alert('failed');
         }
     });
@@ -381,13 +391,14 @@ function customer_due(id) {
 
 
 "use strict";
+
 function customer_autocomplete(sl) {
 
     var customer_id = $('#customer_id').val();
     // Auto complete
     var options = {
         minLength: 0,
-        source: function (request, response) {
+        source: function(request, response) {
             var customer_name = $('#customer_name').val();
             var csrf_test_name = $('[name="csrf_test_name"]').val();
             var base_url = $("#base_url").val();
@@ -401,17 +412,17 @@ function customer_autocomplete(sl) {
                     customer_id: customer_name,
                     csrf_test_name: csrf_test_name,
                 },
-                success: function (data) {
+                success: function(data) {
                     response(data);
 
                 }
             });
         },
-        focus: function (event, ui) {
+        focus: function(event, ui) {
             $(this).val(ui.item.label);
             return false;
         },
-        select: function (event, ui) {
+        select: function(event, ui) {
             $(this).parent().parent().find("#autocomplete_customer_id").val(ui.item.value);
             var customer_id = ui.item.value;
             customer_due(customer_id);
@@ -421,20 +432,21 @@ function customer_autocomplete(sl) {
         }
     }
 
-    $('body').on('keypress.autocomplete', '#customer_name', function () {
+    $('body').on('keypress.autocomplete', '#customer_name', function() {
         $(this).autocomplete(options);
     });
 
 }
 
 "use strict";
+
 function cancelprint() {
     location.reload();
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
 
-    $('#full_paid_tab').keydown(function (event) {
+    $('#full_paid_tab').keydown(function(event) {
         if (event.keyCode == 13) {
             $('#add_invoice').trigger('click');
         }
@@ -443,18 +455,18 @@ $(document).ready(function () {
 
 
 
-$(document).ready(function () {
+$(document).ready(function() {
     "use strict";
     var frm = $("#insert_sale");
     var output = $("#output");
-    frm.on('submit', function (e) {
+    frm.on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             url: $(this).attr('action'),
             method: $(this).attr('method'),
             dataType: 'json',
             data: frm.serialize(),
-            success: function (data) {
+            success: function(data) {
 
                 if (data.status == true) {
                     toastr["success"](data.message);
@@ -467,7 +479,7 @@ $(document).ready(function () {
                         type: "success",
 
 
-                    }, function (inputValue) {
+                    }, function(inputValue) {
                         if (inputValue === true) {
                             $("#normalinvoice tbody tr").remove();
                             $('#insert_sale').trigger("reset");
@@ -478,50 +490,48 @@ $(document).ready(function () {
                         }
 
                     });
-                    if (data.status == true && event.keyCode == 13) {
-                    }
+                    if (data.status == true && event.keyCode == 13) {}
                 } else {
                     toastr["error"](data.exception);
                 }
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 alert('failed!');
             }
         });
     });
 });
 
-$(document).ready(function () {
+$(document).ready(function() {
     "use strict";
     var frm = $("#update_invoice");
     var output = $("#output");
-    frm.on('submit', function (e) {
+    frm.on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             url: $(this).attr('action'),
             method: $(this).attr('method'),
             dataType: 'json',
             data: frm.serialize(),
-            success: function (data) {
+            success: function(data) {
 
                 if (data.status == true) {
                     toastr["success"](data.message);
                     $("#inv_id").val(data.invoice_id);
                     $('#printconfirmodal').modal('show');
-                    if (data.status == true && event.keyCode == 13) {
-                    }
+                    if (data.status == true && event.keyCode == 13) {}
                 } else {
                     toastr["error"](data.exception);
                 }
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 alert('failed!');
             }
         });
     });
 });
 
-$("#printconfirmodal").on('keydown', function (e) {
+$("#printconfirmodal").on('keydown', function(e) {
     var key = e.which || e.keyCode;
     if (key == 13) {
         $('#yes').trigger('click');
@@ -530,6 +540,7 @@ $("#printconfirmodal").on('keydown', function (e) {
 
 
 "use strict";
+
 function invoice_productList(sl) {
     var priceClass = 'price_item' + sl;
     var available_quantity = 'available_quantity_' + sl;
@@ -543,7 +554,7 @@ function invoice_productList(sl) {
     // Auto complete
     var options = {
         minLength: 0,
-        source: function (request, response) {
+        source: function(request, response) {
             var product_name = $('#product_name_' + sl).val();
             $.ajax({
                 url: base_url + "invoice/invoice/bdtask_autocomplete_product",
@@ -554,60 +565,57 @@ function invoice_productList(sl) {
                     product_name: product_name,
                     csrf_test_name: csrf_test_name,
                 },
-                success: function (data) {
+                success: function(data) {
                     response(data);
 
                 }
             });
         },
-        focus: function (event, ui) {
+        focus: function(event, ui) {
             $(this).val(ui.item.label);
             return false;
         },
-        select: function (event, ui) {
+        select: function(event, ui) {
             $(this).parent().parent().find(".autocomplete_hidden_value").val(ui.item.value);
             $(this).val(ui.item.label);
             var id = ui.item.value;
             var dataString = 'product_id=' + id;
             var base_url = $('.baseUrl').val();
 
-            $.ajax
-                ({
-                    type: "POST",
-                    url: base_url + "invoice/invoice/retrieve_product_data_inv",
-                    data: { product_id: id, csrf_test_name: csrf_test_name },
-                    cache: false,
-                    success: function (data) {
-                        var obj = jQuery.parseJSON(data);
-                        for (var i = 0; i < (obj.txnmber); i++) {
-                            var txam = obj.taxdta[i];
-                            var txclass = 'total_tax' + i + '_' + sl;
-                            $('.' + txclass).val(obj.taxdta[i]);
-                        }
-                        $('.' + priceClass).val(obj.price);
-                        $('.' + available_quantity).val(obj.total_product.toFixed(2, 2));
-                        $('.' + unit).val(obj.unit);
-                        $('.' + tax).val(obj.tax);
-                        $('#txfieldnum').val(obj.txnmber);
-                        $('#' + serial_no).html(obj.serial);
-
-                        bdtask_invoice_quantity_calculate(sl);
-
+            $.ajax({
+                type: "POST",
+                url: base_url + "invoice/invoice/retrieve_product_data_inv",
+                data: { product_id: id, csrf_test_name: csrf_test_name },
+                cache: false,
+                success: function(data) {
+                    var obj = jQuery.parseJSON(data);
+                    for (var i = 0; i < (obj.txnmber); i++) {
+                        var txam = obj.taxdta[i];
+                        var txclass = 'total_tax' + i + '_' + sl;
+                        $('.' + txclass).val(obj.taxdta[i]);
                     }
-                });
+                    $('.' + priceClass).val(obj.price);
+                    $('.' + available_quantity).val(obj.total_product.toFixed(2, 2));
+                    $('.' + unit).val(obj.unit);
+                    $('.' + tax).val(obj.tax);
+                    $('#txfieldnum').val(obj.txnmber);
+                    $('#' + serial_no).html(obj.serial);
+                    bdtask_invoice_quantity_calculate(sl);
+                }
+            });
 
             $(this).unbind("change");
             return false;
         }
     }
 
-    $('body').on('keypress.autocomplete', '.productSelection', function () {
+    $('body').on('keypress.autocomplete', '.productSelection', function() {
         $(this).autocomplete(options);
     });
 
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     "use strict";
     var paytype = $("#editpayment_type").val();
     if (paytype == 2) {
@@ -619,4 +627,30 @@ $(document).ready(function () {
     $(".bankpayment").css("width", "100%");
 });
 
+"use strict"
 
+function select_employ(elem) {
+    // alert();
+    var base_url = $('.baseUrl').val();
+    var csrf_test_name = $('[name="csrf_test_name"]').val();
+    var id = elem;
+    $.ajax({
+        type: "POST",
+        url: "get_employ",
+        data: { employ_id: id, csrf_test_name: csrf_test_name },
+        cache: false,
+        success: function(data) {
+            // alert(data);
+            $("#salary_input").val(data);
+        }
+    });
+}
+
+"use strict"
+
+function advance_infot(elem) {
+    var salary_input = $("#salary_input").val();
+    var advance_data = elem.value;
+    var total = salary_input - advance_data;
+    $(".remaning_amount").val(total);
+}

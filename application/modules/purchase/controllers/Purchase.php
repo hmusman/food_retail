@@ -21,7 +21,6 @@ class Purchase extends MX_Controller
             redirect('login');
     }
 
-
     function bdtask_purchase_form()
     {
         $data['title']      = display('add_purchase');
@@ -751,8 +750,7 @@ class Purchase extends MX_Controller
                 'quantity' => $quty[$i],
                 'waste'         => $product_rate[$i],
                 'lose'           => $product_quantity[$i],
-                'remaining'               => $total_price[$i],
-                
+                'remaining'               => $total_price[$i],     
             );
             
             $this->db->insert('waste_detail', $data1);

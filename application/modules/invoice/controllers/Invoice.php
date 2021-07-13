@@ -1,28 +1,30 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-    #------------------------------------    
-    # Author: Bdtask Ltd
-    # Author link: https://www.bdtask.com/
-    # Dynamic style php file
-    # Developed by :Isahaq
-    #------------------------------------    
+#------------------------------------    
+# Author: Bdtask Ltd
+# Author link: https://www.bdtask.com/
+# Dynamic style php file
+# Developed by :Isahaq
+#------------------------------------    
 
-class Invoice extends MX_Controller {
+class Invoice extends MX_Controller
+{
 
     public function __construct()
     {
         parent::__construct();
-  
-        $this->load->model(array(
-            'invoice_model','customer/customer_model')); 
-        if (! $this->session->userdata('isLogIn'))
-            redirect('login');
-          
-    }
-   
 
-    function bdtask_invoice_form() {
+        $this->load->model(array(
+            'invoice_model', 'customer/customer_model'
+        ));
+        if (!$this->session->userdata('isLogIn'))
+            redirect('login');
+    }
+
+
+    function bdtask_invoice_form()
+    {
         $walking_customer      = $this->invoice_model->pos_customer_setup();
         $data['customer_name'] = $walking_customer[0]['customer_name'];
         $data['customer_id']   = $walking_customer[0]['customer_id'];
@@ -30,36 +32,39 @@ class Invoice extends MX_Controller {
         $data['title']         = display('add_invoice');
         $data['taxes']         = $this->invoice_model->tax_fileds();
         $data['module']        = "invoice";
-        $data['page']          = "add_invoice_form"; 
+        $data['page']          = "add_invoice_form";
         echo modules::run('template/layout', $data);
     }
 
-    public function bdtask_invoice_list(){
+    public function bdtask_invoice_list()
+    {
         $data['title']        = display('manage_invoice');
-        $data['total_invoice']= $this->invoice_model->count_invoice();
+        $data['total_invoice'] = $this->invoice_model->count_invoice();
         $data['module']       = "invoice";
-        $data['page']         = "invoice"; 
+        $data['page']         = "invoice";
         echo modules::run('template/layout', $data);
     }
 
-     public function CheckInvoiceList(){
+    public function CheckInvoiceList()
+    {
         $postData = $this->input->post();
         $data     = $this->invoice_model->getInvoiceList($postData);
         echo json_encode($data);
-    } 
+    }
 
-    public function bdtask_invoice_details($invoice_id = null){
-         $invoice_detail     = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
+    public function bdtask_invoice_details($invoice_id = null)
+    {
+        $invoice_detail     = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }       
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -78,73 +83,70 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                  if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
-   
             }
         }
 
 
-        $totalbal      = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+        $totalbal      = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $amount_inword = $totalbal;
         $user_id       = $invoice_detail[0]['sales_by'];
         $users         = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'             => display('invoice_details'),
-        'invoice_id'        => $invoice_detail[0]['invoice_id'],
-        'invoice_no'        => $invoice_detail[0]['invoice'],
-        'customer_name'     => $invoice_detail[0]['customer_name'],
-        'customer_address'  => $invoice_detail[0]['customer_address'],
-        'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
-        'customer_email'    => $invoice_detail[0]['customer_email'],
-        'final_date'        => $invoice_detail[0]['final_date'],
-        'invoice_details'   => $invoice_detail[0]['invoice_details'],
-        'total_amount'      => number_format($invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'subTotal_quantity' => $subTotal_quantity,
-        'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'  => $invoice_detail,
-        'am_inword'         => $amount_inword,
-        'is_discount'       => $invoice_detail[0]['total_discount']-$invoice_detail[0]['invoice_discount'],
-        'users_name'        => $users->first_name.' '.$users->last_name,
-        'tax_regno'         => $txregname,
-        'is_desc'           => $descript,
-        'is_serial'         => $isserial,
-        'is_unit'           => $isunit,
+            'title'             => display('invoice_details'),
+            'invoice_id'        => $invoice_detail[0]['invoice_id'],
+            'invoice_no'        => $invoice_detail[0]['invoice'],
+            'customer_name'     => $invoice_detail[0]['customer_name'],
+            'customer_address'  => $invoice_detail[0]['customer_address'],
+            'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
+            'customer_email'    => $invoice_detail[0]['customer_email'],
+            'final_date'        => $invoice_detail[0]['final_date'],
+            'invoice_details'   => $invoice_detail[0]['invoice_details'],
+            'total_amount'      => number_format($invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'subTotal_quantity' => $subTotal_quantity,
+            'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'  => $invoice_detail,
+            'am_inword'         => $amount_inword,
+            'is_discount'       => $invoice_detail[0]['total_discount'] - $invoice_detail[0]['invoice_discount'],
+            'users_name'        => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'         => $txregname,
+            'is_desc'           => $descript,
+            'is_serial'         => $isserial,
+            'is_unit'           => $isunit,
         );
         $data['module']     = "invoice";
-        $data['page']       = "invoice_html"; 
+        $data['page']       = "invoice_html";
         echo modules::run('template/layout', $data);
     }
 
 
-    public function bdtask_invoice_pad_print($invoice_id){
-           $invoice_detail = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
-         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }       
+    public function bdtask_invoice_pad_print($invoice_id)
+    {
+        $invoice_detail = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
+        $taxfield = $this->db->select('*')
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -163,76 +165,74 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                 if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
             }
         }
 
-        $totalbal      = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+        $totalbal      = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $amount_inword = $this->numbertowords->convert_number($totalbal);
         $user_id       = $invoice_detail[0]['sales_by'];
         $users         = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'            => display('pad_print'),
-        'invoice_id'       => $invoice_detail[0]['invoice_id'],
-        'invoice_no'       => $invoice_detail[0]['invoice'],
-        'customer_name'    => $invoice_detail[0]['customer_name'],
-        'customer_address' => $invoice_detail[0]['customer_address'],
-        'customer_mobile'  => $invoice_detail[0]['customer_mobile'],
-        'customer_email'   => $invoice_detail[0]['customer_email'],
-        'final_date'       => $invoice_detail[0]['final_date'],
-        'print_setting'    => $this->invoice_model->bdtask_print_settingdata(),
-        'invoice_details'  => $invoice_detail[0]['invoice_details'],
-        'total_amount'     => number_format($totalbal, 2, '.', ','),
-        'subTotal_cartoon' => $subTotal_cartoon,
-        'subTotal_quantity'=> $subTotal_quantity,
-        'invoice_discount' => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
-        'total_discount'   => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'        => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount' => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'      => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'       => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-         'shipping_cost'   => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data' => $invoice_detail,
-        'previous'         => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'am_inword'        => $amount_inword,
-        'is_discount'      => $invoice_detail[0]['total_discount']-$invoice_detail[0]['invoice_discount'],
-       
-        'users_name'       => $users->first_name.' '.$users->last_name,
-        'tax_regno'        => $txregname,
-        'is_desc'          => $descript,
-        'is_serial'        => $isserial,
-        'is_unit'          => $isunit,
+            'title'            => display('pad_print'),
+            'invoice_id'       => $invoice_detail[0]['invoice_id'],
+            'invoice_no'       => $invoice_detail[0]['invoice'],
+            'customer_name'    => $invoice_detail[0]['customer_name'],
+            'customer_address' => $invoice_detail[0]['customer_address'],
+            'customer_mobile'  => $invoice_detail[0]['customer_mobile'],
+            'customer_email'   => $invoice_detail[0]['customer_email'],
+            'final_date'       => $invoice_detail[0]['final_date'],
+            'print_setting'    => $this->invoice_model->bdtask_print_settingdata(),
+            'invoice_details'  => $invoice_detail[0]['invoice_details'],
+            'total_amount'     => number_format($totalbal, 2, '.', ','),
+            'subTotal_cartoon' => $subTotal_cartoon,
+            'subTotal_quantity' => $subTotal_quantity,
+            'invoice_discount' => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
+            'total_discount'   => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'        => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount' => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'      => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'       => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'shipping_cost'   => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data' => $invoice_detail,
+            'previous'         => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'am_inword'        => $amount_inword,
+            'is_discount'      => $invoice_detail[0]['total_discount'] - $invoice_detail[0]['invoice_discount'],
+
+            'users_name'       => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'        => $txregname,
+            'is_desc'          => $descript,
+            'is_serial'        => $isserial,
+            'is_unit'          => $isunit,
         );
 
         $data['module']     = "invoice";
-        $data['page']       = "pad_print"; 
+        $data['page']       = "pad_print";
         echo modules::run('template/layout', $data);
     }
 
 
-    public function bdtask_invoice_pos_print($invoice_id = null){
+    public function bdtask_invoice_pos_print($invoice_id = null)
+    {
         $invoice_detail = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }  
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -252,80 +252,76 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                 if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
-                    if(!empty($invoice_detail[$k]['discount_per'])){
-                    $is_discount = $is_discount+1;
-                    
+                if (!empty($invoice_detail[$k]['discount_per'])) {
+                    $is_discount = $is_discount + 1;
                 }
             }
         }
 
- 
-        $totalbal = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+
+        $totalbal = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $user_id  = $invoice_detail[0]['sales_by'];
         $users    = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'                => display('pos_print'),
-        'invoice_id'           => $invoice_detail[0]['invoice_id'],
-        'invoice_no'           => $invoice_detail[0]['invoice'],
-        'customer_name'        => $invoice_detail[0]['customer_name'],
-        'customer_address'     => $invoice_detail[0]['customer_address'],
-        'customer_mobile'      => $invoice_detail[0]['customer_mobile'],
-        'customer_email'       => $invoice_detail[0]['customer_email'],
-        'final_date'           => $invoice_detail[0]['final_date'],
-        'invoice_details'      => $invoice_detail[0]['invoice_details'],
-        'total_amount'         => number_format($totalbal, 2, '.', ','),
-        'subTotal_cartoon'     => $subTotal_cartoon,
-        'subTotal_quantity'    => $subTotal_quantity,
-        'invoice_discount'     => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
-        'total_discount'       => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'            => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'     => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'          => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'           => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'shipping_cost'        => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'     => $invoice_detail,
-        'previous'             => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-         'is_discount'         => $is_discount,
-        'users_name'           => $users->first_name.' '.$users->last_name,
-        'tax_regno'            => $txregname,
-        'is_desc'              => $descript,
-        'is_serial'            => $isserial,
-        'is_unit'              => $isunit,
+            'title'                => display('pos_print'),
+            'invoice_id'           => $invoice_detail[0]['invoice_id'],
+            'invoice_no'           => $invoice_detail[0]['invoice'],
+            'customer_name'        => $invoice_detail[0]['customer_name'],
+            'customer_address'     => $invoice_detail[0]['customer_address'],
+            'customer_mobile'      => $invoice_detail[0]['customer_mobile'],
+            'customer_email'       => $invoice_detail[0]['customer_email'],
+            'final_date'           => $invoice_detail[0]['final_date'],
+            'invoice_details'      => $invoice_detail[0]['invoice_details'],
+            'total_amount'         => number_format($totalbal, 2, '.', ','),
+            'subTotal_cartoon'     => $subTotal_cartoon,
+            'subTotal_quantity'    => $subTotal_quantity,
+            'invoice_discount'     => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
+            'total_discount'       => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'            => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'     => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'          => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'           => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'shipping_cost'        => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'     => $invoice_detail,
+            'previous'             => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'is_discount'         => $is_discount,
+            'users_name'           => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'            => $txregname,
+            'is_desc'              => $descript,
+            'is_serial'            => $isserial,
+            'is_unit'              => $isunit,
 
         );
 
         $data['module']     = "invoice";
-        $data['page']       = "pos_print"; 
+        $data['page']       = "pos_print";
         echo modules::run('template/layout', $data);
-
     }
 
 
-     public function bdtask_pos_print_direct(){
-        $invoice_id = $this->input->post('invoice_id',true);
+    public function bdtask_pos_print_direct()
+    {
+        $invoice_id = $this->input->post('invoice_id', true);
         $invoice_detail = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }  
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -345,80 +341,76 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                 if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
-                    if(!empty($invoice_detail[$k]['discount_per'])){
-                    $is_discount = $is_discount+1;
-                    
+                if (!empty($invoice_detail[$k]['discount_per'])) {
+                    $is_discount = $is_discount + 1;
                 }
             }
         }
 
- 
-        $totalbal = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+
+        $totalbal = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $user_id  = $invoice_detail[0]['sales_by'];
         $users    = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'                => display('pos_print'),
-        'invoice_id'           => $invoice_detail[0]['invoice_id'],
-        'invoice_no'           => $invoice_detail[0]['invoice'],
-        'customer_name'        => $invoice_detail[0]['customer_name'],
-        'customer_address'     => $invoice_detail[0]['customer_address'],
-        'customer_mobile'      => $invoice_detail[0]['customer_mobile'],
-        'customer_email'       => $invoice_detail[0]['customer_email'],
-        'final_date'           => $invoice_detail[0]['final_date'],
-        'invoice_details'      => $invoice_detail[0]['invoice_details'],
-        'total_amount'         => number_format($totalbal, 2, '.', ','),
-        'subTotal_cartoon'     => $subTotal_cartoon,
-        'subTotal_quantity'    => $subTotal_quantity,
-        'invoice_discount'     => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
-        'total_discount'       => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'            => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'     => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'          => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'           => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'shipping_cost'        => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'     => $invoice_detail,
-        'previous'             => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-         'is_discount'         => $is_discount,
-        'users_name'           => $users->first_name.' '.$users->last_name,
-        'tax_regno'            => $txregname,
-        'is_desc'              => $descript,
-        'is_serial'            => $isserial,
-        'is_unit'              => $isunit,
-        'url'                  => $this->input->post('url',TRUE),
+            'title'                => display('pos_print'),
+            'invoice_id'           => $invoice_detail[0]['invoice_id'],
+            'invoice_no'           => $invoice_detail[0]['invoice'],
+            'customer_name'        => $invoice_detail[0]['customer_name'],
+            'customer_address'     => $invoice_detail[0]['customer_address'],
+            'customer_mobile'      => $invoice_detail[0]['customer_mobile'],
+            'customer_email'       => $invoice_detail[0]['customer_email'],
+            'final_date'           => $invoice_detail[0]['final_date'],
+            'invoice_details'      => $invoice_detail[0]['invoice_details'],
+            'total_amount'         => number_format($totalbal, 2, '.', ','),
+            'subTotal_cartoon'     => $subTotal_cartoon,
+            'subTotal_quantity'    => $subTotal_quantity,
+            'invoice_discount'     => number_format($invoice_detail[0]['invoice_discount'], 2, '.', ','),
+            'total_discount'       => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'            => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'     => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'          => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'           => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'shipping_cost'        => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'     => $invoice_detail,
+            'previous'             => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'is_discount'         => $is_discount,
+            'users_name'           => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'            => $txregname,
+            'is_desc'              => $descript,
+            'is_serial'            => $isserial,
+            'is_unit'              => $isunit,
+            'url'                  => $this->input->post('url', TRUE),
 
         );
 
         $data['module']     = "invoice";
-        $data['page']       = "pos_invoice_html_direct"; 
+        $data['page']       = "pos_invoice_html_direct";
         echo modules::run('template/layout', $data);
-
     }
 
 
-    public function bdtask_download_invoice($invoice_id = null){
+    public function bdtask_download_invoice($invoice_id = null)
+    {
         $invoice_detail = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }       
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -431,66 +423,66 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $invoice_detail[$k]['final_date'] = $this->occational->dateConvert($invoice_detail[$k]['date']);
                 $subTotal_quantity = $subTotal_quantity + $invoice_detail[$k]['quantity'];
-                $subTotal_ammount = $subTotal_ammount + $invoice_detail[$k]['total_price']; 
+                $subTotal_ammount = $subTotal_ammount + $invoice_detail[$k]['total_price'];
             }
             $i = 0;
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['discount_per'])){
-                    $is_discount = $is_discount+1;
+                if (!empty($invoice_detail[$k]['discount_per'])) {
+                    $is_discount = $is_discount + 1;
                 }
-                if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
             }
         }
 
         $currency_details = $this->invoice_model->retrieve_setting_editdata();
         $company_info     = $this->invoice_model->retrieve_company();
-        $totalbal         = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+        $totalbal         = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $amount_inword    = $this->numbertowords->convert_number($totalbal);
         $user_id          = $invoice_detail[0]['sales_by'];
         $users            = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'             => display('invoice_details'),
-        'invoice_id'        => $invoice_detail[0]['invoice_id'],
-        'customer_info'     => $invoice_detail,
-        'invoice_no'        => $invoice_detail[0]['invoice'],
-        'customer_name'     => $invoice_detail[0]['customer_name'],
-        'customer_address'  => $invoice_detail[0]['customer_address'],
-        'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
-        'customer_email'    => $invoice_detail[0]['customer_email'],
-        'final_date'        => $invoice_detail[0]['final_date'],
-        'invoice_details'   => $invoice_detail[0]['invoice_details'],
-        'total_amount'      => number_format($invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'subTotal_quantity' => $subTotal_quantity,
-        'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'  => $invoice_detail,
-        'company_info'      => $company_info,
-        'currency'          => $currency_details[0]['currency'],
-        'position'          => $currency_details[0]['currency_position'],
-        'discount_type'     => $currency_details[0]['discount_type'],
-        'currency_details'  => $currency_details,
-        'am_inword'         => $amount_inword,
-        'is_discount'       => $is_discount,
-        'users_name'        => $users->first_name.' '.$users->last_name,
-        'tax_regno'         => $txregname,
-        'is_desc'           => $descript,
-        'is_serial'         => $isserial,
-        'is_unit'           => $isunit,
+            'title'             => display('invoice_details'),
+            'invoice_id'        => $invoice_detail[0]['invoice_id'],
+            'customer_info'     => $invoice_detail,
+            'invoice_no'        => $invoice_detail[0]['invoice'],
+            'customer_name'     => $invoice_detail[0]['customer_name'],
+            'customer_address'  => $invoice_detail[0]['customer_address'],
+            'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
+            'customer_email'    => $invoice_detail[0]['customer_email'],
+            'final_date'        => $invoice_detail[0]['final_date'],
+            'invoice_details'   => $invoice_detail[0]['invoice_details'],
+            'total_amount'      => number_format($invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'subTotal_quantity' => $subTotal_quantity,
+            'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'  => $invoice_detail,
+            'company_info'      => $company_info,
+            'currency'          => $currency_details[0]['currency'],
+            'position'          => $currency_details[0]['currency_position'],
+            'discount_type'     => $currency_details[0]['discount_type'],
+            'currency_details'  => $currency_details,
+            'am_inword'         => $amount_inword,
+            'is_discount'       => $is_discount,
+            'users_name'        => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'         => $txregname,
+            'is_desc'           => $descript,
+            'is_serial'         => $isserial,
+            'is_unit'           => $isunit,
         );
 
 
@@ -499,7 +491,7 @@ class Invoice extends MX_Controller {
         $dompdf = new DOMPDF();
         $page = $this->load->view('invoice/invoice_download', $data, true);
         $file_name = time();
-        $dompdf->load_html($page,'UTF-8');
+        $dompdf->load_html($page, 'UTF-8');
         $dompdf->render();
         $output = $dompdf->output();
         file_put_contents("assets/data/pdf/invoice/$file_name.pdf", $output);
@@ -511,56 +503,56 @@ class Invoice extends MX_Controller {
         redirect("invoice_list");
     }
 
-    public function bdtask_manual_sales_insert(){
-     $this->form_validation->set_rules('customer_id', display('customer_name') ,'required|max_length[15]');
-    $this->form_validation->set_rules('paytype', display('payment_type') ,'required|max_length[20]');
-    $this->form_validation->set_rules('invoice_no', display('invoice_no') ,'required|max_length[20]|is_unique[invoice.invoice]');
-    $this->form_validation->set_rules('product_id[]',display('product'),'required|max_length[20]');
-    $this->form_validation->set_rules('product_quantity[]',display('quantity'),'required|max_length[20]');
-    $this->form_validation->set_rules('product_rate[]',display('rate'),'required|max_length[20]');
-    $normal = $this->input->post('is_normal');
+    public function bdtask_manual_sales_insert()
+    {
+        $this->form_validation->set_rules('customer_id', display('customer_name'), 'required|max_length[15]');
+        $this->form_validation->set_rules('paytype', display('payment_type'), 'required|max_length[20]');
+        $this->form_validation->set_rules('invoice_no', display('invoice_no'), 'required|max_length[20]|is_unique[invoice.invoice]');
+        $this->form_validation->set_rules('product_id[]', display('product'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_quantity[]', display('quantity'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
+        $normal = $this->input->post('is_normal');
 
-    if ($this->form_validation->run() === true) {
-       $invoice_id = $this->invoice_model->invoice_entry();
-        if(!empty($invoice_id)){
-        $data['status'] = true;
-        $data['invoice_id'] = $invoice_id;
-        $data['message'] = display('save_successfully');
-        $mailsetting = $this->db->select('*')->from('email_config')->get()->result_array();
-        if($mailsetting[0]['isinvoice']==1){
-        $mail = $this->invoice_pdf_generate($invoice_id);
-        if($mail == 0){
-        $data['exception'] = $this->session->set_userdata(array('error_message' => display('please_config_your_mail_setting')));
-          }
+        if ($this->form_validation->run() === true) {
+            $invoice_id = $this->invoice_model->invoice_entry();
+            if (!empty($invoice_id)) {
+                $data['status'] = true;
+                $data['invoice_id'] = $invoice_id;
+                $data['message'] = display('save_successfully');
+                $mailsetting = $this->db->select('*')->from('email_config')->get()->result_array();
+                if ($mailsetting[0]['isinvoice'] == 1) {
+                    $mail = $this->invoice_pdf_generate($invoice_id);
+                    if ($mail == 0) {
+                        $data['exception'] = $this->session->set_userdata(array('error_message' => display('please_config_your_mail_setting')));
+                    }
+                }
+                if ($normal == 1) {
+                    $printdata = $this->bdtask_invoice_details_directprint($invoice_id);
+                    $data['details'] = $this->load->view('invoice/invoice_html_manual', $printdata, true);
+                } else {
+                    $printdata = $this->invoice_model->bdtask_invoice_pos_print_direct($invoice_id);
+                    $data['details'] = $this->load->view('invoice/pos_print', $printdata, true);
+                }
+            } else {
+                $data['status'] = false;
+                $data['exception'] = 'Please Try Again';
+            }
+        } else {
+            $data['status'] = false;
+            $data['exception'] = validation_errors();
         }
-        if($normal == 1){
-        $printdata = $this->bdtask_invoice_details_directprint($invoice_id);
-        $data['details'] = $this->load->view('invoice/invoice_html_manual', $printdata, true);
-        }else{
-        $printdata = $this->invoice_model->bdtask_invoice_pos_print_direct($invoice_id);
-        $data['details'] = $this->load->view('invoice/pos_print', $printdata, true);
-        }
-     
-        }else{
-        $data['status'] = false;
-        $data['exception'] = 'Please Try Again';
-        }
-       
-    }else{
-        $data['status'] = false;
-       $data['exception'] = validation_errors();  
+        echo json_encode($data);
     }
-     echo json_encode($data);
-    }
 
 
-    public function bdtask_edit_invoice($invoice_id = null){
+    public function bdtask_edit_invoice($invoice_id = null)
+    {
         $invoice_detail = $this->invoice_model->retrieve_invoice_editdata($invoice_id);
         $taxinfo        = $this->invoice_model->invoice_taxinfo($invoice_id);
         $taxfield       = $this->db->select('tax_name,default_value')
-                                ->from('tax_settings')
-                                ->get()
-                                ->result_array();
+            ->from('tax_settings')
+            ->get()
+            ->result_array();
         $i = 0;
         if (!empty($invoice_detail)) {
             foreach ($invoice_detail as $k => $v) {
@@ -583,67 +575,68 @@ class Invoice extends MX_Controller {
             'total_amount'    => $invoice_detail[0]['total_amount'],
             'paid_amount'     => $invoice_detail[0]['paid_amount'],
             'due_amount'      => $invoice_detail[0]['due_amount'],
-            'invoice_discount'=> $invoice_detail[0]['invoice_discount'],
+            'invoice_discount' => $invoice_detail[0]['invoice_discount'],
             'total_discount'  => $invoice_detail[0]['total_discount'],
             'unit'            => $invoice_detail[0]['unit'],
             'tax'             => $invoice_detail[0]['tax'],
-             'taxes'          => $taxfield,
+            'taxes'          => $taxfield,
             'prev_due'        => $invoice_detail[0]['prevous_due'],
-            'net_total'       => $invoice_detail[0]['prevous_due'] + $invoice_detail[0]['total_amount'], 
+            'net_total'       => $invoice_detail[0]['prevous_due'] + $invoice_detail[0]['total_amount'],
             'shipping_cost'   => $invoice_detail[0]['shipping_cost'],
             'total_tax'       => $invoice_detail[0]['taxs'],
-            'invoice_all_data'=> $invoice_detail,
+            'invoice_all_data' => $invoice_detail,
             'taxvalu'         => $taxinfo,
             'discount_type'   => $currency_details[0]['discount_type'],
             'bank_id'         => $invoice_detail[0]['bank_id'],
             'paytype'         => $invoice_detail[0]['payment_type'],
         );
         $data['module']     = "invoice";
-        $data['page']       = "edit_invoice_form"; 
+        $data['page']       = "edit_invoice_form";
         echo modules::run('template/layout', $data);
     }
 
-    public function bdtask_update_invoice(){
-     $this->form_validation->set_rules('customer_id', display('customer_name') ,'required|max_length[15]');
-    $this->form_validation->set_rules('paytype', display('payment_type') ,'required|max_length[20]');
-    $this->form_validation->set_rules('invoice_no', display('invoice_no') ,'required|max_length[20]');
-    $this->form_validation->set_rules('product_id[]',display('product'),'required|max_length[20]');
-    $this->form_validation->set_rules('product_quantity[]',display('quantity'),'required|max_length[20]');
-    $this->form_validation->set_rules('product_rate[]',display('rate'),'required|max_length[20]');
+    public function bdtask_update_invoice()
+    {
+        $this->form_validation->set_rules('customer_id', display('customer_name'), 'required|max_length[15]');
+        $this->form_validation->set_rules('paytype', display('payment_type'), 'required|max_length[20]');
+        $this->form_validation->set_rules('invoice_no', display('invoice_no'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_id[]', display('product'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_quantity[]', display('quantity'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
 
-    if ($this->form_validation->run() === true) {
-       $invoice_id = $this->invoice_model->update_invoice();
-        if(!empty($invoice_id)){
-        $data['status'] = true;
-        $data['invoice_id'] = $invoice_id;
-        $data['message'] = display('update_successfully');
-        $mailsetting = $this->db->select('*')->from('email_config')->get()->result_array();
-        if($mailsetting[0]['isinvoice']==1){
-        $mail = $this->invoice_pdf_generate($invoice_id);
-        if($mail == 0){
-        $data['exception'] = $this->session->set_userdata(array('error_message' => display('please_config_your_mail_setting')));
-          }
+        if ($this->form_validation->run() === true) {
+            $invoice_id = $this->invoice_model->update_invoice();
+            if (!empty($invoice_id)) {
+                $data['status'] = true;
+                $data['invoice_id'] = $invoice_id;
+                $data['message'] = display('update_successfully');
+                $mailsetting = $this->db->select('*')->from('email_config')->get()->result_array();
+                if ($mailsetting[0]['isinvoice'] == 1) {
+                    $mail = $this->invoice_pdf_generate($invoice_id);
+                    if ($mail == 0) {
+                        $data['exception'] = $this->session->set_userdata(array('error_message' => display('please_config_your_mail_setting')));
+                    }
+                }
+                $data['details'] = $this->load->view('invoice/invoice_html', $data, true);
+            } else {
+                $data['status'] = false;
+                $data['exception'] = 'Please Try Again';
+            }
+        } else {
+            $data['status'] = false;
+            $data['exception'] = validation_errors();
         }
-        $data['details'] = $this->load->view('invoice/invoice_html', $data, true);
-        }else{
-        $data['status'] = false;
-        $data['exception'] = 'Please Try Again';
-        }
-       
-    }else{
-        $data['status'] = false;
-       $data['exception'] = validation_errors();  
-    }
-     echo json_encode($data);
+        echo json_encode($data);
     }
 
-        function bdtask_pos_invoice() {
+    function bdtask_pos_invoice()
+    {
         $taxfield = $this->db->select('tax_name,default_value')
-                ->from('tax_settings')
-                ->get()
-                ->result_array();
-                $tablecolumn   = $this->db->list_fields('tax_collection');
-                $num_column    = count($tablecolumn)-4;
+            ->from('tax_settings')
+            ->get()
+            ->result_array();
+        $tablecolumn   = $this->db->list_fields('tax_collection');
+        $num_column    = count($tablecolumn) - 4;
         $walking_customer      = $this->invoice_model->pos_customer_setup();
         $data['customer_name'] = $walking_customer[0]['customer_name'];
         $data['customer_id']   = $walking_customer[0]['customer_id'];
@@ -652,115 +645,119 @@ class Invoice extends MX_Controller {
         $data['taxes']         = $this->invoice_model->tax_fileds();
         $data['taxnumber']     = $num_column;
         $data['module']        = "invoice";
-        $data['page']          = "add_pos_invoice_form"; 
+        $data['page']          = "add_pos_invoice_form";
         echo modules::run('template/layout', $data);
     }
 
 
 
-  public function bdtask_gui_pos(){
-            $taxfield = $this->db->select('tax_name,default_value')
-                ->from('tax_settings')
-                ->get()
-                ->result_array();
-                $tablecolumn       = $this->db->list_fields('tax_collection');
-                $num_column        = count($tablecolumn)-4;
-            $data['title']         = display('gui_pos');
-            $saveid                = $this->session->userdata('id');
-            $walking_customer      = $this->invoice_model->walking_customer();
-            $data['customer_id']   = $walking_customer[0]['customer_id'];
-            $data['customer_name'] = $walking_customer[0]['customer_name'];
-            $data['categorylist']  = $this->invoice_model->category_list();
-            $customer_details      = $this->invoice_model->pos_customer_setup();
-            $data['customerlist']  = $this->invoice_model->customer_dropdown();
-            $data['customer_name'] = $customer_details[0]['customer_name'];
-            $data['customer_id']   = $customer_details[0]['customer_id'];
-            $data['itemlist']      = $this->invoice_model->allproduct();
-            $data['product_list']  = $this->invoice_model->product_list();
-            $data['taxes']         = $taxfield;
-            $data['taxnumber']     = $num_column;
-            $data['invoice_no']    = $this->number_generator();
-            $data['todays_invoice']= $this->invoice_model->todays_invoice();
-            $data['module']        = "invoice";
-            $data['page']          = "gui_pos_invoice"; 
-            echo modules::run('template/layout', $data); 
-        }
+    public function bdtask_gui_pos()
+    {
+        $taxfield = $this->db->select('tax_name,default_value')
+            ->from('tax_settings')
+            ->get()
+            ->result_array();
+        $tablecolumn       = $this->db->list_fields('tax_collection');
+        $num_column        = count($tablecolumn) - 4;
+        $data['title']         = display('gui_pos');
+        $saveid                = $this->session->userdata('id');
+        $walking_customer      = $this->invoice_model->walking_customer();
+        $data['customer_id']   = $walking_customer[0]['customer_id'];
+        $data['customer_name'] = $walking_customer[0]['customer_name'];
+        $data['categorylist']  = $this->invoice_model->category_list();
+        $customer_details      = $this->invoice_model->pos_customer_setup();
+        $data['customerlist']  = $this->invoice_model->customer_dropdown();
+        $data['customer_name'] = $customer_details[0]['customer_name'];
+        $data['customer_id']   = $customer_details[0]['customer_id'];
+        $data['itemlist']      = $this->invoice_model->allproduct();
+        $data['product_list']  = $this->invoice_model->product_list();
+        $data['taxes']         = $taxfield;
+        $data['taxnumber']     = $num_column;
+        $data['invoice_no']    = $this->number_generator();
+        $data['todays_invoice'] = $this->invoice_model->todays_invoice();
+        $data['module']        = "invoice";
+        $data['page']          = "gui_pos_invoice";
+        echo modules::run('template/layout', $data);
+    }
 
 
-      public function getitemlist(){
-                $catid       = $this->input->post('category_id',TRUE);
-                $category_id = (!empty($catid)?$catid:'');
-                $getproduct  = $this->invoice_model->searchprod($category_id);
-                if(!empty($getproduct)){
-                $data['itemlist']=$getproduct;
-                $this->load->view('invoice/getproductlist', $data);  
-                }else{
-                $title['title'] = 'Product Not found';
-                $this->load->view('invoice/productnot_found', $title);
-                }
-        }
-
-
-     public function getitemlist_byname(){
-            $product_name     = $this->input->post('product_name',TRUE);
-            $getproduct       = $this->invoice_model->searchprod_byname($product_name);
-            if(!empty($getproduct)){
+    public function getitemlist()
+    {
+        $catid       = $this->input->post('category_id', TRUE);
+        $category_id = (!empty($catid) ? $catid : '');
+        $getproduct  = $this->invoice_model->searchprod($category_id);
+        if (!empty($getproduct)) {
             $data['itemlist'] = $getproduct;
-            $this->load->view('invoice/getproductlist', $data);  
-            }else{
+            $this->load->view('invoice/getproductlist', $data);
+        } else {
+            $title['title'] = 'Product Not found';
+            $this->load->view('invoice/productnot_found', $title);
+        }
+    }
+
+
+    public function getitemlist_byname()
+    {
+        $product_name     = $this->input->post('product_name', TRUE);
+        $getproduct       = $this->invoice_model->searchprod_byname($product_name);
+        if (!empty($getproduct)) {
+            $data['itemlist'] = $getproduct;
+            $this->load->view('invoice/getproductlist', $data);
+        } else {
             $title['title']   = 'Product Not found';
             $this->load->view('invoice/productnot_found', $title);
-            }
-     }
-
-
-
-        public function getitemlist_byproductname(){
-                $prod       = $this->input->post('product_name',TRUE);
-                $catid      = $this->input->post('category_id',TRUE);
-                $getproduct = $this->invoice_model->searchprod_byname($catid,$prod);
-                if(!empty($getproduct)){
-                $data['itemlist']=$getproduct;
-                $this->load->view('invoice/getproductlist', $data);  
-                }
-                else{
-                    $title['title'] = 'Product Not found';
-                    $this->load->view('invoice/productnot_found', $title);
-                    }
         }
+    }
 
-         public function gui_pos_invoice() {
-        $product_id = $this->input->post('product_id',TRUE);
+
+
+    public function getitemlist_byproductname()
+    {
+        $prod       = $this->input->post('product_name', TRUE);
+        $catid      = $this->input->post('category_id', TRUE);
+        $getproduct = $this->invoice_model->searchprod_byname($catid, $prod);
+        if (!empty($getproduct)) {
+            $data['itemlist'] = $getproduct;
+            $this->load->view('invoice/getproductlist', $data);
+        } else {
+            $title['title'] = 'Product Not found';
+            $this->load->view('invoice/productnot_found', $title);
+        }
+    }
+
+    public function gui_pos_invoice()
+    {
+        $product_id = $this->input->post('product_id', TRUE);
         $product_details = $this->invoice_model->pos_invoice_setup($product_id);
         $taxfield       = $this->db->select('tax_name,default_value')
-                ->from('tax_settings')
-                ->get()
-                ->result_array();
-           $prinfo = $this->db->select('*')->from('product_information')->where('product_id',$product_id)->get()->result_array();
+            ->from('tax_settings')
+            ->get()
+            ->result_array();
+        $prinfo = $this->db->select('*')->from('product_information')->where('product_id', $product_id)->get()->result_array();
 
         $tr = " ";
         if (!empty($product_details)) {
             $product_id = $this->generator(5);
-            $serialdata =explode(',', $product_details->serial_no);
-            if($product_details->total_product > 0){
-              $qty = 1;
-            }else{
+            $serialdata = explode(',', $product_details->serial_no);
+            if ($product_details->total_product > 0) {
+                $qty = 1;
+            } else {
                 $qty = 1;
             }
 
-        $html = "";
-        if (empty($serialdata)) {
-            $html .="No Serial Found !";
-        }else{
-            // Select option created for product
-            $html .="<select name=\"serial_no[]\"   class=\"serial_no_1 form-control\" id=\"serial_no_".$product_details->product_id."\">";
-                $html .= "<option value=''>".display('select_one')."</option>";
+            $html = "";
+            if (empty($serialdata)) {
+                $html .= "No Serial Found !";
+            } else {
+                // Select option created for product
+                $html .= "<select name=\"serial_no[]\"   class=\"serial_no_1 form-control\" id=\"serial_no_" . $product_details->product_id . "\">";
+                $html .= "<option value=''>" . display('select_one') . "</option>";
                 foreach ($serialdata as $serial) {
-                    $html .="<option value=".$serial.">".$serial."</option>";
-                }   
-            $html .="</select>";
-        }
-            
+                    $html .= "<option value=" . $serial . ">" . $serial . "</option>";
+                }
+                $html .= "</select>";
+            }
+
             $tr .= "<tr id=\"row_" . $product_details->product_id . "\">
                         <td class=\"\" style=\"width:220px\">
                             
@@ -769,7 +766,7 @@ class Invoice extends MX_Controller {
                             <input type=\"hidden\" class=\"form-control autocomplete_hidden_value product_id_" . $product_details->product_id . "\" name=\"product_id[]\" id=\"SchoolHiddenId_" . $product_details->product_id . "\" value = \"$product_details->product_id\"/>
                             <input type=\"hidden\" class=\"form-control autocomplete_hidden_value deals_id" . $product_details->deal_id . "\" name=\"deals_id[]\" id=\"deals_id_" . $product_details->deal_id . "\" value = \"$product_details->deal_id\"/>
                         </td>
-                        <td>".$html."</td>
+                        <td>" . $html . "</td>
                         <td>
                             <input type=\"text\" name=\"available_quantity[]\" class=\"form-control text-right available_quantity_" . $product_details->product_id . "\" value='" . $product_details->total_product . "' readonly=\"\" id=\"available_quantity_" . $product_details->product_id . "\"/>
                         </td>
@@ -791,18 +788,19 @@ class Invoice extends MX_Controller {
                         </td>
 
                         <td>";
-                     
-                            $sl=0;
-                        foreach ($taxfield as $taxes) {
-                            $txs = 'tax'.$sl;
-                           $tr .= "<input type=\"hidden\" id=\"total_tax".$sl."_" . $product_details->product_id . "\" class=\"total_tax".$sl."_" . $product_details->product_id . "\" value='" . $prinfo[0][$txs] . "'/>
-                            <input type=\"hidden\" id=\"all_tax".$sl."_" . $product_details->product_id . "\" class=\" total_tax".$sl."\" value='" . $prinfo[0][$txs]*$product_details->price . "' name=\"tax[]\"/>";  
-                       $sl++; }
 
-                           $tr.="<input type=\"hidden\" id=\"total_discount_" . $product_details->product_id . "\" />
+            $sl = 0;
+            foreach ($taxfield as $taxes) {
+                $txs = 'tax' . $sl;
+                $tr .= "<input type=\"hidden\" id=\"total_tax" . $sl . "_" . $product_details->product_id . "\" class=\"total_tax" . $sl . "_" . $product_details->product_id . "\" value='" . $prinfo[0][$txs] . "'/>
+                            <input type=\"hidden\" id=\"all_tax" . $sl . "_" . $product_details->product_id . "\" class=\" total_tax" . $sl . "\" value='" . $prinfo[0][$txs] * $product_details->price . "' name=\"tax[]\"/>";
+                $sl++;
+            }
+
+            $tr .= "<input type=\"hidden\" id=\"total_discount_" . $product_details->product_id . "\" />
                             <input type=\"hidden\" id=\"all_discount_" . $product_details->product_id . "\" class=\"total_discount dppr\"/>
                             <a style=\"text-align: right;\" class=\"btn btn-danger btn-xs\" href=\"#\"  onclick=\"deleteRow(this)\">" . '<i class="fa fa-close"></i>' . "</a>
-                             <a style=\"text-align: right;\" class=\"btn btn-success btn-xs\" href=\"#\"  onclick=\"detailsmodal('".$product_details->product_name."','".$product_details->total_product."','".$product_details->product_model."','".$product_details->unit."','".$product_details->price."','".$product_details->image."')\">" . '<i class="fa fa-eye"></i>' . "</a>
+                             <a style=\"text-align: right;\" class=\"btn btn-success btn-xs\" href=\"#\"  onclick=\"detailsmodal('" . $product_details->product_name . "','" . $product_details->total_product . "','" . $product_details->product_model . "','" . $product_details->unit . "','" . $product_details->price . "','" . $product_details->image . "')\">" . '<i class="fa fa-eye"></i>' . "</a>
                         </td>
                     </tr>";
             echo $tr;
@@ -812,38 +810,39 @@ class Invoice extends MX_Controller {
     }
 
 
-        //Insert pos invoice
-    public function insert_pos_invoice() {
-        $product_id      = $this->input->post('product_id',TRUE);
+    //Insert pos invoice
+    public function insert_pos_invoice()
+    {
+        $product_id      = $this->input->post('product_id', TRUE);
         $product_details = $this->invoice_model->pos_invoice_setup($product_id);
         $taxfield = $this->db->select('tax_name,default_value')
-                ->from('tax_settings')
-                ->get()
-                ->result_array();
-           $prinfo = $this->db->select('*')->from('product_information')->where('product_id',$product_id)->get()->result_array();
+            ->from('tax_settings')
+            ->get()
+            ->result_array();
+        $prinfo = $this->db->select('*')->from('product_information')->where('product_id', $product_id)->get()->result_array();
         $tr = " ";
         if (!empty($product_details)) {
             $product_id = $this->generator(5);
-            $serialdata =explode(',', $product_details->serial_no);
-            if($product_details->total_product > 0){
-              $qty = 1;
-            }else{
+            $serialdata = explode(',', $product_details->serial_no);
+            if ($product_details->total_product > 0) {
+                $qty = 1;
+            } else {
                 $qty = 1;
             }
 
-        $html = "";
-        if (empty($serialdata)) {
-            $html .="No Serial Found !";
-        }else{
-            // Select option created for product
-            $html .="<select name=\"serial_no[]\"   class=\"serial_no_1 form-control\" id=\"serial_no_" . $product_details->product_id . "\">";
-                $html .= "<option value=''>".display('select_one')."</option>";
+            $html = "";
+            if (empty($serialdata)) {
+                $html .= "No Serial Found !";
+            } else {
+                // Select option created for product
+                $html .= "<select name=\"serial_no[]\"   class=\"serial_no_1 form-control\" id=\"serial_no_" . $product_details->product_id . "\">";
+                $html .= "<option value=''>" . display('select_one') . "</option>";
                 foreach ($serialdata as $serial) {
-                    $html .="<option value=".$serial.">".$serial."</option>";
-                }   
-            $html .="</select>";
-        }
-            
+                    $html .= "<option value=" . $serial . ">" . $serial . "</option>";
+                }
+                $html .= "</select>";
+            }
+
             $tr .= "<tr id=\"row_" . $product_details->product_id . "\">
                         <td class=\"\" style=\"width:220px\">
                             
@@ -855,7 +854,7 @@ class Invoice extends MX_Controller {
                          <td>
                              <input type=\"text\" name=\"desc[]\" class=\"form-control text-right \"  />
                                         </td>
-                                        <td>".$html."</td>
+                                        <td>" . $html . "</td>
                         <td>
                             <input type=\"text\" name=\"available_quantity[]\" class=\"form-control text-right available_quantity_" . $product_details->product_id . "\" value='" . $product_details->total_product . "' readonly=\"\" id=\"available_quantity_" . $product_details->product_id . "\"/>
                         </td>
@@ -883,14 +882,15 @@ class Invoice extends MX_Controller {
                         </td>
 
                         <td>";
-                        $sl=0;
-                        foreach ($taxfield as $taxes) {
-                            $txs = 'tax'.$sl;
-                           $tr .= "<input type=\"hidden\" id=\"total_tax".$sl."_" . $product_details->product_id . "\" class=\"total_tax".$sl."_" . $product_details->product_id . "\" value='" . $prinfo[0][$txs] . "'/>
-                            <input type=\"hidden\" id=\"all_tax".$sl."_" . $product_details->product_id . "\" class=\" total_tax".$sl."\" value='" . $prinfo[0][$txs]*$product_details->price . "' name=\"tax[]\"/>";  
-                       $sl++; }
-                        
-                             $tr .= "<input type=\"hidden\" id=\"total_discount_" . $product_details->product_id . "\" />
+            $sl = 0;
+            foreach ($taxfield as $taxes) {
+                $txs = 'tax' . $sl;
+                $tr .= "<input type=\"hidden\" id=\"total_tax" . $sl . "_" . $product_details->product_id . "\" class=\"total_tax" . $sl . "_" . $product_details->product_id . "\" value='" . $prinfo[0][$txs] . "'/>
+                            <input type=\"hidden\" id=\"all_tax" . $sl . "_" . $product_details->product_id . "\" class=\" total_tax" . $sl . "\" value='" . $prinfo[0][$txs] * $product_details->price . "' name=\"tax[]\"/>";
+                $sl++;
+            }
+
+            $tr .= "<input type=\"hidden\" id=\"total_discount_" . $product_details->product_id . "\" />
                             <input type=\"hidden\" id=\"all_discount_" . $product_details->product_id . "\" class=\"total_discount dppr\"/>
                             <button  class=\"btn btn-danger btn-xs text-center\" type=\"button\"  onclick=\"deleteRow(this)\">" . '<i class="fa fa-close"></i>' . "</button>
                         </td>
@@ -901,20 +901,21 @@ class Invoice extends MX_Controller {
         }
     }
 
-    public function invoice_inserted_data_manual(){
+    public function invoice_inserted_data_manual()
+    {
         $data['title']      = display('invoice_print');
-        $invoice_id         = $this->input->post('invoice_id',TRUE);
+        $invoice_id         = $this->input->post('invoice_id', TRUE);
         $invoice_detail     = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }       
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -933,61 +934,58 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                  if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
-   
             }
         }
 
 
-        $totalbal      = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+        $totalbal      = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $amount_inword = $totalbal;
         $user_id       = $invoice_detail[0]['sales_by'];
         $users         = $this->invoice_model->user_invoice_data($user_id);
         $data = array(
-        'title'             => display('invoice_details'),
-        'invoice_id'        => $invoice_detail[0]['invoice_id'],
-        'invoice_no'        => $invoice_detail[0]['invoice'],
-        'customer_name'     => $invoice_detail[0]['customer_name'],
-        'customer_address'  => $invoice_detail[0]['customer_address'],
-        'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
-        'customer_email'    => $invoice_detail[0]['customer_email'],
-        'final_date'        => $invoice_detail[0]['final_date'],
-        'invoice_details'   => $invoice_detail[0]['invoice_details'],
-        'total_amount'      => number_format($invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'subTotal_quantity' => $subTotal_quantity,
-        'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'  => $invoice_detail,
-        'am_inword'         => $amount_inword,
-        'is_discount'       => $invoice_detail[0]['total_discount']-$invoice_detail[0]['invoice_discount'],
-        'users_name'        => $users->first_name.' '.$users->last_name,
-        'tax_regno'         => $txregname,
-        'is_desc'           => $descript,
-        'is_serial'         => $isserial,
-        'is_unit'           => $isunit,
+            'title'             => display('invoice_details'),
+            'invoice_id'        => $invoice_detail[0]['invoice_id'],
+            'invoice_no'        => $invoice_detail[0]['invoice'],
+            'customer_name'     => $invoice_detail[0]['customer_name'],
+            'customer_address'  => $invoice_detail[0]['customer_address'],
+            'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
+            'customer_email'    => $invoice_detail[0]['customer_email'],
+            'final_date'        => $invoice_detail[0]['final_date'],
+            'invoice_details'   => $invoice_detail[0]['invoice_details'],
+            'total_amount'      => number_format($invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'subTotal_quantity' => $subTotal_quantity,
+            'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'  => $invoice_detail,
+            'am_inword'         => $amount_inword,
+            'is_discount'       => $invoice_detail[0]['total_discount'] - $invoice_detail[0]['invoice_discount'],
+            'users_name'        => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'         => $txregname,
+            'is_desc'           => $descript,
+            'is_serial'         => $isserial,
+            'is_unit'           => $isunit,
         );
         $data['module']     = "invoice";
-        $data['page']       = "invoice_html_manual"; 
+        $data['page']       = "invoice_html_manual";
         echo modules::run('template/layout', $data);
     }
-   /*invoice no generator*/
-      public function number_generator() {
+    /*invoice no generator*/
+    public function number_generator()
+    {
         $this->db->select_max('invoice', 'invoice_no');
         $query      = $this->db->get('invoice');
         $result     = $query->result_array();
@@ -1000,105 +998,109 @@ class Invoice extends MX_Controller {
         return $invoice_no;
     }
 
- public function bdtask_customer_autocomplete(){
-        $customer_id    = $this->input->post('customer_id',TRUE);
+    public function bdtask_customer_autocomplete()
+    {
+        $customer_id    = $this->input->post('customer_id', TRUE);
         $customer_info  = $this->invoice_model->customer_search($customer_id);
 
         $list[''] = '';
         foreach ($customer_info as $value) {
-            $json_customer[] = array('label'=>$value['customer_name'],'value'=>$value['customer_id']);
-        } 
+            $json_customer[] = array('label' => $value['customer_name'], 'value' => $value['customer_id']);
+        }
         echo json_encode($json_customer);
     }
 
-     /*product autocomple search*/
-        public function bdtask_autocomplete_product(){
-        $product_name   = $this->input->post('product_name',TRUE);
+    /*product autocomple search*/
+    public function bdtask_autocomplete_product()
+    {
+        $product_name   = $this->input->post('product_name', TRUE);
         $product_info   = $this->invoice_model->autocompletproductdata($product_name);
-       if(!empty($product_info)){
-        $list[''] = '';
-        foreach ($product_info as $value) {
-            $json_product[] = array('label'=>$value['product_name'].'('.$value['product_model'].')','value'=>$value['product_id']);
-        } 
-    }else{
-        $json_product[] = 'No Product Found';
+        if (!empty($product_info)) {
+            $list[''] = '';
+            foreach ($product_info as $value) {
+                $json_product[] = array('label' => $value['product_name'] . '(' . $value['product_model'] . ')', 'value' => $value['product_id']);
+            }
+        } else {
+            $json_product[] = 'No Product Found';
         }
         echo json_encode($json_product);
-    
     }
-     
-     /*after selecting product retrieve product info*/
-        public function retrieve_product_data_inv() {
-        $product_id   = $this->input->post('product_id',TRUE);
+
+    /*after selecting product retrieve product info*/
+    public function retrieve_product_data_inv()
+    {
+        $product_id   = $this->input->post('product_id', TRUE);
         $product_info = $this->invoice_model->get_total_product_invoic($product_id);
         echo json_encode($product_info);
-        }
+    }
 
     /*after select customer retrieve customer previous balance*/
-        public function previous() {
-        $customer_id = $this->input->post('customer_id',TRUE);
+    public function previous()
+    {
+        $customer_id = $this->input->post('customer_id', TRUE);
         $this->db->select("a.*,b.HeadCode,((select ifnull(sum(Debit),0) from acc_transaction where COAID= `b`.`HeadCode` AND IsAppove = 1)-(select ifnull(sum(Credit),0) from acc_transaction where COAID= `b`.`HeadCode` AND IsAppove = 1)) as balance");
-         $this->db->from('customer_information a');
-         $this->db->join('acc_coa b','a.customer_id = b.customer_id','left');
-         $this->db->where('a.customer_id',$customer_id);
+        $this->db->from('customer_information a');
+        $this->db->join('acc_coa b', 'a.customer_id = b.customer_id', 'left');
+        $this->db->where('a.customer_id', $customer_id);
         $result = $this->db->get()->result_array();
-       $balance = $result[0]['balance'];   
-       $b = (!empty($balance)?$balance:0);                            
-        if ($b){
-           echo  $b;
+        $balance = $result[0]['balance'];
+        $b = (!empty($balance) ? $balance : 0);
+        if ($b) {
+            echo  $b;
         } else {
-           echo  $b;
+            echo  $b;
         }
     }
 
 
 
-     public function instant_customer(){
-     
+    public function instant_customer()
+    {
+
         $data = array(
-            'customer_name'    => $this->input->post('customer_name',TRUE),
-            'customer_address' => $this->input->post('address',TRUE),
-            'customer_mobile'  => $this->input->post('mobile',TRUE),
-            'customer_email'   => $this->input->post('email',TRUE),
+            'customer_name'    => $this->input->post('customer_name', TRUE),
+            'customer_address' => $this->input->post('address', TRUE),
+            'customer_mobile'  => $this->input->post('mobile', TRUE),
+            'customer_email'   => $this->input->post('email', TRUE),
             'status'           => 1
         );
 
-        $result = $this->db->insert('customer_information',$data);
+        $result = $this->db->insert('customer_information', $data);
         if ($result) {
 
-        $customer_id = $this->db->insert_id();
-       
-        //Customer  basic information adding.
-        $coa = $this->customer_model->headcode();
-           if($coa->HeadCode!=NULL){
-                $headcode=$coa->HeadCode+1;
-           }else{
-                $headcode="102030001";
-            }
-   $c_acc      = $customer_id.'-'.$this->input->post('customer_name',TRUE);
-   $createby   = $this->session->userdata('id');
-   $createdate = date('Y-m-d H:i:s');
+            $customer_id = $this->db->insert_id();
 
-    $customer_coa = [
-             'HeadCode'         => $headcode,
-             'HeadName'         => $c_acc,
-             'PHeadName'        => 'Customer Receivable',
-             'HeadLevel'        => '4',
-             'IsActive'         => '1',
-             'IsTransaction'    => '1',
-             'IsGL'             => '0',
-             'HeadType'         => 'A',
-             'IsBudget'         => '0',
-             'IsDepreciation'   => '0',
-             'customer_id'      => $customer_id,
-             'DepreciationRate' => '0',
-             'CreateBy'         => $createby,
-             'CreateDate'       => $createdate,
-        ];
+            //Customer  basic information adding.
+            $coa = $this->customer_model->headcode();
+            if ($coa->HeadCode != NULL) {
+                $headcode = $coa->HeadCode + 1;
+            } else {
+                $headcode = "102030001";
+            }
+            $c_acc      = $customer_id . '-' . $this->input->post('customer_name', TRUE);
+            $createby   = $this->session->userdata('id');
+            $createdate = date('Y-m-d H:i:s');
+
+            $customer_coa = [
+                'HeadCode'         => $headcode,
+                'HeadName'         => $c_acc,
+                'PHeadName'        => 'Customer Receivable',
+                'HeadLevel'        => '4',
+                'IsActive'         => '1',
+                'IsTransaction'    => '1',
+                'IsGL'             => '0',
+                'HeadType'         => 'A',
+                'IsBudget'         => '0',
+                'IsDepreciation'   => '0',
+                'customer_id'      => $customer_id,
+                'DepreciationRate' => '0',
+                'CreateBy'         => $createby,
+                'CreateDate'       => $createdate,
+            ];
             //Previous balance adding -> Sending to customer model to adjust the data.
-            $this->db->insert('acc_coa',$customer_coa);
-            
-          
+            $this->db->insert('acc_coa', $customer_coa);
+
+
             $data['status']        = true;
             $data['message']       = display('save_successfully');
             $data['customer_id']   = $customer_id;
@@ -1107,23 +1109,24 @@ class Invoice extends MX_Controller {
             $data['status'] = false;
             $data['exception'] = display('please_try_again');
         }
-         echo json_encode($data);
-        }
+        echo json_encode($data);
+    }
 
 
 
-            public function bdtask_invoice_details_directprint($invoice_id = null){
-         $invoice_detail     = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
+    public function bdtask_invoice_details_directprint($invoice_id = null)
+    {
+        $invoice_detail     = $this->invoice_model->retrieve_invoice_html_data($invoice_id);
         $taxfield = $this->db->select('*')
-                ->from('tax_settings')
-                ->where('is_show',1)
-                ->get()
-                ->result_array();
-        $txregname ='';
-        foreach($taxfield as $txrgname){
-        $regname = $txrgname['tax_name'].' Reg No  - '.$txrgname['reg_no'].', ';
-        $txregname .= $regname;
-        }       
+            ->from('tax_settings')
+            ->where('is_show', 1)
+            ->get()
+            ->result_array();
+        $txregname = '';
+        foreach ($taxfield as $txrgname) {
+            $regname = $txrgname['tax_name'] . ' Reg No  - ' . $txrgname['reg_no'] . ', ';
+            $txregname .= $regname;
+        }
         $subTotal_quantity = 0;
         $subTotal_cartoon  = 0;
         $subTotal_discount = 0;
@@ -1142,88 +1145,82 @@ class Invoice extends MX_Controller {
             foreach ($invoice_detail as $k => $v) {
                 $i++;
                 $invoice_detail[$k]['sl'] = $i;
-                  if(!empty($invoice_detail[$k]['description'])){
-                    $descript = $descript+1;
-                    
+                if (!empty($invoice_detail[$k]['description'])) {
+                    $descript = $descript + 1;
                 }
-                 if(!empty($invoice_detail[$k]['serial_no'])){
-                    $isserial = $isserial+1;
-                    
+                if (!empty($invoice_detail[$k]['serial_no'])) {
+                    $isserial = $isserial + 1;
                 }
-                 if(!empty($invoice_detail[$k]['unit'])){
-                    $isunit = $isunit+1;
-                    
+                if (!empty($invoice_detail[$k]['unit'])) {
+                    $isunit = $isunit + 1;
                 }
-   
             }
         }
 
 
-        $totalbal = $invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'];
+        $totalbal = $invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'];
         $amount_inword     = $totalbal;
         $user_id           = $invoice_detail[0]['sales_by'];
         $users             = $this->invoice_model->user_invoice_data($user_id);
         $company_info      = $this->invoice_model->retrieve_company();
         $currency_details  = $this->invoice_model->retrieve_setting_editdata();
         $data = array(
-        'title'             => display('invoice_details'),
-        'invoice_id'        => $invoice_detail[0]['invoice_id'],
-        'invoice_no'        => $invoice_detail[0]['invoice'],
-        'customer_name'     => $invoice_detail[0]['customer_name'],
-        'customer_address'  => $invoice_detail[0]['customer_address'],
-        'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
-        'customer_email'    => $invoice_detail[0]['customer_email'],
-        'final_date'        => $invoice_detail[0]['final_date'],
-        'invoice_details'   => $invoice_detail[0]['invoice_details'],
-        'total_amount'      => number_format($invoice_detail[0]['total_amount']+$invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'subTotal_quantity' => $subTotal_quantity,
-        'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
-        'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
-        'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
-        'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
-        'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
-        'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
-        'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
-        'invoice_all_data'  => $invoice_detail,
-        'am_inword'         => $amount_inword,
-        'is_discount'       => $invoice_detail[0]['total_discount']-$invoice_detail[0]['invoice_discount'],
-        'users_name'        => $users->first_name.' '.$users->last_name,
-        'tax_regno'         => $txregname,
-        'is_desc'           => $descript,
-        'is_serial'         => $isserial,
-        'is_unit'           => $isunit,
-        'discount_type'     => $currency_details[0]['discount_type'],
-        'company_info'      => $company_info,
-        'logo'              => $currency_details[0]['invoice_logo'],
-        'position'          => $currency_details[0]['currency_position'],
-        'currency'          => $currency_details[0]['currency'],
+            'title'             => display('invoice_details'),
+            'invoice_id'        => $invoice_detail[0]['invoice_id'],
+            'invoice_no'        => $invoice_detail[0]['invoice'],
+            'customer_name'     => $invoice_detail[0]['customer_name'],
+            'customer_address'  => $invoice_detail[0]['customer_address'],
+            'customer_mobile'   => $invoice_detail[0]['customer_mobile'],
+            'customer_email'    => $invoice_detail[0]['customer_email'],
+            'final_date'        => $invoice_detail[0]['final_date'],
+            'invoice_details'   => $invoice_detail[0]['invoice_details'],
+            'total_amount'      => number_format($invoice_detail[0]['total_amount'] + $invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'subTotal_quantity' => $subTotal_quantity,
+            'total_discount'    => number_format($invoice_detail[0]['total_discount'], 2, '.', ','),
+            'total_tax'         => number_format($invoice_detail[0]['total_tax'], 2, '.', ','),
+            'subTotal_ammount'  => number_format($subTotal_ammount, 2, '.', ','),
+            'paid_amount'       => number_format($invoice_detail[0]['paid_amount'], 2, '.', ','),
+            'due_amount'        => number_format($invoice_detail[0]['due_amount'], 2, '.', ','),
+            'previous'          => number_format($invoice_detail[0]['prevous_due'], 2, '.', ','),
+            'shipping_cost'     => number_format($invoice_detail[0]['shipping_cost'], 2, '.', ','),
+            'invoice_all_data'  => $invoice_detail,
+            'am_inword'         => $amount_inword,
+            'is_discount'       => $invoice_detail[0]['total_discount'] - $invoice_detail[0]['invoice_discount'],
+            'users_name'        => $users->first_name . ' ' . $users->last_name,
+            'tax_regno'         => $txregname,
+            'is_desc'           => $descript,
+            'is_serial'         => $isserial,
+            'is_unit'           => $isunit,
+            'discount_type'     => $currency_details[0]['discount_type'],
+            'company_info'      => $company_info,
+            'logo'              => $currency_details[0]['invoice_logo'],
+            'position'          => $currency_details[0]['currency_position'],
+            'currency'          => $currency_details[0]['currency'],
         );
-       return $data;
+        return $data;
     }
 
 
-       public function generator($lenth)
+    public function generator($lenth)
     {
-        $number=array("A","B","C","D","E","F","G","H","I","J","K","L","N","M","O","P","Q","R","S","U","V","T","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0");
-    
-        for($i=0; $i<$lenth; $i++)
-        {
-            $rand_value=rand(0,34);
-            $rand_number=$number["$rand_value"];
-        
-            if(empty($con))
-            { 
-            $con=$rand_number;
+        $number = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "M", "O", "P", "Q", "R", "S", "U", "V", "T", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
+
+        for ($i = 0; $i < $lenth; $i++) {
+            $rand_value = rand(0, 34);
+            $rand_number = $number["$rand_value"];
+
+            if (empty($con)) {
+                $con = $rand_number;
+            } else {
+                $con = "$con" . "$rand_number";
             }
-            else
-            {
-            $con="$con"."$rand_number";}
         }
         return $con;
     }
 
-   /*invoice no generator*/
-      public function number_generator_ajax() {
+    /*invoice no generator*/
+    public function number_generator_ajax()
+    {
         $this->db->select_max('invoice', 'invoice_no');
         $query      = $this->db->get('invoice');
         $result     = $query->result_array();
@@ -1235,5 +1232,57 @@ class Invoice extends MX_Controller {
         }
         echo  $invoice_no;
     }
-}
 
+    public function add_expence()
+    {
+        $data['title']        = display('add_expense');
+        $data['employ_data'] = $this->invoice_model->employ_data();
+        $data['module']        = "invoice";
+        $data['page']          = "add_expences";
+        echo modules::run('template/layout', $data);
+    }
+
+    public function get_employ(){
+        extract($_POST);
+        
+        $data = $this->db->select('hrate')
+        ->from('employee_history')
+        ->where('id', $employ_id)
+        ->get()
+        ->result_array();
+        
+        echo $data[0]['hrate'];
+    }
+
+    public function add_expence_form(){
+        $advance_amount = $this->input->post('advance_data', TRUE);
+        $employ_id = $this->input->post('employ_id', TRUE);
+        $sale_type = $this->input->post('sale_type', TRUE);
+        $date = $this->input->post('date', TRUE);
+        $remaining = $this->input->post('remaining', TRUE);
+        
+        $data = array(
+            'employee_id' => $employ_id,
+            'sal_type' => $sale_type,
+            'amount'  => $advance_amount,
+            'create_date'   => $date,
+            'gross_salary'  => $remaining
+        );
+        $result = $this->db->insert('employee_salary_setup', $data);
+
+        // $data1 = array(
+        //     'employee_id' => $employ_id,
+        //     'total_salary' => $advance_amount,
+        //     'payment_due'   => "paid",
+        //     'payment_date'  => $date,
+        //     'paid_by'  => $this->session->userdata('id')
+        // );
+        // $result = $this->db->insert('employee_salary_setup', $data1);
+
+        if($result == true){
+            redirect("add_expences");
+        } else{
+            redirect("add_expences");
+        }
+    }
+}
