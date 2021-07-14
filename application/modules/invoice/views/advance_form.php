@@ -12,7 +12,7 @@
             </div>
             <div class="panel-body">
 
-                <?php echo  form_open_multipart('invoice/invoice/add_expence_form') ?>
+                <?php echo  form_open_multipart('invoice/invoice/advance_form_insert') ?>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group row">

@@ -1233,12 +1233,12 @@ class Invoice extends MX_Controller
         echo  $invoice_no;
     }
 
-    public function add_expence()
+    public function advance_form()
     {
         $data['title']        = display('add_expense');
         $data['employ_data'] = $this->invoice_model->employ_data();
         $data['module']        = "invoice";
-        $data['page']          = "add_expences";
+        $data['page']          = "advance_form";
         echo modules::run('template/layout', $data);
     }
 
@@ -1254,7 +1254,7 @@ class Invoice extends MX_Controller
         echo $data[0]['hrate'];
     }
 
-    public function add_expence_form(){
+    public function advance_form_insert(){
         $advance_amount = $this->input->post('advance_data', TRUE);
         $employ_id = $this->input->post('employ_id', TRUE);
         $sale_type = $this->input->post('sale_type', TRUE);
@@ -1280,9 +1280,9 @@ class Invoice extends MX_Controller
         $result = $this->db->insert('employee_salary_payment', $data1);
 
         if($result == true){
-            redirect("add_expences");
+            redirect("advance_form");
         } else{
-            redirect("add_expences");
+            redirect("advance_form");
         }
     }
 }

@@ -22,8 +22,8 @@
           </a>
         </li>
         <li class="onprocessg">
-          <a href="<?php echo base_url('add_expences') ?>"class="ongord" id="todays_salelist">
-            Add Expence                               
+          <a href="<?php echo base_url('advance_form') ?>"class="ongord" id="todays_salelist">
+            Advance Form                               
           </a>
         </li>
     </ul>
