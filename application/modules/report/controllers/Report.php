@@ -695,4 +695,13 @@ class Report extends MX_Controller
         $data['raw_data'] = $query->result_array();
         echo modules::run('template/layout', $data);
     }
+
+    public function waste_item_report(){
+        // $query = $this->db->query($rawQry);
+        $data['raw_data'] = $this->report_model->waste_date_report();
+        // die(var_dump($data));
+        $data['module']       = "report";
+        $data['page']         = "waste_item_report";
+        echo modules::run('template/layout', $data);
+    }
 }

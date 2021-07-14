@@ -27,3 +27,5 @@ $route['profit_report']        = "report/report/bdtask_profit_report";
 $route['rawMaterialStock']        = "report/report/rawMaterialStock";
 $route['finishFoodStock']        = "report/report/finishFoodStock";
 
+$route['waste_item_report']        = "report/report/waste_item_report";
+

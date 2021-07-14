@@ -520,5 +520,18 @@ class Report_model extends CI_Model {
         }
         return false;
     }
+
+    public function waste_date_report(){
+        $this->db->select('a.date,c.product_name as product_name,b.*');
+        $this->db->from('waste a');
+        $this->db->join('waste_detail b', 'b.waste_id = a.waste_id');
+        $this->db->join('product_information c', 'c.product_id = b.product_id');
+        $this->db->order_by('a.waste_id', 'desc');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+        return false;
+    }
 }
 
