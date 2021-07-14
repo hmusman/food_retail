@@ -87,6 +87,7 @@ class Expense_model extends CI_Model {
 
 
         public function expense_insert(){
+          $user_id = $this->session->userdata('id');
            $voucher_no = date('Ymdhis');
             $Vtype="Expense";
             $expense_type = $this->input->post('expense_type',true);
@@ -112,6 +113,7 @@ class Expense_model extends CI_Model {
       'type'           =>  $expense_type,
       'date'           =>  $VDate,
       'amount'         =>  $Credit,
+      'user_id'        =>  $user_id
     ); 
          // expense type credit  
      $expense_acc = array(
