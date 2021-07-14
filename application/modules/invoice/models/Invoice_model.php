@@ -268,6 +268,11 @@ public function invoice_taxinfo($invoice_id){
         }else{
              $paidamount = $this->input->post('paid_amount',TRUE);
         }
+        if (!empty($_POST['tracking_number'])) {
+            $tracking_number          = $this->input->post('tracking_number');
+        } else {
+            $tracking_number = "NULL";
+        }
 
      $bank_id = $this->input->post('bank_id',TRUE);
         if(!empty($bank_id)){
@@ -326,6 +331,7 @@ public function invoice_taxinfo($invoice_id){
             'shipping_cost'   => $this->input->post('shipping_cost',TRUE),
             'sales_by'        => $this->session->userdata('id'),
             'status'          => 1,
+            'tracking_id' => $tracking_number,
             'payment_type'    =>  $this->input->post('paytype',TRUE),
             'bank_id'         =>  (!empty($this->input->post('bank_id',TRUE))?$this->input->post('bank_id',TRUE):null),
         );
