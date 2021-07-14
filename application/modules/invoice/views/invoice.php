@@ -18,7 +18,12 @@
                             <label class="" for="to_date"><?php echo display('end_date') ?></label>
                             <input type="text" name="to_date" class="form-control datepicker" id="to_date" placeholder="<?php echo display('end_date') ?>" value="">
                         </div>  
-
+                        <div class="form-group">
+                            <select class="form-control" id="panda">
+                                <option disabled selected>Select</option>
+                                <option value="food_panda">food panda</option>
+                            </select>
+                        </div>
                         <button type="button" id="btn-filter" class="btn btn-success"><?php echo display('find') ?></button>
 
                         <?php echo form_close() ?>
@@ -57,6 +62,7 @@
                                     <tr>
                                     <th><?php echo display('sl') ?></th>
                                     <th><?php echo display('invoice_no') ?></th>
+                                    <th>FoodPanda Tracking</th>
                                     <th><?php echo display('sale_by') ?></th>
                                     <th><?php echo display('customer_name') ?></th>
                                     <th><?php echo display('date') ?></th>

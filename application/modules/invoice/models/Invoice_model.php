@@ -105,10 +105,15 @@ class Invoice_model extends CI_Model {
          $usertype = $this->session->userdata('user_type');
          $fromdate = $this->input->post('fromdate',TRUE);
          $todate   = $this->input->post('todate',TRUE);
+         $panda    = $this->input->post('panda',True);
          if(!empty($fromdate)){
             $datbetween = "(a.date BETWEEN '$fromdate' AND '$todate')";
          }else{
             $datbetween = "";
+         }
+         if (!empty($panda)) {
+           
+            $foodpanda = "a.tracking_id IS NOT NULL";
          }
          ## Read value
          $draw         = $postData['draw'];
@@ -122,7 +127,7 @@ class Invoice_model extends CI_Model {
          ## Search 
          $searchQuery = "";
          if($searchValue != ''){
-            $searchQuery = " (b.customer_name like '%".$searchValue."%' or a.invoice like '%".$searchValue."%' or a.date like'%".$searchValue."%' or a.invoice_id like'%".$searchValue."%' or u.first_name like'%".$searchValue."%'or u.last_name like'%".$searchValue."%')";
+            $searchQuery = " (b.customer_name like '%".$searchValue."%' or a.tracking_id like '%".$searchValue."%' or a.invoice like '%".$searchValue."%' or a.date like'%".$searchValue."%' or a.invoice_id like'%".$searchValue."%' or u.first_name like'%".$searchValue."%'or u.last_name like'%".$searchValue."%')";
          }
 
          ## Total number of records without filtering
@@ -153,6 +158,10 @@ class Invoice_model extends CI_Model {
          if(!empty($fromdate) && !empty($todate)){
              $this->db->where($datbetween);
          }
+         if (!empty($panda)) {
+            
+            $this->db->where($foodpanda);
+         }
          if($searchValue != '')
             $this->db->where($searchQuery);
           
@@ -169,6 +178,9 @@ class Invoice_model extends CI_Model {
          }
           if(!empty($fromdate) && !empty($todate)){
              $this->db->where($datbetween);
+         }if (!empty($panda)) {
+            
+            $this->db->where($foodpanda);
          }
          if($searchValue != '')
          $this->db->where($searchQuery);
@@ -201,6 +213,7 @@ class Invoice_model extends CI_Model {
                
             $data[] = array( 
                 'sl'               =>$sl,
+                'tracking_id'      =>$record->tracking_id,
                 'invoice'          =>$details,
                 'salesman'         =>$record->first_name.' '.$record->last_name,
                 'customer_name'    =>$record->customer_name,
