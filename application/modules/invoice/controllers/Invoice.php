@@ -1270,14 +1270,14 @@ class Invoice extends MX_Controller
         );
         $result = $this->db->insert('employee_salary_setup', $data);
 
-        // $data1 = array(
-        //     'employee_id' => $employ_id,
-        //     'total_salary' => $advance_amount,
-        //     'payment_due'   => "paid",
-        //     'payment_date'  => $date,
-        //     'paid_by'  => $this->session->userdata('id')
-        // );
-        // $result = $this->db->insert('employee_salary_setup', $data1);
+        $data1 = array(
+            'employee_id' => $employ_id,
+            'total_salary' => $remaining,
+            'payment_due'   => "paid",
+            'payment_date'  => $date,
+            'paid_by'  => $this->session->userdata('id')
+        );
+        $result = $this->db->insert('employee_salary_payment', $data1);
 
         if($result == true){
             redirect("add_expences");
