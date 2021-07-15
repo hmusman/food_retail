@@ -569,25 +569,11 @@ class Report extends MX_Controller
     public function rawMaterialStock()
     {
         $rawQry = "SELECT
-                    t1.product_name,
-                    t2.qty - t1.qty qty
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
                 FROM
                     (
-                    SELECT
-                        p.product_id,
-                        p.product_name,
-                        SUM(sd.quantity) qty
-                    FROM
-                        stock s
-                    INNER JOIN stock_details sd ON
-                        s.stk_id = sd.stk_id AND sd.type = 'raw_material'
-                    INNER JOIN product_information p ON
-                        p.product_id = sd.product_id
-                    GROUP BY
-                        p.product_name,
-                        p.product_id
-                ) t1,
-                (
                     SELECT
                         p.product_id,
                         p.product_name,
@@ -601,9 +587,24 @@ class Report extends MX_Controller
                     GROUP BY
                         p.product_name,
                         p.product_id
-                ) t2
-                WHERE
-                    t1.product_id = t2.product_id";
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
 
 
         $data['module']       = "report";
@@ -616,6 +617,7 @@ class Report extends MX_Controller
     public function finishFoodStock()
     {
         $rawQry = "SELECT
+                    t1.product_id,
                     t1.product_name,
                     t1.qty - t2.qty qty
                 FROM
@@ -652,42 +654,41 @@ class Report extends MX_Controller
                 WHERE
                     t1.product_id = t2.product_id
                 UNION
+
                 SELECT
-                    t1.product_name,
-                    t1.qty - t2.qty qty
-                FROM
-                    (
-                    SELECT
-                        p.product_id,
-                        p.product_name,
-                        SUM(sd.quantity) qty
-                    FROM
-                        stock s
-                    INNER JOIN stock_details sd ON
-                        s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
-                    INNER JOIN product_information p ON
-                        p.product_id = sd.product_id
-                    GROUP BY
-                        p.product_name,
-                        p.product_id
-                ) t1,
+                t.product_id,
+                t.product_name,
+                SUM(t.qty) qty
+            FROM
                 (
-                    SELECT
-                        p.product_id,
-                        p.product_name,
-                        SUM(invd.quantity) qty
-                    FROM
-                        invoice inv
-                    INNER JOIN invoice_details invd ON
-                        inv.invoice_id = invd.invoice_id
-                    INNER JOIN product_information p ON
-                        p.product_id = invd.product_id
-                    GROUP BY
-                        p.product_name,
-                        p.product_id
-                ) t2
-                WHERE
-                    t1.product_id = t2.product_id";
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                UNION
+            SELECT
+                p.product_id,
+                p.product_name,
+                SUM(invd.quantity) * -1 qty
+            FROM
+                invoice inv
+            INNER JOIN invoice_details invd ON
+                inv.invoice_id = invd.invoice_id
+            INNER JOIN product_information p ON
+                p.product_id = invd.product_id
+            GROUP BY
+                p.product_name,
+                p.product_id
+            ) t";
 
         $data['module']       = "report";
         $data['page']         = "finishFoodStock";
