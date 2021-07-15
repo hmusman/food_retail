@@ -22,8 +22,13 @@
           </a>
         </li>
         <li class="onprocessg">
-          <a href="<?php echo base_url('advance_form') ?>"class="ongord" id="todays_salelist">
+          <a href="<?php echo base_url('advance_form') ?>" class="ongord" id="todays_salelist">
             Advance Form                               
+          </a>
+        </li>
+        <li class="onprocessg">
+          <a href="<?php echo base_url('add_expense') ?>" class="ongord" id="todays_salelist">
+            Add Expense
           </a>
         </li>
     </ul>
@@ -151,6 +156,23 @@
 
 </div>
  <input class="form-control" type="hidden"  name="invoice_no" id="invoice_no" required value="<?php echo html_escape($invoice_no); ?>" readonly/>
+</div>
+
+
+
+</div>
+
+<div class="d-flex align-items-center mb-3">
+  <div class="form-group"><label>FoodPand Tracking</label></div>
+  <div class="form-group" style="margin-left: 10px">
+    <select class="form-control select" id="food_panda" style="border-radius: 7px">
+      <option disabled selected="">Select Option</option>
+      <option value="food_panda">Food Panda</option>
+    </select>
+  </div>
+  <div class="form-group" style="margin-left: 10px">
+  <!-- <label id="label_pand" style="display: none">TrackingID</label> -->
+  <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;border-radius: 5px;">
 </div>
 </div>
 
@@ -517,7 +539,20 @@ name="shipping_cost" onkeyup="quantity_calculate(1);"  onchange="quantity_calcul
 
 
  <script>
-                                                $('.product-grid').each(function () {
-                                                    const ps = new PerfectScrollbar($(this)[0]);
-                                                });
-        </script>
+        $('.product-grid').each(function () {
+            const ps = new PerfectScrollbar($(this)[0]);
+        });
+        $('#food_panda').on('change', function() {
+
+          if (this.value == 'food_panda') {
+
+            $('#tracking_nmbr').css("display", "");
+            $('#label_pand').css('display',"");
+
+          }else{
+
+            $('#label_pand').css('display',"none");
+            $('#tracking_nmbr').css("display", "none");
+          }
+        });
+  </script>

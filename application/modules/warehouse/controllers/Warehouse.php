@@ -681,11 +681,7 @@ class Warehouse extends MX_Controller
 
                 // print_r($stock_data2);
 
-                $product_quantity = $quantity[$i];
-                $product_rate     = $rate[$i];
-                $product_id       = $recipe_id[$i];
-                $total_price      = $t_price[$i];
-                $disc             = $discount[$i];
+        
 
                 $data1 = array(
                     'production_detail_id'       => $this->generator(15),

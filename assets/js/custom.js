@@ -180,12 +180,14 @@ $(document).ready(function() {
                  "data": function ( data) {
          data.fromdate = $('#from_date').val();
          data.todate = $('#to_date').val();
+         data.panda = $('#panda').val();
         data.csrf_test_name = csrf_test_name;
 }
             },
           'columns': [
              { data: 'sl' },
              { data: 'invoice' },
+             { data: 'tracking_id'},
              { data: 'salesman' },
              { data: 'customer_name'},
              { data: 'final_date' },

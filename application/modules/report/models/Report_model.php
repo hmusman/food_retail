@@ -291,17 +291,62 @@ class Report_model extends CI_Model {
 
 
         // ======================= user sales report ================
-    public function user_sales_report($from_date,$to_date,$user_id) {
-        $this->db->select("sum(total_amount) as amount,count(a.invoice_id) as toal_invoice,a.*,b.first_name,b.last_name");
-        $this->db->from('invoice a');
-        $this->db->join('users b', 'b.user_id = a.sales_by','left');
-        if(!empty($user_id)){
-        $this->db->where('a.sales_by', $user_id);    
-        }
-        $this->db->where('a.date >=', $from_date);
-        $this->db->where('a.date <=', $to_date);
-        $this->db->group_by('a.sales_by');
-        $query = $this->db->get();
+    public function user_sales_report($user_id) {
+        
+        $date = date('Y-m-d');
+        $rawquery = 'SELECT
+                            SUM(total_amount) AS amount,
+                            COUNT(a.invoice_id) AS count,
+                            "Invoice" type,
+                            b.first_name,
+                            b.last_name
+                        FROM
+                            invoice a
+                        LEFT JOIN users b ON
+                            b.user_id = a.sales_by
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            a.date = "'.$date.'"    
+                        GROUP BY
+                            a.sales_by
+                            
+                            UNION
+                            
+                            SELECT SUM(amount) AS amount,
+                            COUNT(e.id) count,
+                            "Expense" type,
+                            b.first_name,
+                            b.last_name
+                            FROM expense  e
+                            LEFT JOIN users b ON
+                            b.user_id = e.user_id
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            e.date = "'.$date.'"
+                        GROUP BY
+                            e.id
+                            
+                            UNION
+                            
+                            SELECT
+                            SUM(emp.total_salary) AS amount,
+                            COUNT(emp.emp_sal_pay_id) count,
+                            "Salary" type,
+                            b.first_name,
+                            b.last_name
+                        FROM
+                            employee_salary_payment emp
+                        LEFT JOIN users b ON
+                            b.user_id = emp.paid_by
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            emp.payment_date = "'.$date.'"    
+                        GROUP BY
+                            emp.paid_by';                   
+        $query = $this->db->query($rawquery);
         if ($query->num_rows() > 0) {
             return $query->result_array();
         }

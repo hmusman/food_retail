@@ -261,7 +261,9 @@ class Report extends MX_Controller
         $user_id = (!empty($this->input->get('user_id')) ? $this->input->get('user_id') : '');
         $star_date = (!empty($this->input->get('from_date')) ? $this->input->get('from_date') : date('Y-m-d'));
         $end_date = (!empty($this->input->get('to_date')) ? $this->input->get('to_date') : date('Y-m-d'));
-        $sales_report = $this->report_model->user_sales_report($star_date, $end_date, $user_id);
+         $user_id = $this->session->userdata('id');
+        $sales_report = $this->report_model->user_sales_report($user_id);
+
         $sales_amount = 0;
         if (!empty($sales_report)) {
             $i = 0;
@@ -274,16 +276,16 @@ class Report extends MX_Controller
         }
         $user_list = $this->report_model->userList();
         $data = array(
-            'title'         => display('user_wise_sales_report'),
-            'sales_amount'  => number_format($sales_amount, 2, '.', ','),
+            // 'title'         => display('user_wise_sales_report'),
+            // 'sales_amount'  => number_format($sales_amount, 2, '.', ','),
             'sales_report'  => $sales_report,
-            'from'          => $this->occational->dateConvert($star_date),
-            'to'            => $this->occational->dateConvert($end_date),
-            'user_list'     => $user_list,
-            'user_id'       => $user_id,
+            // 'from'          => $this->occational->dateConvert($star_date),
+            // 'to'            => $this->occational->dateConvert($end_date),
+            // 'user_list'     => $user_list,
+            // 'user_id'       => $user_id,
         );
         $data['module']   = "report";
-        $data['page']     = "user_wise_sales_report";
+        $data['page']     = "users_sales_report";
         echo modules::run('template/layout', $data);
     }
 
@@ -569,25 +571,11 @@ class Report extends MX_Controller
     public function rawMaterialStock()
     {
         $rawQry = "SELECT
-                    t1.product_name,
-                    t2.qty - t1.qty qty
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
                 FROM
                     (
-                    SELECT
-                        p.product_id,
-                        p.product_name,
-                        SUM(sd.quantity) qty
-                    FROM
-                        stock s
-                    INNER JOIN stock_details sd ON
-                        s.stk_id = sd.stk_id AND sd.type = 'raw_material'
-                    INNER JOIN product_information p ON
-                        p.product_id = sd.product_id
-                    GROUP BY
-                        p.product_name,
-                        p.product_id
-                ) t1,
-                (
                     SELECT
                         p.product_id,
                         p.product_name,
@@ -601,9 +589,24 @@ class Report extends MX_Controller
                     GROUP BY
                         p.product_name,
                         p.product_id
-                ) t2
-                WHERE
-                    t1.product_id = t2.product_id";
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
 
 
         $data['module']       = "report";
@@ -616,6 +619,7 @@ class Report extends MX_Controller
     public function finishFoodStock()
     {
         $rawQry = "SELECT
+                    t1.product_id,
                     t1.product_name,
                     t1.qty - t2.qty qty
                 FROM
@@ -651,43 +655,88 @@ class Report extends MX_Controller
                 ) t2
                 WHERE
                     t1.product_id = t2.product_id
+                
+                
+                
+                    /*Finished Food Query End*/
+                    /*Raw material Report Start*/
                 UNION
+
+
+
                 SELECT
-                    t1.product_name,
-                    t1.qty - t2.qty qty
+                t.product_id,
+                t.product_name,
+                SUM(t.qty) qty
+            FROM
+                (
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                UNION
+            SELECT
+                p.product_id,
+                p.product_name,
+                SUM(invd.quantity) * -1 qty
+            FROM
+                invoice inv
+            INNER JOIN invoice_details invd ON
+                inv.invoice_id = invd.invoice_id
+            INNER JOIN product_information p ON
+                p.product_id = invd.product_id
+            GROUP BY
+                p.product_name,
+                p.product_id
+            ) t
+            UNION 
+            
+            SELECT
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
                 FROM
                     (
                     SELECT
                         p.product_id,
                         p.product_name,
-                        SUM(sd.quantity) qty
+                        SUM(pd.quantity) qty
                     FROM
-                        stock s
-                    INNER JOIN stock_details sd ON
-                        s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
+                        product_purchase pr
+                    INNER JOIN product_purchase_details pd ON
+                        pr.purchase_id = pd.purchase_id
                     INNER JOIN product_information p ON
-                        p.product_id = sd.product_id
+                        p.product_id = pd.product_id
                     GROUP BY
                         p.product_name,
                         p.product_id
-                ) t1,
-                (
-                    SELECT
-                        p.product_id,
-                        p.product_name,
-                        SUM(invd.quantity) qty
-                    FROM
-                        invoice inv
-                    INNER JOIN invoice_details invd ON
-                        inv.invoice_id = invd.invoice_id
-                    INNER JOIN product_information p ON
-                        p.product_id = invd.product_id
-                    GROUP BY
-                        p.product_name,
-                        p.product_id
-                ) t2
-                WHERE
-                    t1.product_id = t2.product_id";
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
 
         $data['module']       = "report";
         $data['page']         = "finishFoodStock";
