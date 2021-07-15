@@ -6,7 +6,7 @@
                     <div class="panel-body"> 
                         <?php echo form_open('userwise_sales_report', array('class' => 'form-inline', 'method' => 'get')) ?>
                         
-                            <div class="col-sm-3">
+                            <!-- <div class="col-sm-3">
                            
                             <label class="col-sm-4" for="user_name"><?php echo display('user_name') ?></label>
                             <div class="col-sm-8">
@@ -32,9 +32,9 @@
                             <input type="text" name="to_date" class="form-control datepicker" id="to_date" placeholder="<?php echo display('end_date') ?>" value="<?php echo  date('Y-m-d',strtotime($to)) ?>">
                         </div>  
                         </div>
-                            </div>
+                            </div> -->
                             <div class="col-sm-2">
-                                  <button type="submit" class="btn btn-success"><?php echo display('search') ?></button>
+                                  <!-- <button type="submit" class="btn btn-success"><?php echo display('search') ?></button> -->
                         <a  class="btn btn-warning" href="#" onclick="printDiv('purchase_div')"><?php echo display('print') ?></a>
                             </div>
                         
@@ -126,9 +126,9 @@
                                             <?php 
                                             $subtotal = 0;
                                             $sl = 1;
-                                            foreach($sales_report as $sales){ ?>
+                                            foreach($sales_report as $sl => $sales){ ?>
                                 <tr>
-                                    <td><?php echo $sl;?></td>
+                                    <td><?php echo $sl+1;?></td>
                                     <td><?php echo html_escape($sales['first_name']).' '.html_escape($sales['last_name'])?></td>
                                     <td><?php echo $sales['type'] ?></td>
                                     <td>

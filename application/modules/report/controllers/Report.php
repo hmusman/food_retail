@@ -261,7 +261,8 @@ class Report extends MX_Controller
         $user_id = (!empty($this->input->get('user_id')) ? $this->input->get('user_id') : '');
         $star_date = (!empty($this->input->get('from_date')) ? $this->input->get('from_date') : date('Y-m-d'));
         $end_date = (!empty($this->input->get('to_date')) ? $this->input->get('to_date') : date('Y-m-d'));
-        $sales_report = $this->report_model->user_sales_report($star_date, $end_date, $user_id);
+         $user_id = $this->session->userdata('id');
+        $sales_report = $this->report_model->user_sales_report($user_id);
 
         $sales_amount = 0;
         if (!empty($sales_report)) {

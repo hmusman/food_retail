@@ -291,7 +291,7 @@ class Report_model extends CI_Model {
 
 
         // ======================= user sales report ================
-    public function user_sales_report($from_date,$to_date,$user_id) {
+    public function user_sales_report($user_id) {
         
         $date = date('Y-m-d');
         $rawquery = 'SELECT
@@ -304,6 +304,10 @@ class Report_model extends CI_Model {
                             invoice a
                         LEFT JOIN users b ON
                             b.user_id = a.sales_by
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            a.date = '.$date.'    
                         GROUP BY
                             a.sales_by
                             
@@ -317,6 +321,10 @@ class Report_model extends CI_Model {
                             FROM expense  e
                             LEFT JOIN users b ON
                             b.user_id = e.user_id
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            e.date = '.$date.'
                         GROUP BY
                             e.id
                             
@@ -332,6 +340,10 @@ class Report_model extends CI_Model {
                             employee_salary_payment emp
                         LEFT JOIN users b ON
                             b.user_id = emp.paid_by
+                        where
+                            b.user_id = '.$user_id.'
+                        AND 
+                            emp.payment_date = '.$date.'    
                         GROUP BY
                             emp.paid_by';                   
         $query = $this->db->query($rawquery);
