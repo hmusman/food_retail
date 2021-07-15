@@ -307,7 +307,7 @@ class Report_model extends CI_Model {
                         where
                             b.user_id = '.$user_id.'
                         AND 
-                            a.date = '.$date.'    
+                            a.date = "'.$date.'"    
                         GROUP BY
                             a.sales_by
                             
@@ -324,7 +324,7 @@ class Report_model extends CI_Model {
                         where
                             b.user_id = '.$user_id.'
                         AND 
-                            e.date = '.$date.'
+                            e.date = "'.$date.'"
                         GROUP BY
                             e.id
                             
@@ -343,7 +343,7 @@ class Report_model extends CI_Model {
                         where
                             b.user_id = '.$user_id.'
                         AND 
-                            emp.payment_date = '.$date.'    
+                            emp.payment_date = "'.$date.'"    
                         GROUP BY
                             emp.paid_by';                   
         $query = $this->db->query($rawquery);
