@@ -653,7 +653,14 @@ class Report extends MX_Controller
                 ) t2
                 WHERE
                     t1.product_id = t2.product_id
+                
+                
+                
+                    /*Finished Food Query End*/
+                    /*Raw material Report Start*/
                 UNION
+
+
 
                 SELECT
                 t.product_id,
@@ -688,7 +695,46 @@ class Report extends MX_Controller
             GROUP BY
                 p.product_name,
                 p.product_id
-            ) t";
+            ) t
+            UNION 
+            
+            SELECT
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
+                FROM
+                    (
+                    SELECT
+                        p.product_id,
+                        p.product_name,
+                        SUM(pd.quantity) qty
+                    FROM
+                        product_purchase pr
+                    INNER JOIN product_purchase_details pd ON
+                        pr.purchase_id = pd.purchase_id
+                    INNER JOIN product_information p ON
+                        p.product_id = pd.product_id
+                    GROUP BY
+                        p.product_name,
+                        p.product_id
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
 
         $data['module']       = "report";
         $data['page']         = "finishFoodStock";
