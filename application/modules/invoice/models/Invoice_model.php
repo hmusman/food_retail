@@ -284,7 +284,7 @@ public function invoice_taxinfo($invoice_id){
         if (!empty($_POST['tracking_number'])) {
             $tracking_number          = $this->input->post('tracking_number');
         } else {
-            $tracking_number = NULL;
+            $tracking_number = "NULL";
         }
 
      $bank_id = $this->input->post('bank_id',TRUE);
