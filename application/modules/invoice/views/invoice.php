@@ -20,8 +20,8 @@
                         </div>  
                         <div class="form-group">
                             <select class="form-control" id="panda">
-                                <option disabled selected>Select</option>
-                                <option value="food_panda">food panda</option>
+                                <option disabled selected>Select Option</option>
+                                <option value="food_panda">Food Panda</option>
                             </select>
                         </div>
                         <button type="button" id="btn-filter" class="btn btn-success"><?php echo display('find') ?></button>

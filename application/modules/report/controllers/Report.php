@@ -262,6 +262,7 @@ class Report extends MX_Controller
         $star_date = (!empty($this->input->get('from_date')) ? $this->input->get('from_date') : date('Y-m-d'));
         $end_date = (!empty($this->input->get('to_date')) ? $this->input->get('to_date') : date('Y-m-d'));
         $sales_report = $this->report_model->user_sales_report($star_date, $end_date, $user_id);
+
         $sales_amount = 0;
         if (!empty($sales_report)) {
             $i = 0;
@@ -274,16 +275,16 @@ class Report extends MX_Controller
         }
         $user_list = $this->report_model->userList();
         $data = array(
-            'title'         => display('user_wise_sales_report'),
-            'sales_amount'  => number_format($sales_amount, 2, '.', ','),
+            // 'title'         => display('user_wise_sales_report'),
+            // 'sales_amount'  => number_format($sales_amount, 2, '.', ','),
             'sales_report'  => $sales_report,
-            'from'          => $this->occational->dateConvert($star_date),
-            'to'            => $this->occational->dateConvert($end_date),
-            'user_list'     => $user_list,
-            'user_id'       => $user_id,
+            // 'from'          => $this->occational->dateConvert($star_date),
+            // 'to'            => $this->occational->dateConvert($end_date),
+            // 'user_list'     => $user_list,
+            // 'user_id'       => $user_id,
         );
         $data['module']   = "report";
-        $data['page']     = "user_wise_sales_report";
+        $data['page']     = "users_sales_report";
         echo modules::run('template/layout', $data);
     }
 
