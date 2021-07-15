@@ -110,6 +110,7 @@
                                         <tr>
                                             <th><?php echo display('sl')?></th>
                                             <th><?php echo display('user_name') ?></th>
+                                            <th>Type</th>
                                             <th><?php echo display('total_invoice') ?></th>
                                             <th><?php echo display('total_amount') ?></th>
                                            
@@ -129,8 +130,9 @@
                                 <tr>
                                     <td><?php echo $sl;?></td>
                                     <td><?php echo html_escape($sales['first_name']).' '.html_escape($sales['last_name'])?></td>
+                                    <td><?php echo $sales['type'] ?></td>
                                     <td>
-                                    <?php echo html_escape($sales['toal_invoice'])?> 
+                                    <?php echo $sales['count']?> 
                                     </td>
                                     <td class="text-right"><?php 
                                if($position == 0){
@@ -151,16 +153,16 @@
                                             </tr> 
                                         <?php } ?>
                                     </tbody>
-                                     <tfoot>
+                                     <!-- <tfoot>
                                         <tr>
-                                            <td colspan="3" class="text-right"><b><?php echo display('total_seles') ?></b></td>
+                                            <td colspan="4" class="text-right"><b><?php echo display('total_seles') ?></b></td>
                                             <td class="text-right"><b><?php if($position == 0){
                                               echo $currency.' '.number_format($subtotal, 2, '.', ',');  
                                             }else{
                                             echo number_format($subtotal, 2, '.', ',').' '.$currency; 
                                             } ?></b></td>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> -->
                                 </table>
                             </div>
                         </div>

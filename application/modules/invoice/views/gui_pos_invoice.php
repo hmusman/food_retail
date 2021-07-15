@@ -138,10 +138,13 @@
             <div class="form-group">
             <input type="text" class="form-control" id="add_item_m" placeholder="Manual Input barcode">
             </div>
+              <div class="form-group">
+            <label class="mr-3 ml-3">OR</label>                                 
+            </div>
             <div class="form-group">
-              <select class="form-control" id="food_panda">
+              <select class="form-control select" id="food_panda" style="border-radius: 7px">
                 <option disabled selected="">Select Option</option>
-                <option value="food_panda">food panda</option>
+                <option value="food_panda">Food Panda</option>
               </select>
             </div>
       </form>
@@ -163,8 +166,10 @@
 </div>
  <input class="form-control" type="hidden"  name="invoice_no" id="invoice_no" required value="<?php echo html_escape($invoice_no); ?>" readonly/>
 </div>
-<div class="d-flex align-items-center">
-  <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;">
+
+<div class="d-flex align-items-center" style="margin-left: 10px">
+  <label id="label_pand" style="display: none">TrackingID</label>
+  <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;border-radius: 7px;">
 </div>
 </div>
 
@@ -539,9 +544,11 @@ name="shipping_cost" onkeyup="quantity_calculate(1);"  onchange="quantity_calcul
           if (this.value == 'food_panda') {
 
             $('#tracking_nmbr').css("display", "");
+            $('#label_pand').css('display',"");
 
           }else{
 
+            $('#label_pand').css('display',"none");
             $('#tracking_nmbr').css("display", "none");
           }
         });
