@@ -138,15 +138,6 @@
             <div class="form-group">
             <input type="text" class="form-control" id="add_item_m" placeholder="Manual Input barcode">
             </div>
-              <div class="form-group">
-            <label class="mr-3 ml-3">OR</label>                                 
-            </div>
-            <div class="form-group">
-              <select class="form-control select" id="food_panda" style="border-radius: 7px">
-                <option disabled selected="">Select Option</option>
-                <option value="food_panda">Food Panda</option>
-              </select>
-            </div>
       </form>
  <?php echo form_open_multipart('invoice/invoice/bdtask_manual_sales_insert', array('class' => 'form-vertical', 'id' => 'gui_sale_insert', 'name' => 'insert_pos_invoice')) ?>
 <div class="d-flex align-items-center mb-5">
@@ -167,9 +158,21 @@
  <input class="form-control" type="hidden"  name="invoice_no" id="invoice_no" required value="<?php echo html_escape($invoice_no); ?>" readonly/>
 </div>
 
-<div class="d-flex align-items-center" style="margin-left: 10px">
-  <label id="label_pand" style="display: none">TrackingID</label>
-  <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;border-radius: 7px;">
+
+
+</div>
+
+<div class="d-flex align-items-center mb-3">
+  <div class="form-group"><label>FoodPand Tracking</label></div>
+  <div class="form-group" style="margin-left: 10px">
+    <select class="form-control select" id="food_panda" style="border-radius: 7px">
+      <option disabled selected="">Select Option</option>
+      <option value="food_panda">Food Panda</option>
+    </select>
+  </div>
+  <div class="form-group" style="margin-left: 10px">
+  <!-- <label id="label_pand" style="display: none">TrackingID</label> -->
+  <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;border-radius: 5px;">
 </div>
 </div>
 
