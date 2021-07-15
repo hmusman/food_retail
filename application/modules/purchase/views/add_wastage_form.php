@@ -6,7 +6,7 @@
         <div class="panel panel-bd lobidrag">
             <div class="panel-heading">
                 <div class="panel-title">
-                    <h4><?php echo display('add_purchase') ?></h4>
+                    <h4><?php echo ('Waste Form') ?></h4>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
 
                     <div class="col-sm-12">
                         <div class="form-group row">
-                            <label for="date" class="col-sm-4 col-form-label"><?php echo display('purchase_date') ?>
+                            <label for="date" class="col-sm-4 col-form-label text-capitalize"><?php echo ('date') ?>
                                 <i class="text-danger">*</i>
                             </label>
                             <div class="col-sm-8">

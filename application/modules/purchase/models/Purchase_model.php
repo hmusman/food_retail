@@ -249,7 +249,7 @@ class Purchase_model extends CI_Model
 
     public function edit_receipe($id)
     {
-        $this->db->select('b.*,p.product_name,a.receipe_name,a.expected_weight,a.no_plates,a.receipe,a.r_date');
+        $this->db->select('b.*,p.product_name,a.receipe_name,a.expected_weight,a.no_plates,a.receipe,a.r_date,p.serial_no');
         $this->db->from('receipe a');
         $this->db->join('receipe_detail b', 'b.receipe_id = a.receipe_id');
         $this->db->join('product_information p', 'b.product_id = p.product_id');

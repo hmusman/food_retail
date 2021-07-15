@@ -29,12 +29,12 @@ $user_id = $this->session->userdata('id'); ?>
                 </div>
 
                 <div class="form-group row">
-                    <div class="col-sm-6">
+                    <!-- <div class="col-sm-6">
                         <label for="no_plates" class="col-sm-4 col-form-label"><?php echo ('No Plates') ?> <i class="text-danger"></i></label>
                         <div class="col-sm-8">
                             <input type="text" name="no_plates" required class="form-control" placeholder="No Plates">
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-sm-6">
                         <label for="r_date" class="col-sm-4 col-form-label"><?php echo display('date') ?><i class="text-danger">*</i> </label>

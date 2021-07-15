@@ -59,7 +59,7 @@
                                     <th class=""><?php echo display('quantity') ?></th>
                                     <th class=""><?php echo ('Waste') ?></th>
                                     <th class=""><?php echo ('Lost') ?></th>
-                                    <th class=""><?php echo ('Remaning') ?></th>                                    
+                                    <!-- <th class=""><?php echo ('Total Quantity') ?></th>                                     -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,7 +76,7 @@
                                             <td> <?php echo ($single['quantity']); ?></td>
                                             <td> <?php echo ($single['waste']); ?></td>
                                             <td> <?php echo ($single['lose']); ?></td>
-                                            <td> <?php echo ($single['remaining']); ?></td>
+                                            <!-- <td> <?php echo ($single['total_quantity']); ?></td> -->
                                         </tr>
                                     <?php
                                     }

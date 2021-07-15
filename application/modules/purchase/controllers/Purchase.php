@@ -748,9 +748,9 @@ class Purchase extends MX_Controller
                 'waste_id' => $waste_id,
                 'product_id' => $product_id,
                 'quantity' => $quty[$i],
-                'waste'         => $product_rate[$i],
-                'lose'           => $product_quantity[$i],
-                'remaining'               => $total_price[$i],     
+                'lose'         => $product_rate[$i],
+                'waste'           => $product_quantity[$i],
+                'total_quantity'               => $total_price[$i],     
             );
             
             $this->db->insert('waste_detail', $data1);
