@@ -72,26 +72,23 @@ function calculate_store_waste(sl) {
     var dis = 0;
     var item_ctn_qty = $("#cartoon_" + sl).val();
     var vendor_rate = $("#product_rate_" + sl).val();
+    var stock_t = $("#available_quantity_" + sl).val();
 
-    item_ctn_qty = parseInt(item_ctn_qty);
-    vendor_rate = parseInt(vendor_rate);
+    var t_data = parseFloat(item_ctn_qty) + parseFloat(vendor_rate);
+    t_data = parseFloat(t_data);
+    var total_price = stock_t - t_data;
 
-
-    var available_quantity_1 = $("#available_quantity_" + sl).val();
-
-    // var total_price = item_ctn_qty * vendor_rate;
-    // alert();
-    var total_price = available_quantity_1 - (item_ctn_qty + vendor_rate);
-    // alert(available_quantity_1);
+    total_price = parseInt(total_price);
     $("#total_price_" + sl).val(total_price.toFixed(2));
 
+    // console.log(item_ctn_qty + vendor_rate);
     //Total Price
     $(".total_price").each(function() {
         isNaN(this.value) || 0 == this.value.length || (gr_tot += parseFloat(this.value))
     });
-    $(".discount").each(function() {
-        isNaN(this.value) || 0 == this.value.length || (dis += parseFloat(this.value))
-    });
+    // $(".discount").each(function() {
+    //     isNaN(this.value) || 0 == this.value.length || (dis += parseFloat(this.value))
+    // });
 
     $("#Total").val(gr_tot.toFixed(2, 2));
     var grandtotal = gr_tot - dis;

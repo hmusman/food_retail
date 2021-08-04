@@ -139,10 +139,10 @@
                                 </td>
 
                                 <td class="text-right">
-                                    <input type="text" name="product_quantity[]" id="cartoon_1" required="" min="0" class="form-control text-right store_cal_1" onkeyup="calculate_store_waste(1);" onchange="calculate_store_waste(1);" placeholder="0.00" value="" tabindex="6" />
+                                    <input type="text" name="product_quantity[]" id="cartoon_1" required="" min="0" class="form-control text-right store_cal_1 total_price" onkeyup="calculate_store_waste(1);" onchange="calculate_store_waste(1);" placeholder="0.00" value="" tabindex="6" />
                                 </td>
                                 <td class="test">
-                                    <input type="text" name="product_rate[]" required="" onkeyup="calculate_store_waste(1);" onchange="calculate_store_waste(1);" id="product_rate_1" class="form-control product_rate_1 text-right" placeholder="0.00" value="" min="0" tabindex="7" />
+                                    <input type="text" name="product_rate[]" required="" onkeyup="calculate_store_waste(1);" onchange="calculate_store_waste(1);" id="product_rate_1" class="form-control product_rate_1 text-right total_price" placeholder="0.00" value="" min="0" tabindex="7" />
                                 </td>
 
                                 <td class="text-right">

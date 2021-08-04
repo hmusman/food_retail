@@ -578,5 +578,170 @@ class Report_model extends CI_Model {
         }
         return false;
     }
+
+    public function rawMaterialStock(){
+        $rawQry = "SELECT
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
+                FROM
+                    (
+                    SELECT
+                        p.product_id,
+                        p.product_name,
+                        SUM(pd.quantity) qty
+                    FROM
+                        product_purchase pr
+                    INNER JOIN product_purchase_details pd ON
+                        pr.purchase_id = pd.purchase_id
+                    INNER JOIN product_information p ON
+                        p.product_id = pd.product_id
+                    GROUP BY
+                        p.product_name,
+                        p.product_id
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
+
+        return $this->db->query($rawQry);
+    }
+
+    public function finishFoodStock(){
+        $rawQry = "SELECT
+                    t1.product_id,
+                    t1.product_name,
+                    t1.qty - t2.qty qty
+                FROM
+                    (
+                    SELECT
+                        p.product_id,
+                        p.product_name,
+                        SUM(sd.quantity) qty
+                    FROM
+                        stock s
+                    INNER JOIN stock_details sd ON
+                        s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
+                    INNER JOIN product_information p ON
+                        p.product_id = sd.product_id
+                    GROUP BY
+                        p.product_name,
+                        p.product_id
+                ) t1,
+                (
+                    SELECT
+                        p.product_id,
+                        p.product_name,
+                        d.quantity * invd.quantity qty
+                    FROM
+                        invoice_details invd
+                    INNER JOIN product_deal_details d ON
+                        d.deal_id = invd.deal_id
+                    INNER JOIN product_information p ON
+                        p.product_id = d.product_id
+                    GROUP BY
+                        p.product_name,
+                        p.product_id
+                ) t2
+                WHERE
+                    t1.product_id = t2.product_id
+                
+                
+                
+                    /*Finished Food Query End*/
+                    /*Raw material Report Start*/
+                UNION
+
+
+
+                SELECT
+                t.product_id,
+                t.product_name,
+                SUM(t.qty) qty
+            FROM
+                (
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'finish_foods'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                UNION
+            SELECT
+                p.product_id,
+                p.product_name,
+                SUM(invd.quantity) * -1 qty
+            FROM
+                invoice inv
+            INNER JOIN invoice_details invd ON
+                inv.invoice_id = invd.invoice_id
+            INNER JOIN product_information p ON
+                p.product_id = invd.product_id
+            GROUP BY
+                p.product_name,
+                p.product_id
+            ) t
+            UNION 
+            
+            SELECT
+                    t.product_id,
+                    t.product_name,
+                    SUM(t.qty) qty
+                FROM
+                    (
+                    SELECT
+                        p.product_id,
+                        p.product_name,
+                        SUM(pd.quantity) qty
+                    FROM
+                        product_purchase pr
+                    INNER JOIN product_purchase_details pd ON
+                        pr.purchase_id = pd.purchase_id
+                    INNER JOIN product_information p ON
+                        p.product_id = pd.product_id
+                    GROUP BY
+                        p.product_name,
+                        p.product_id
+                    UNION
+                SELECT
+                    p.product_id,
+                    p.product_name,
+                    SUM(sd.quantity) * -1 qty
+                FROM
+                    stock s
+                INNER JOIN stock_details sd ON
+                    s.stk_id = sd.stk_id AND sd.type = 'raw_material'
+                INNER JOIN product_information p ON
+                    p.product_id = sd.product_id
+                GROUP BY
+                    p.product_name,
+                    p.product_id
+                ) t
+                GROUP BY
+                    t.product_id,
+                    t.product_name";
+        return $this->db->query($rawQry);
+    }
 }
 

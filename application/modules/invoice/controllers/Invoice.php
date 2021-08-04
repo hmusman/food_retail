@@ -1242,25 +1242,27 @@ class Invoice extends MX_Controller
         echo modules::run('template/layout', $data);
     }
 
-    public function get_employ(){
+    public function get_employ()
+    {
         extract($_POST);
-        
+
         $data = $this->db->select('hrate')
-        ->from('employee_history')
-        ->where('id', $employ_id)
-        ->get()
-        ->result_array();
-        
+            ->from('employee_history')
+            ->where('id', $employ_id)
+            ->get()
+            ->result_array();
+
         echo $data[0]['hrate'];
     }
 
-    public function advance_form_insert(){
+    public function advance_form_insert()
+    {
         $advance_amount = $this->input->post('advance_data', TRUE);
         $employ_id = $this->input->post('employ_id', TRUE);
         $sale_type = $this->input->post('sale_type', TRUE);
         $date = $this->input->post('date', TRUE);
         $remaining = $this->input->post('remaining', TRUE);
-        
+
         $data = array(
             'employee_id' => $employ_id,
             'sal_type' => $sale_type,
@@ -1279,10 +1281,103 @@ class Invoice extends MX_Controller
         );
         $result = $this->db->insert('employee_salary_payment', $data1);
 
-        if($result == true){
+        if ($result == true) {
             redirect("advance_form");
-        } else{
+        } else {
             redirect("advance_form");
+        }
+    }
+
+    public function check_process_ajax()
+    {
+
+        $this->db->select('*');
+        $this->db->from('invoice');
+        $this->db->where('process', 'process');
+        $this->db->order_by('id', 'desc');
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        foreach ($result as $key => $result_val) {
+?>
+            <tr>
+                <th scope="row"><?php echo $key + 1; ?></th>
+                <td><?php echo $result_val['invoice']; ?></td>
+                <?php
+                if ($result_val['process'] == 'process') {
+                ?>
+                    <td><button class="btn btn-success" id="<?php echo $result_val['invoice_id']; ?>" data-id="<?php echo $result_val['invoice']; ?>" onclick="update_order(this)"><i class="fa fa-edit"></i></button></td>
+                    <td><button onclick="conferm_order(this)" id="<?php echo $result_val['id']; ?>" class="btn btn-info"><i class="fa fa-check"></i></button></td>
+                <?php
+                }
+                ?>
+            </tr>
+        <?php
+        }
+    }
+
+    public function conferm_order_ajax()
+    {
+        extract($_POST);
+
+        $data = array(
+            'process'      => 'complete',
+        );
+        $this->db->where('id', $id);
+        $this->db->update('invoice', $data);
+    }
+
+    public function update_order_ajax()
+    {
+        extract($_POST);
+        $this->db->select('invoice_details.*,product_information.product_name');
+        $this->db->from('invoice');
+        $this->db->join('invoice_details', 'invoice.invoice_id = invoice_details.invoice_id');
+        $this->db->join('product_information', 'invoice_details.product_id = product_information.product_id');
+        $this->db->where('invoice.invoice_id', $id);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        
+        foreach ($result as $key => $value) {
+            
+            ?>
+            <tr id="row_<?php echo $value['product_id']; ?>">
+                <td class="" style="width:220px">
+
+                    <input type="text" name="product_name" onkeypress="invoice_productList('<?php echo $value['product_id']; ?>');" class="form-control productSelection " value="<?php echo $value['product_name']; ?>" placeholder="Product Name" required="" tabindex="" readonly="">
+
+                    <input type="hidden" class="form-control autocomplete_hidden_value product_id_<?php echo $value['product_id']; ?>" name="product_id[]" id="SchoolHiddenId_<?php echo $value['product_id']; ?>" value="<?php echo $value['product_id']; ?>">
+                    <input type="hidden" class="form-control autocomplete_hidden_value deals_id0" name="deals_id[]" id="deals_id_0" value="0">
+                </td>
+                <td><select name="serial_no[]" class="serial_no_1 form-control" id="serial_no_<?php echo $value['product_id']; ?>">
+                        <option value="">Select One</option>
+                        <option value="finish_foods">finish_foods</option>
+                    </select></td>
+                <td>
+                    <input type="text" name="available_quantity[]" class="form-control text-right available_quantity_<?php echo $value['product_id']; ?>" value="<?php echo $value['quantity']; ?>" readonly="" id="available_quantity_<?php echo $value['product_id']; ?>">
+                </td>
+                <td>
+                    <input type="text" value="<?php echo $value['quantity']; ?>" name="product_quantity[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" class="total_qntt_<?php echo $value['product_id']; ?> form-control text-right" id="total_qntt_<?php echo $value['product_id']; ?>" placeholder="0.00" min="0" required="required">
+                </td>
+                <td style="width:85px">
+                    <input value="<?php echo $value['rate']; ?>" type="text" name="product_rate[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" <?php echo $value['quantity']; ?> id="price_item_<?php echo $value['product_id']; ?>" class="price_item1 form-control text-right" required="" placeholder="0.00" min="0">
+                </td>
+
+                <td class="">
+                    <input type="text" value="<?php echo $value['discount']; ?>" name="discount[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" id="discount_<?php echo $value['product_id']; ?>" class="form-control text-right" placeholder="0.00" min="0">
+                </td>
+
+                <td class="text-right" style="width:100px">
+                    <input value="<?php echo $value['total_price']; ?>" class="total_price form-control text-right" type="text" name="total_price[]" id="total_price_<?php echo $value['product_id']; ?>" value="21" tabindex="-1" readonly="readonly">
+                </td>
+
+                <td><input type="hidden" id="total_discount_<?php echo $value['product_id']; ?>">
+                    <input type="hidden" id="all_discount_<?php echo $value['product_id']; ?>" class="total_discount dppr" value="0">
+                    <a style="text-align: right;" class="btn btn-danger btn-xs" href="#" onclick="deleteRow(this)"><i class="fa fa-close"></i></a>
+                    <a style="text-align: right;" class="btn btn-success btn-xs" href="#" onclick="detailsmodal('plates','472','123','','21','my-assets/image/product.png')"><i class="fa fa-eye"></i></a>
+                </td>
+            </tr>
+        <?php
         }
     }
 }
