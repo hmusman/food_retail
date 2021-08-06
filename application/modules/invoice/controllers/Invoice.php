@@ -1330,54 +1330,68 @@ class Invoice extends MX_Controller
     public function update_order_ajax()
     {
         extract($_POST);
-        $this->db->select('invoice_details.*,product_information.product_name');
+        $this->db->select(
+            'invoice_details.*,
+            product_information.product_name,
+            invoice.total_discount,
+            invoice.invoice_discount,
+            invoice.total_amount,
+            invoice.paid_amount,
+            invoice.shipping_cost,
+            invoice.prevous_due,
+            invoice.customer_id,
+            invoice.invoice'
+        );
         $this->db->from('invoice');
         $this->db->join('invoice_details', 'invoice.invoice_id = invoice_details.invoice_id');
         $this->db->join('product_information', 'invoice_details.product_id = product_information.product_id');
         $this->db->where('invoice.invoice_id', $id);
         $query = $this->db->get();
-        $result = $query->result_array();
-        
-        foreach ($result as $key => $value) {
-            
-            ?>
-            <tr id="row_<?php echo $value['product_id']; ?>">
-                <td class="" style="width:220px">
+        $result['result'] = $query->result_array();
 
-                    <input type="text" name="product_name" onkeypress="invoice_productList('<?php echo $value['product_id']; ?>');" class="form-control productSelection " value="<?php echo $value['product_name']; ?>" placeholder="Product Name" required="" tabindex="" readonly="">
+        $this->load->view('update_invoice',$result);
+    }
 
-                    <input type="hidden" class="form-control autocomplete_hidden_value product_id_<?php echo $value['product_id']; ?>" name="product_id[]" id="SchoolHiddenId_<?php echo $value['product_id']; ?>" value="<?php echo $value['product_id']; ?>">
-                    <input type="hidden" class="form-control autocomplete_hidden_value deals_id0" name="deals_id[]" id="deals_id_0" value="0">
-                </td>
-                <td><select name="serial_no[]" class="serial_no_1 form-control" id="serial_no_<?php echo $value['product_id']; ?>">
-                        <option value="">Select One</option>
-                        <option value="finish_foods">finish_foods</option>
-                    </select></td>
-                <td>
-                    <input type="text" name="available_quantity[]" class="form-control text-right available_quantity_<?php echo $value['product_id']; ?>" value="<?php echo $value['quantity']; ?>" readonly="" id="available_quantity_<?php echo $value['product_id']; ?>">
-                </td>
-                <td>
-                    <input type="text" value="<?php echo $value['quantity']; ?>" name="product_quantity[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" class="total_qntt_<?php echo $value['product_id']; ?> form-control text-right" id="total_qntt_<?php echo $value['product_id']; ?>" placeholder="0.00" min="0" required="required">
-                </td>
-                <td style="width:85px">
-                    <input value="<?php echo $value['rate']; ?>" type="text" name="product_rate[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" <?php echo $value['quantity']; ?> id="price_item_<?php echo $value['product_id']; ?>" class="price_item1 form-control text-right" required="" placeholder="0.00" min="0">
-                </td>
-
-                <td class="">
-                    <input type="text" value="<?php echo $value['discount']; ?>" name="discount[]" onkeyup="quantity_calculate('<?php echo $value['product_id']; ?>');" onchange="quantity_calculate('<?php echo $value['product_id']; ?>');" id="discount_<?php echo $value['product_id']; ?>" class="form-control text-right" placeholder="0.00" min="0">
-                </td>
-
-                <td class="text-right" style="width:100px">
-                    <input value="<?php echo $value['total_price']; ?>" class="total_price form-control text-right" type="text" name="total_price[]" id="total_price_<?php echo $value['product_id']; ?>" value="21" tabindex="-1" readonly="readonly">
-                </td>
-
-                <td><input type="hidden" id="total_discount_<?php echo $value['product_id']; ?>">
-                    <input type="hidden" id="all_discount_<?php echo $value['product_id']; ?>" class="total_discount dppr" value="0">
-                    <a style="text-align: right;" class="btn btn-danger btn-xs" href="#" onclick="deleteRow(this)"><i class="fa fa-close"></i></a>
-                    <a style="text-align: right;" class="btn btn-success btn-xs" href="#" onclick="detailsmodal('plates','472','123','','21','my-assets/image/product.png')"><i class="fa fa-eye"></i></a>
-                </td>
-            </tr>
-        <?php
-        }
+    public function bdtask_manual_sales_update()
+    {
+        // die($this->input->post('grand_total_price', TRUE)); 
+        $this->form_validation->set_rules('customer_id', display('customer_name'), 'required|max_length[15]');
+        $this->form_validation->set_rules('paytype', display('payment_type'), 'required|max_length[20]');
+        $this->form_validation->set_rules('invoice_no', display('invoice_no'), 'required|max_length[20]|is_unique[invoice.invoice]');
+        $this->form_validation->set_rules('product_id[]', display('product'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_quantity[]', display('quantity'), 'required|max_length[20]');
+        $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
+        $normal = $this->input->post('is_normal');
+        $invoice_id = $this->invoice_model->invoice_entry_update();
+        redirect('gui_pos');
+        // if ($this->form_validation->run() === true) {
+        //     $invoice_id = $this->invoice_model->invoice_entry();
+        //     if (!empty($invoice_id)) {
+        //         $data['status'] = true;
+        //         $data['invoice_id'] = $invoice_id;
+        //         $data['message'] = display('save_successfully');
+        //         $mailsetting = $this->db->select('*')->from('email_config')->get()->result_array();
+        //         if ($mailsetting[0]['isinvoice'] == 1) {
+        //             $mail = $this->invoice_pdf_generate($invoice_id);
+        //             if ($mail == 0) {
+        //                 $data['exception'] = $this->session->set_userdata(array('error_message' => display('please_config_your_mail_setting')));
+        //             }
+        //         }
+        //         if ($normal == 1) {
+        //             $printdata = $this->bdtask_invoice_details_directprint($invoice_id);
+        //             $data['details'] = $this->load->view('invoice/invoice_html_manual', $printdata, true);
+        //         } else {
+        //             $printdata = $this->invoice_model->bdtask_invoice_pos_print_direct($invoice_id);
+        //             $data['details'] = $this->load->view('invoice/pos_print', $printdata, true);
+        //         }
+        //     } else {
+        //         $data['status'] = false;
+        //         $data['exception'] = 'Please Try Again';
+        //     }
+        // } else {
+        //     $data['status'] = false;
+        //     $data['exception'] = validation_errors();
+        // }
+        // echo json_encode($invoice_id);
     }
 }

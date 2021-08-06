@@ -276,6 +276,7 @@ class Invoice_model extends CI_Model
 
     public function invoice_entry()
     {
+        // die("Invoice Data");
         $tablecolumn         = $this->db->list_fields('tax_collection');
         $num_column          = count($tablecolumn) - 4;
         $invoice_id          = $this->generator(10);
@@ -1258,5 +1259,294 @@ class Invoice_model extends CI_Model
             return $query->result_array();
         }
         return false;
+    }
+
+    public function invoice_entry_update()
+    {
+        $invoice_id_update = $this->input->post('invoice_id', TRUE);
+        $tablecolumn         = $this->db->list_fields('tax_collection');
+        $num_column          = count($tablecolumn) - 4;
+        $invoice_id          = $this->generator(10);
+        $invoice_id          = strtoupper($invoice_id);
+        $createby            = $this->session->userdata('id');
+        $createdate          = date('Y-m-d H:i:s');
+        $product_id          = $this->input->post('product_id');
+        $deals_id          = $this->input->post('deals_id');
+        $currency_details    = $this->db->select('*')->from('web_setting')->get()->result_array();
+        $quantity            = $this->input->post('product_quantity', TRUE);
+        $invoice_no_generated = $this->input->post('invoic_no');
+        $changeamount        = $this->input->post('change', TRUE);
+        if ($changeamount > 0) {
+            $paidamount = $this->input->post('n_total', TRUE);
+        } else {
+            $paidamount = $this->input->post('paid_amount', TRUE);
+        }
+        if (!empty($_POST['tracking_number'])) {
+            $tracking_number          = $this->input->post('tracking_number');
+        } else {
+            $tracking_number = NULL;
+        }
+
+        $bank_id = $this->input->post('bank_id', TRUE);
+        if (!empty($bank_id)) {
+            $bankname = $this->db->select('bank_name')->from('bank_add')->where('bank_id', $bank_id)->get()->row()->bank_name;
+
+            $bankcoaid = $this->db->select('HeadCode')->from('acc_coa')->where('HeadName', $bankname)->get()->row()->HeadCode;
+        } else {
+            $bankcoaid = '';
+        }
+
+        $available_quantity = $this->input->post('available_quantity', TRUE);
+
+        $result = array();
+        foreach ($available_quantity as $k => $v) {
+            if ($v < $quantity[$k]) {
+                $this->session->set_userdata(array('error_message' => display('you_can_not_buy_greater_than_available_qnty')));
+                redirect('Cinvoice');
+            }
+        }
+
+
+        $customer_id = $this->input->post('customer_id', TRUE);
+        // die($customer_id);
+        //Full or partial Payment record.
+        $paid_amount    = $this->input->post('paid_amount', TRUE);
+        $transection_id = $this->generator(8);
+        $tax_v = 0;
+        for ($j = 0; $j < $num_column; $j++) {
+            $taxfield        = 'tax' . $j;
+            $taxvalue        = 'total_tax' . $j;
+            $taxdata[$taxfield] = $this->input->post($taxvalue);
+            $tax_v    += $this->input->post($taxvalue);
+        }
+        $taxdata['customer_id'] = $customer_id;
+        $taxdata['date']        = (!empty($this->input->post('invoice_date', TRUE)) ? $this->input->post('invoice_date', TRUE) : date('Y-m-d'));
+        $taxdata['relation_id'] = $invoice_id_update;
+        if ($tax_v > 0) {
+            $this->db->insert('tax_collection', $taxdata);
+        }
+
+
+        //Data inserting into invoice table
+        $datainv = array(
+            'invoice_id'      => $invoice_id_update,
+            'customer_id'     => $customer_id,
+            'date'            => (!empty($this->input->post('invoice_date', TRUE)) ? $this->input->post('invoice_date', TRUE) : date('Y-m-d')),
+            'total_amount'    => $this->input->post('grand_total_price', TRUE),
+            'total_tax'       => $this->input->post('total_tax', TRUE),
+            'invoice'         => $this->input->post('invoice_no', TRUE),
+            'invoice_details' => (!empty($this->input->post('inva_details', TRUE)) ? $this->input->post('inva_details', TRUE) : 'Thank you for shopping with us'),
+            'invoice_discount' => $this->input->post('invoice_discount', TRUE),
+            'total_discount'  => $this->input->post('total_discount', TRUE),
+            'paid_amount'     => $this->input->post('paid_amount', TRUE),
+            'due_amount'      => $this->input->post('due_amount', TRUE),
+            'prevous_due'     => $this->input->post('previous', TRUE),
+            'shipping_cost'   => $this->input->post('shipping_cost', TRUE),
+            'sales_by'        => $this->session->userdata('id'),
+            'status'          => 1,
+            'tracking_id' => $tracking_number,
+            'payment_type'    =>  $this->input->post('paytype', TRUE),
+            'bank_id'         => (!empty($this->input->post('bank_id', TRUE)) ? $this->input->post('bank_id', TRUE) : null),
+        );
+        $this->db->where('invoice_id',$invoice_id_update);
+        $this->db->update('invoice', $datainv);
+
+        $prinfo  = $this->db->select('product_id,Avg(rate) as product_rate')->from('product_purchase_details')->where_in('product_id', $product_id)->group_by('product_id')->get()->result();
+        $purchase_ave = [];
+        $i = 0;
+        foreach ($prinfo as $avg) {
+            $purchase_ave[] =  $avg->product_rate * $quantity[$i];
+            $i++;
+        }
+        $sumval   = array_sum($purchase_ave);
+        $cusifo   = $this->db->select('*')->from('customer_information')->where('customer_id', $customer_id)->get()->row();
+        $headn    = $customer_id . '-' . $cusifo->customer_name;
+        $coainfo  = $this->db->select('*')->from('acc_coa')->where('HeadName', $headn)->get()->row();
+        $customer_headcode = $coainfo->HeadCode;
+        // Cash in Hand debit
+        $cc = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INV',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  1020101,
+            'Narration'      =>  'Cash in Hand in Sale for Invoice No - ' . $invoice_no_generated . ' customer- ' . $cusifo->customer_name,
+            'Debit'          =>  $paidamount,
+            'Credit'         =>  0,
+            'IsPosted'       =>  1,
+            'CreateBy'       =>  $createby,
+            'CreateDate'     =>  $createdate,
+            'IsAppove'       =>  1
+        );
+
+        // bank ledger
+        $bankc = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INVOICE',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  $bankcoaid,
+            'Narration'      =>  'Paid amount for customer  Invoice No - ' . $invoice_no_generated . ' customer -' . $cusifo->customer_name,
+            'Debit'          =>  $paidamount,
+            'Credit'         =>  0,
+            'IsPosted'       =>  1,
+            'CreateBy'       =>  $createby,
+            'CreateDate'     =>  $createdate,
+            'IsAppove'       =>  1
+        );
+
+        ///Inventory credit
+        $coscr = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INV',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  10107,
+            'Narration'      =>  'Inventory credit For Invoice No' . $invoice_no_generated,
+            'Debit'          =>  0,
+            'Credit'         =>  $sumval, //purchase price asbe
+            'IsPosted'       => 1,
+            'CreateBy'       => $createby,
+            'CreateDate'     => $createdate,
+            'IsAppove'       => 1
+        );
+        $this->db->insert('acc_transaction', $coscr);
+
+        // Customer Transactions
+        //Customer debit for Product Value
+        $cosdr = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INV',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  $customer_headcode,
+            'Narration'      =>  'Customer debit For Invoice No -  ' . $invoice_no_generated . ' Customer ' . $cusifo->customer_name,
+            'Debit'          =>  $this->input->post('n_total', TRUE) - (!empty($this->input->post('previous', TRUE)) ? $this->input->post('previous', TRUE) : 0),
+            'Credit'         =>  0,
+            'IsPosted'       => 1,
+            'CreateBy'       => $createby,
+            'CreateDate'     => $createdate,
+            'IsAppove'       => 1
+        );
+        $this->db->insert('acc_transaction', $cosdr);
+
+        $total_saleamnt = $this->input->post('n_total', TRUE) - (!empty($this->input->post('previous', TRUE)) ? $this->input->post('previous', TRUE) : 0);
+        $withoutinventory = $total_saleamnt - $sumval;
+        $income = $withoutinventory - $this->input->post('total_tax', TRUE);
+
+        $pro_sale_income = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INVOICE',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  303,
+            'Narration'      =>  'Sale Income For Invoice NO - ' . $invoice_no_generated . ' Customer ' . $cusifo->customer_name,
+            'Debit'          =>  0,
+            'Credit'         =>  $income,
+            'IsPosted'       => 1,
+            'CreateBy'       => $createby,
+            'CreateDate'     => $createdate,
+            'IsAppove'       => 1
+        );
+        $this->db->insert('acc_transaction', $pro_sale_income);
+
+        $tax_info = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INVOICE',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  50203,
+            'Narration'      =>  'Sale Income For Invoice NO - ' . $invoice_no_generated . ' Customer ' . $cusifo->customer_name,
+            'Debit'          =>  $this->input->post('total_tax', TRUE),
+            'Credit'         =>  0,
+            'IsPosted'       => 1,
+            'CreateBy'       => $createby,
+            'CreateDate'     => $createdate,
+            'IsAppove'       => 1
+        );
+        $this->db->insert('acc_transaction', $tax_info);
+
+        ///Customer credit for Paid Amount
+        $cuscredit = array(
+            'VNo'            =>  $invoice_id_update,
+            'Vtype'          =>  'INV',
+            'VDate'          =>  $createdate,
+            'COAID'          =>  $customer_headcode,
+            'Narration'      =>  'Customer credit for Paid Amount For Customer Invoice NO- ' . $invoice_no_generated . ' Customer- ' . $cusifo->customer_name,
+            'Debit'          =>  0,
+            'Credit'         =>  $paidamount,
+            'IsPosted'       => 1,
+            'CreateBy'       => $createby,
+            'CreateDate'     => $createdate,
+            'IsAppove'       => 1
+        );
+        if (!empty($this->input->post('paid_amount', TRUE))) {
+            $this->db->insert('acc_transaction', $cuscredit);
+
+            if ($this->input->post('paytype', TRUE) == 2) {
+                $this->db->insert('acc_transaction', $bankc);
+            }
+            if ($this->input->post('paytype', TRUE) == 1) {
+                $this->db->insert('acc_transaction', $cc);
+            }
+        }
+        $customerinfo = $this->db->select('*')->from('customer_information')->where('customer_id', $customer_id)->get()->row();
+
+        $rate                = $this->input->post('product_rate', TRUE);
+        $p_id                = $this->input->post('product_id', TRUE);
+        $total_amount        = $this->input->post('total_price', TRUE);
+        $discount_rate       = $this->input->post('discount_amount', TRUE);
+        $discount_per        = $this->input->post('discount', TRUE);
+        $tax_amount          = $this->input->post('tax', TRUE);
+        $invoice_description = $this->input->post('desc', TRUE);
+        $serial_n            = $this->input->post('serial_no', TRUE);
+
+        for ($i = 0, $n = count($p_id); $i < $n; $i++) {
+            $product_quantity = $quantity[$i];
+            $product_rate     = $rate[$i];
+            $product_id       = $p_id[$i];
+            $deal_id          = $deals_id[$i];
+            $serial_no        = (!empty($serial_n[$i]) ? $serial_n[$i] : null);
+            $total_price      = $total_amount[$i];
+            $supplier_rate    = $this->supplier_price($product_id);
+            $disper           = $discount_per[$i];
+            $discount         = is_numeric($product_quantity) * is_numeric($product_rate) * is_numeric($disper) / 100;
+            $tax              = $tax_amount[$i];
+            $description      = (!empty($invoice_description) ? $invoice_description[$i] : null);
+
+            $data1 = array(
+                'invoice_details_id' => $this->generator(15),
+                'invoice_id'         => $invoice_id_update,
+                'product_id'         => $product_id,
+                'serial_no'          => $serial_no,
+                'deal_id'            => $deal_id,
+                'quantity'           => $product_quantity,
+                'rate'               => $product_rate,
+                'discount'           => $discount,
+                'description'        => $description,
+                'discount_per'       => $disper,
+                'tax'                => $tax,
+                'paid_amount'        => $paidamount,
+                'due_amount'         => $this->input->post('due_amount', TRUE),
+                'supplier_rate'      => $supplier_rate,
+                'total_price'        => $total_price,
+                'status'             => 1
+            );
+            if (!empty($quantity)) {
+                $this->db->where('invoice_id',$invoice_id_update);
+                $this->db->update('invoice_details', $data1);
+            }
+        }
+        $message = 'Mr.' . $customerinfo->customer_name . ',
+        ' . 'You have purchase  ' . $this->input->post('grand_total_price', TRUE) . ' ' . $currency_details[0]['currency'] . ' You have paid .' . $this->input->post('paid_amount', TRUE) . ' ' . $currency_details[0]['currency'];
+
+
+        $config_data = $this->db->select('*')->from('sms_settings')->get()->row();
+        if ($config_data->isinvoice == 1) {
+            $this->smsgateway->send([
+                'apiProvider' => 'nexmo',
+                'username'    => $config_data->api_key,
+                'password'    => $config_data->api_secret,
+                'from'        => $config_data->from,
+                'to'          => $customerinfo->customer_mobile,
+                'message'     => $message
+            ]);
+        }
+
+        return $invoice_id_update;
     }
 }

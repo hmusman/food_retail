@@ -133,7 +133,8 @@
           </div>
         </div>
 
-        <div class="col-sm-12 col-md-5">
+        <div class="col-sm-12 col-md-5" id="addinvoiceItem">
+          
           <form class="form-inline mb-3">
             <div class="form-group">
               <input type="text" id="add_item" class="form-control" placeholder="Barcode or QR-code scan here">
@@ -159,7 +160,6 @@
               <label class="mr-2 mb-0"><?php echo display('invoice_no'); ?> - <i class="text-danger"></i></label>
               <div class="invoice-no" id="gui_invoice_no">
                 <?php echo html_escape($invoice_no); ?>
-
               </div>
               <input class="form-control" type="hidden" name="invoice_no" id="invoice_no" required value="<?php echo html_escape($invoice_no); ?>" readonly />
             </div>
@@ -205,7 +205,7 @@
                   <th class="text-center"><?php echo display('action') ?></th>
                 </tr>
               </thead>
-              <tbody id="addinvoiceItem"></tbody>
+              <tbody id=""></tbody>
             </table>
           </div>
           <div class="footer">
@@ -302,7 +302,7 @@
 
                     <input type="submit" id="add_invoice" class="btn btn-success btn-lg mr-2" name="add_invoice" value="Save Sale">
 
-                    <input type="submit" id="update_invoice" class="btn btn-info btn-lg mr-2" style="display: none !important;" name="update_invoice" value="Update Sale">
+                    <input type="button" onclick="update_invoce(this)" id="update_invoice" class="btn btn-info btn-lg mr-2" style="display: none !important;" name="update_invoice" value="Update Sale">
 
                     <a href="#" class="btn btn-info btn-lg" data-toggle="modal" id="calculator_modal" data-target="#calculator"><i class="fa fa-calculator" aria-hidden="true"></i> </a>
                   </div>

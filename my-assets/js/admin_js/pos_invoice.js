@@ -518,11 +518,83 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    "use strict";
+
+    var frm = $("#gui_sale_update");
+    var output = $("#output");
+    var invoice_no = $("#gui_invoice_no").text();
+
+    var nextinvoice = parseInt(invoice_no) + +1;
+    frm.on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).attr('action'),
+            method: $(this).attr('method'),
+            dataType: 'json',
+            data: frm.serialize(),
+            success: function(data) {
+                if (data.status == true) {
+                    toastr["success"](data.message);
+                    $(".quantity").removeClass("quantity");
+                    $(".product-panel").removeClass("active");
+                    $(".active_qty").text('');
+
+                    swal({
+                        title: "Success!",
+                        showCancelButton: true,
+                        cancelButtonText: "NO",
+                        cancelButtonColor: "red",
+                        confirmButtonText: "Yes",
+                        confirmButtonColor: "#008000",
+                        text: "Do You Want To Print ?",
+                        type: "success",
 
 
+                    }, function(inputValue) {
+                        if (inputValue === true) {
+                            $("#addinvoice tbody tr").remove();
+                            $('#gui_sale_insert').trigger("reset");
+                            $("#n_total").val('');
+                            $("#net_total_text").text('0.00');
+                            $("#dueAmmount").val('');
+                            $("#due_text").text('0.00');
+                            $("#invoice_no").val(nextinvoice);
+                            $("#gui_invoice_no").text(nextinvoice);
+                            chech_process();
+                            printRawHtml(data.details);
+                        } else {
+                            // location.reload();
+
+                            $("#addinvoice tbody tr").remove();
+                            $('#gui_sale_insert').trigger("reset");
+                            $("#n_total").val('');
+                            $("#net_total_text").text('0.00');
+                            $("#dueAmmount").val('');
+                            $("#due_text").text('0.00');
+                            $("#invoice_no").val(nextinvoice);
+                            $("#gui_invoice_no").text(nextinvoice);
+                            invoice_no_check();
+                            chech_process();
+                        }
+
+                    });
+
+                    $("#inv_id").val(data.invoice_id);
 
 
-
+                    // $('#printconfirmodal').modal('show');
+                    if (data.status == true && event.keyCode == 13) {}
+                } else {
+                    toastr["error"](data.exception);
+                }
+            },
+            error: function(xhr) {
+                alert('failed!');
+            }
+        });
+    });
+});
 
 "use strict";
 
@@ -1198,8 +1270,8 @@ function update_order(elem) {
         data: { id: id },
         success: function(msg) {
             $("#addinvoiceItem").html(msg);
-            $("#update_invoice").show();
-            $("#add_invoice").hide();
+            // $("#update_invoice").show();
+            // $("#add_invoice").hide();
             $("#gui_invoice_no").html(invoce_no);
             chech_process();
         },
@@ -1208,3 +1280,154 @@ function update_order(elem) {
         }
     });
 }
+
+function update_invoice_fun(elem) {
+    var frm = $("#update_invoice");
+    var output = $("#output");
+    var invoice_no = $("#gui_invoice_no").text();
+    var nextinvoice = parseInt(invoice_no) + +1;
+
+    $.ajax({
+        url: 'invoice/invoice/bdtask_manual_sales_update',
+        method: "post",
+        dataType: 'json',
+        data: frm.serialize(),
+        success: function(data) {
+            if (data.status == true) {
+                toastr["success"](data.message);
+                $(".quantity").removeClass("quantity");
+                $(".product-panel").removeClass("active");
+                $(".active_qty").text('');
+
+                swal({
+                    title: "Success!",
+                    showCancelButton: true,
+                    cancelButtonText: "NO",
+                    cancelButtonColor: "red",
+                    confirmButtonText: "Yes",
+                    confirmButtonColor: "#008000",
+                    text: "Do You Want To Print ?",
+                    type: "success",
+
+
+                }, function(inputValue) {
+                    if (inputValue === true) {
+                        $("#addinvoice tbody tr").remove();
+                        $('#gui_sale_insert').trigger("reset");
+                        $("#n_total").val('');
+                        $("#net_total_text").text('0.00');
+                        $("#dueAmmount").val('');
+                        $("#due_text").text('0.00');
+                        $("#invoice_no").val(nextinvoice);
+                        $("#gui_invoice_no").text(nextinvoice);
+                        chech_process();
+                        printRawHtml(data.details);
+                    } else {
+                        // location.reload();
+
+                        $("#addinvoice tbody tr").remove();
+                        $('#gui_sale_insert').trigger("reset");
+                        $("#n_total").val('');
+                        $("#net_total_text").text('0.00');
+                        $("#dueAmmount").val('');
+                        $("#due_text").text('0.00');
+                        $("#invoice_no").val(nextinvoice);
+                        $("#gui_invoice_no").text(nextinvoice);
+                        invoice_no_check();
+                        chech_process();
+                    }
+
+                });
+
+                $("#inv_id").val(data.invoice_id);
+
+
+                // $('#printconfirmodal').modal('show');
+                if (data.status == true && event.keyCode == 13) {}
+            } else {
+                toastr["error"](data.exception);
+            }
+        },
+        error: function(xhr) {
+            alert('failed!');
+        }
+    });
+}
+
+// $(document).ready(function() {
+
+//     var frm = $("#update_invoice");
+//     var output = $("#output");
+//     var invoice_no = $("#gui_invoice_no").text();
+
+//     var nextinvoice = parseInt(invoice_no) + +1;
+//     frm.on('click', function(e) {
+//         e.preventDefault();
+//         $.ajax({
+//             url: 'invoice/invoice/bdtask_manual_sales_update_data',
+//             method: $(this).attr('method'),
+//             dataType: 'json',
+//             data: frm.serialize(),
+//             success: function(data) {
+//                 if (data.status == true) {
+//                     toastr["success"](data.message);
+//                     $(".quantity").removeClass("quantity");
+//                     $(".product-panel").removeClass("active");
+//                     $(".active_qty").text('');
+
+//                     swal({
+//                         title: "Success!",
+//                         showCancelButton: true,
+//                         cancelButtonText: "NO",
+//                         cancelButtonColor: "red",
+//                         confirmButtonText: "Yes",
+//                         confirmButtonColor: "#008000",
+//                         text: "Do You Want To Print ?",
+//                         type: "success",
+
+
+//                     }, function(inputValue) {
+//                         if (inputValue === true) {
+//                             $("#addinvoice tbody tr").remove();
+//                             $('#gui_sale_insert').trigger("reset");
+//                             $("#n_total").val('');
+//                             $("#net_total_text").text('0.00');
+//                             $("#dueAmmount").val('');
+//                             $("#due_text").text('0.00');
+//                             $("#invoice_no").val(nextinvoice);
+//                             $("#gui_invoice_no").text(nextinvoice);
+//                             chech_process();
+//                             printRawHtml(data.details);
+//                         } else {
+//                             // location.reload();
+
+//                             $("#addinvoice tbody tr").remove();
+//                             $('#gui_sale_insert').trigger("reset");
+//                             $("#n_total").val('');
+//                             $("#net_total_text").text('0.00');
+//                             $("#dueAmmount").val('');
+//                             $("#due_text").text('0.00');
+//                             $("#invoice_no").val(nextinvoice);
+//                             $("#gui_invoice_no").text(nextinvoice);
+//                             invoice_no_check();
+//                             chech_process();
+//                         }
+
+//                     });
+
+//                     $("#inv_id").val(data.invoice_id);
+
+
+//                     // $('#printconfirmodal').modal('show');
+//                     if (data.status == true && event.keyCode == 13) {}
+//                 } else {
+//                     toastr["error"](data.exception);
+//                 }
+//             },
+//             error: function(xhr) {
+//                 alert('failed!');
+//             }
+//         });
+//     });
+
+// });
