@@ -198,9 +198,10 @@ function calculateSum() {
 
     var test = +tx + +s_cost + +e + -ds + +ad;
     $("#grandTotal").val(test.toFixed(2, 2));
-
+    $(".grandTotal").val(test.toFixed(2, 2));
 
     var gt = $("#grandTotal").val();
+    var gt = $(".grandTotal").val();
     var invdis = $("#invoice_discount").val();
     var total_discount_ammount = $("#total_discount_ammount").val();
     var ttl_discount = +total_discount_ammount;
@@ -208,6 +209,7 @@ function calculateSum() {
     var grnt_totals = gt;
     invoice_paidamount();
     $("#grandTotal").val(grnt_totals);
+    $(".grandTotal").val(grnt_totals);
 }
 
 //Invoice Paid Amount
@@ -224,6 +226,7 @@ function invoice_paidamount() {
         pr = 0;
     }
     var t = $("#grandTotal").val(),
+        t = $(".grandTotal").val(),
         a = $("#paidAmount").val(),
         e = t - a,
         f = e + pr,
@@ -1232,7 +1235,7 @@ function invoice_no_check() {
 function chech_process() {
     var base_url = $("#base_url").val();
     $.ajax({
-        url: base_url + 'invoice/invoice/check_process_ajax',
+        url: 'invoice/invoice/check_process_ajax',
         type: 'json',
         success: function(msg) {
             $("#check_process").html(msg);
@@ -1242,6 +1245,9 @@ function chech_process() {
         }
     });
 }
+
+
+chech_process();
 
 function conferm_order(elem) {
     var base_url = $("#base_url").val();
@@ -1353,7 +1359,6 @@ function update_invoice_fun(elem) {
         }
     });
 }
-
 // $(document).ready(function() {
 
 //     var frm = $("#update_invoice");

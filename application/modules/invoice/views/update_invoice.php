@@ -55,14 +55,8 @@
                 <th class="text-center invoice_fields"><?php echo display('serial') ?></th>
                 <th class="text-center"><?php echo display('available_qnty') ?></th>
                 <th class="text-center"><?php echo display('quantity') ?> <i class="text-danger">*</i></th>
-                <th class="text-center"><?php echo display('rate') ?> <i class="text-danger">*</i></th>
-                <?php if ($discount_type == 1) { ?>
-                    <th class="text-center"><?php echo display('disc') ?></th>
-                <?php } elseif ($discount_type == 2) { ?>
-                    <th class="text-center"><?php echo display('discount') ?> </th>
-                <?php } elseif ($discount_type == 3) { ?>
-                    <th class="text-center"><?php echo display('fixed_dis') ?> </th>
-                <?php } ?>
+                <th class="text-center"><?php echo display('rate') ?> <i class="text-danger">*</i></th> 
+                <th class="text-center"><?php echo display('discount') ?> </th>
                 <th class="text-center"><?php echo display('total') ?></th>
                 <th class="text-center"><?php echo display('action') ?></th>
             </tr>
@@ -98,7 +92,7 @@
                     </td>
 
                     <td class="text-right" style="width:100px">
-                        <input value="<?php echo $value['total_price']; ?>" class="total_price form-control text-right" type="text" name="total_price[]" id="total_price_<?php echo $value['product_id']; ?>" value="21" tabindex="-1" readonly="readonly">
+                        <input value="<?php echo $value['total_price']; ?>" class="total_price form-control text-right" type="text" name="total_price[]" id="total_price_<?php echo $value['product_id']; ?>" tabindex="-1" readonly="readonly">
                     </td>
 
                     <td><input type="hidden" id="total_discount_<?php echo $value['product_id']; ?>">
@@ -161,7 +155,7 @@
         <div class="col-sm-12">
             <label for="date" class="col-sm-6 col-lg-6 col-xl-7 col-form-label"><?php echo display('grand_total') ?>:</label>
             <div class="col-sm-6 col-lg-5 col-xl-4"><input type="text" id="grandTotal" value="<?php echo $result[0]['total_amount']; ?>" class="form-control gui-foot text-right" readonly="readonly" />
-                <input type="hidden" value="<?php echo $result[0]['total_amount']; ?>" name="grand_total_price">
+                <input type="hidden" value="<?php echo $result[0]['total_amount']; ?>" class="grandTotal" name="grand_total_price">
                 <input type="hidden" name="baseUrl" class="baseUrl" value="<?php echo base_url(); ?>" id="baseurl" />
             </div>
         </div>
