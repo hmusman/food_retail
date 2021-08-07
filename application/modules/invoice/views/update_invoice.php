@@ -65,6 +65,7 @@
             <?php
             foreach ($result as $key => $value) {
             ?>
+                <input type="hidden" value="<?php echo $value['product_id']; ?>" name="product_idd[]">
                 <tr id="row_<?php echo $value['product_id']; ?>">
                     <td class="" style="width:220px">
 
@@ -155,7 +156,7 @@
         <div class="col-sm-12">
             <label for="date" class="col-sm-6 col-lg-6 col-xl-7 col-form-label"><?php echo display('grand_total') ?>:</label>
             <div class="col-sm-6 col-lg-5 col-xl-4"><input type="text" id="grandTotal" value="<?php echo $result[0]['total_amount']; ?>" class="form-control gui-foot text-right" readonly="readonly" />
-                <input type="hidden" value="<?php echo $result[0]['total_amount']; ?>" class="grandTotal" name="grand_total_price">
+                <input type="hidden" value="<?php echo $result[0]['total_amount']; ?>" id="grandTotal_val" name="grand_total_price">
                 <input type="hidden" name="baseUrl" class="baseUrl" value="<?php echo base_url(); ?>" id="baseurl" />
             </div>
         </div>

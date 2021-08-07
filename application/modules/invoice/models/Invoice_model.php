@@ -1263,6 +1263,7 @@ class Invoice_model extends CI_Model
 
     public function invoice_entry_update()
     {
+        // die(var_dump($this->input->post('product_id', TRUE)));
         $invoice_id_update = $this->input->post('invoice_id', TRUE);
         $tablecolumn         = $this->db->list_fields('tax_collection');
         $num_column          = count($tablecolumn) - 4;

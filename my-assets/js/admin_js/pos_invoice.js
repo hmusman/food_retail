@@ -198,10 +198,10 @@ function calculateSum() {
 
     var test = +tx + +s_cost + +e + -ds + +ad;
     $("#grandTotal").val(test.toFixed(2, 2));
-    $(".grandTotal").val(test.toFixed(2, 2));
+
 
     var gt = $("#grandTotal").val();
-    var gt = $(".grandTotal").val();
+    $("#grandTotal_val").val(gt);
     var invdis = $("#invoice_discount").val();
     var total_discount_ammount = $("#total_discount_ammount").val();
     var ttl_discount = +total_discount_ammount;
@@ -209,7 +209,6 @@ function calculateSum() {
     var grnt_totals = gt;
     invoice_paidamount();
     $("#grandTotal").val(grnt_totals);
-    $(".grandTotal").val(grnt_totals);
 }
 
 //Invoice Paid Amount
@@ -226,7 +225,6 @@ function invoice_paidamount() {
         pr = 0;
     }
     var t = $("#grandTotal").val(),
-        t = $(".grandTotal").val(),
         a = $("#paidAmount").val(),
         e = t - a,
         f = e + pr,
@@ -602,6 +600,7 @@ $(document).ready(function() {
 "use strict";
 
 function onselectimage(id, type = null) {
+
     var product_id = id;
     var base_url = $('#base_url').val();
     var csrf_test_name = $('[name="csrf_test_name"]').val();
