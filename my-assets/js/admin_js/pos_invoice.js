@@ -457,6 +457,7 @@ $(document).ready(function() {
             dataType: 'json',
             data: frm.serialize(),
             success: function(data) {
+                console.log(data);
                 if (data.status == true) {
                     toastr["success"](data.message);
                     $(".quantity").removeClass("quantity");
@@ -1131,7 +1132,21 @@ $('.product-grid').each(function() {
 
 
 $(document).ready(function() {
-    Mousetrap.bind('ctrl+s', function(e) {
+
+    // Mousetrap.bind('shift+alt+s', function(e) {
+    //     if (e.preventDefault) {
+    //         e.preventDefault();
+    //     } else {
+    //         e.returnValue = false;
+    //     }
+    //     $('#add_invoice').trigger('click');
+    // });
+
+    shortcut("F1", function() {
+        $("#product_name").focus();
+    });
+
+    shortcut("shift+alt+s", function(e) {
         if (e.preventDefault) {
             e.preventDefault();
         } else {
@@ -1140,36 +1155,32 @@ $(document).ready(function() {
         $('#add_invoice').trigger('click');
     });
 
-
-    Mousetrap.bind('shift+c', function() {
+    shortcut("shift+alt+c", function() {
         $('#cust_info').modal();
         setTimeout(function() { $("#m_customer_name").focus(); }, 500);
     });
 
-    Mousetrap.bind('shift+f', function() {
-
+    shortcut("shift+alt+f", function() {
         $('#full_paid_tab').trigger('click');
     });
 
-    Mousetrap.bind('shift+l', function() {
-
+    shortcut("shift+alt+t", function() {
         $('#todays_salelist').trigger('click');
     });
-    Mousetrap.bind('shift+n', function() {
 
+    shortcut("shift+alt+n", function() {
         $('#new_sale').trigger('click');
     });
 
-    Mousetrap.bind('alt+c', function() {
-
+    shortcut("F4", function() {
         $('#calculator_modal').trigger('click');
     });
-    Mousetrap.bind('alt+n', function() {
 
+    shortcut("alt+n", function() {
         $('#customer_name').focus();
     });
 
-    Mousetrap.bind('ctrl+d', function(e) {
+    shortcut("shift+alt+q", function() {
         if (e.preventDefault) {
             e.preventDefault();
         } else {
@@ -1178,12 +1189,11 @@ $(document).ready(function() {
         $('#invoice_discount').focus();
     });
 
-    Mousetrap.bind('alt+p', function() {
-
+    shortcut("alt+p", function() {
         $('#paidAmount').focus();
     });
 
-    Mousetrap.bind('alt+s', function() {
+    shortcut("alt+n", function() {
         $('#shipping_cost').focus();
     });
 
@@ -1358,80 +1368,74 @@ function update_invoice_fun(elem) {
         }
     });
 }
-// $(document).ready(function() {
 
-//     var frm = $("#update_invoice");
-//     var output = $("#output");
-//     var invoice_no = $("#gui_invoice_no").text();
+// ajax <!-- <?php echo form_open_multipart('invoice/invoice/bdtask_manual_sales_update', array('class' => 'form-vertical', 'id' => 'bdtask_manual_sales_update', 'name' => 'insert_pos_invoice')) ?> -->
+function ajax_form(event, elem) {
+    event.preventDefault();
+    let form_data = elem.id;
+    let method = elem.method;
+    $("#" + form_data + "_modal").modal("show");
 
-//     var nextinvoice = parseInt(invoice_no) + +1;
-//     frm.on('click', function(e) {
-//         e.preventDefault();
-//         $.ajax({
-//             url: 'invoice/invoice/bdtask_manual_sales_update_data',
-//             method: $(this).attr('method'),
-//             dataType: 'json',
-//             data: frm.serialize(),
-//             success: function(data) {
-//                 if (data.status == true) {
-//                     toastr["success"](data.message);
-//                     $(".quantity").removeClass("quantity");
-//                     $(".product-panel").removeClass("active");
-//                     $(".active_qty").text('');
-
-//                     swal({
-//                         title: "Success!",
-//                         showCancelButton: true,
-//                         cancelButtonText: "NO",
-//                         cancelButtonColor: "red",
-//                         confirmButtonText: "Yes",
-//                         confirmButtonColor: "#008000",
-//                         text: "Do You Want To Print ?",
-//                         type: "success",
-
-
-//                     }, function(inputValue) {
-//                         if (inputValue === true) {
-//                             $("#addinvoice tbody tr").remove();
-//                             $('#gui_sale_insert').trigger("reset");
-//                             $("#n_total").val('');
-//                             $("#net_total_text").text('0.00');
-//                             $("#dueAmmount").val('');
-//                             $("#due_text").text('0.00');
-//                             $("#invoice_no").val(nextinvoice);
-//                             $("#gui_invoice_no").text(nextinvoice);
-//                             chech_process();
-//                             printRawHtml(data.details);
-//                         } else {
-//                             // location.reload();
-
-//                             $("#addinvoice tbody tr").remove();
-//                             $('#gui_sale_insert').trigger("reset");
-//                             $("#n_total").val('');
-//                             $("#net_total_text").text('0.00');
-//                             $("#dueAmmount").val('');
-//                             $("#due_text").text('0.00');
-//                             $("#invoice_no").val(nextinvoice);
-//                             $("#gui_invoice_no").text(nextinvoice);
-//                             invoice_no_check();
-//                             chech_process();
-//                         }
-
-//                     });
-
-//                     $("#inv_id").val(data.invoice_id);
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: "invoice/invoice/" + form_data,
+        type: method,
+        data: new FormData(elem),
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $("#" + form_data + "_load").show();
+            $("#" + form_data + "_load").attr("disabled", true);
+        },
+        success: function(data) {
+            toastr.success("Updated successfully!");
+            // $("#addinvoiceItem").load(location.href + " #addinvoiceItem");
+            // swal({
+            //     title: "Success!",
+            //     showCancelButton: true,
+            //     cancelButtonText: "NO",
+            //     cancelButtonColor: "red",
+            //     confirmButtonText: "Yes",
+            //     confirmButtonColor: "#008000",
+            //     text: "Do You Want To Print ?",
+            //     type: "success",
 
 
-//                     // $('#printconfirmodal').modal('show');
-//                     if (data.status == true && event.keyCode == 13) {}
-//                 } else {
-//                     toastr["error"](data.exception);
-//                 }
-//             },
-//             error: function(xhr) {
-//                 alert('failed!');
-//             }
-//         });
-//     });
+            // }, function(inputValue) {
+            //     if (inputValue === true) {
+            //         $("#addinvoice tbody tr").remove();
+            //         $('#gui_sale_insert').trigger("reset");
+            //         $("#n_total").val('');
+            //         $("#net_total_text").text('0.00');
+            //         $("#dueAmmount").val('');
+            //         $("#due_text").text('0.00');
+            //         $("#invoice_no").val(nextinvoice);
+            //         $("#gui_invoice_no").text(nextinvoice);
+            //         chech_process();
+            //         printRawHtml(data.details);
+            //     } else {
+            //         // location.reload();
 
-// });
+            //         $("#addinvoice tbody tr").remove();
+            //         $('#gui_sale_insert').trigger("reset");
+            //         $("#n_total").val('');
+            //         $("#net_total_text").text('0.00');
+            //         $("#dueAmmount").val('');
+            //         $("#due_text").text('0.00');
+            //         $("#invoice_no").val(nextinvoice);
+            //         $("#gui_invoice_no").text(nextinvoice);
+            //         invoice_no_check();
+            //         chech_process();
+            //     }
+
+            // });
+        },
+        error: function() {
+            $("#" + form_data + "_load").hide();
+            $("#" + form_data + "_load").attr("disabled", false)
+            toastr.info("Server Error!");
+        }
+    });
+}

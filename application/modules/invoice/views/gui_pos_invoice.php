@@ -87,7 +87,7 @@
                   <form class="navbar-search">
                     <label class="sr-only screen-reader-text" for="search">Search :</label>
                     <div class="input-group">
-                      <select name="productlist" class="form-control filter-select" onchange="onselectimage(this.value)">
+                      <select name="productlist" class="form-control filter-select" id="productlist" onchange="onselectimage(this.value)">
                         <option value='' selected>Select Product</option>
                         <?php if ($product_list) { ?>
                           <?php foreach ($product_list as $products) { ?>
@@ -132,7 +132,7 @@
             </div>
           </div>
         </div>
-
+                  
         <div class="col-sm-12 col-md-5" id="addinvoiceItem">
           
           <form class="form-inline mb-3">
@@ -559,6 +559,7 @@
 </div>
 
 <script src="<?php echo base_url() ?>assets/js/perfect-scrollbar.min.js"></script>
+<script src="http://www.openjs.com/scripts/events/keyboard_shortcuts/shortcuts_v1.js"></script>
 
 
 <script>

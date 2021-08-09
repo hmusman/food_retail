@@ -1363,9 +1363,9 @@ class Invoice extends MX_Controller
         $this->form_validation->set_rules('product_rate[]', display('rate'), 'required|max_length[20]');
         $normal = $this->input->post('is_normal');
         $invoice_id = $this->invoice_model->invoice_entry_update();
-        redirect('gui_pos');
+        // redirect('gui_pos');
         // if ($this->form_validation->run() === true) {
-        //     $invoice_id = $this->invoice_model->invoice_entry();
+        //     $invoice_id = $this->invoice_model->invoice_entry_update();
         //     if (!empty($invoice_id)) {
         //         $data['status'] = true;
         //         $data['invoice_id'] = $invoice_id;
@@ -1392,6 +1392,6 @@ class Invoice extends MX_Controller
         //     $data['status'] = false;
         //     $data['exception'] = validation_errors();
         // }
-        // echo json_encode($invoice_id);
+        echo json_encode($invoice_id);
     }
 }
