@@ -1,3 +1,10 @@
+$(document).ready(function() {
+    $("#FoodPand_Tracking").click(function() {
+        // alert("Hello world");
+        $('#food_tracking').css("display", "");
+    });
+});
+
 //Add Input Field Of Row
 "use strict";
 
@@ -1146,6 +1153,11 @@ $(document).ready(function() {
         $("#product_name").focus();
     });
 
+    // FoodPand_Tracking
+    shortcut("F2", function() {
+        $('#FoodPand_Tracking').trigger('click');
+    });
+
     shortcut("shift+alt+s", function(e) {
         if (e.preventDefault) {
             e.preventDefault();
@@ -1153,6 +1165,10 @@ $(document).ready(function() {
             e.returnValue = false;
         }
         $('#add_invoice').trigger('click');
+    });
+
+    shortcut("F3", function() {
+        $('#product_divs').trigger('click');
     });
 
     shortcut("shift+alt+c", function() {
@@ -1176,16 +1192,16 @@ $(document).ready(function() {
         $('#calculator_modal').trigger('click');
     });
 
-    shortcut("alt+n", function() {
+    shortcut("alt+b", function() {
         $('#customer_name').focus();
     });
 
-    shortcut("shift+alt+q", function() {
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
-        }
+    shortcut("alt+q", function() {
+        // if (e.preventDefault) {
+        //     e.preventDefault();
+        // } else {
+        //     e.returnValue = false;
+        // }
         $('#invoice_discount').focus();
     });
 
@@ -1206,9 +1222,6 @@ function printRawHtml(view) {
         onPrintDialogClose: printJobComplete(),
 
     });
-
-
-
 }
 
 

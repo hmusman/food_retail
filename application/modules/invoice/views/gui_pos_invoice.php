@@ -3,9 +3,6 @@
 <script src="<?php echo base_url() ?>my-assets/js/admin_js/guibarcode.js" type="text/javascript"></script>
 <script src="assets/js/perfect-scrollbar.min.js" type="text/javascript"></script>
 
-
-
-
 <div class="pl-3 pr-3">
   <div class="top-bar">
     <ul class="nav nav-tabs" role="tablist">
@@ -108,19 +105,17 @@
                   if ($itemlist) {
                     foreach ($itemlist as $item) {
                   ?>
-
-                      <div class="col-xs-4 col-sm-3 col-md-4 col-lg-3 col-p-3">
-                        <div class="product-panel overflow-hidden border-0 shadow-sm" id="image-active_<?php echo $item->product_id ?>">
-                          <div class="item-image position-relative overflow-hidden">
-                            <div class="" id="image-active_count_<?php echo $item->product_id ?>"><span id="active_pro_<?php echo $item->product_id ?>" class="active_qty"></span></div>
-                            <img src="<?php echo !empty($item->image) ? $item->image : 'assets/img/icons/default.jpg'; ?>" onclick="onselectimage('<?php echo $item->product_id ?>','<?php echo $item->serial_no ?>')" alt="" class="img-responsive">
-                          </div>
-                          <div class="panel-footer border-0 bg-white" onclick="onselectimage('<?php echo $item->product_id ?>','<?php echo $item->serial_no ?>')" data-type="<?php echo $item->serial_no ?>">
-                            <h3 class="item-details-title"><?php echo  $text = html_escape($item->product_name); ?></h3>
-                          </div>
+                    <div class="col-xs-4 col-sm-3 col-md-4 col-lg-3 col-p-3">
+                      <div class="product-panel overflow-hidden shadow-sm product_divs" id="image-active_<?php echo $item->product_id ?>">
+                        <div class="item-image position-relative overflow-hidden">
+                          <div class="" id="image-active_count_<?php echo $item->product_id ?>"><span id="active_pro_<?php echo $item->product_id ?>" class="active_qty"></span></div>
+                          <img src="<?php echo !empty($item->image) ? $item->image : 'assets/img/icons/default.jpg'; ?>" onclick="onselectimage('<?php echo $item->product_id ?>','<?php echo $item->serial_no ?>')" alt="" class="img-responsive">
+                        </div>
+                        <div class="panel-footer border-0 bg-white" onclick="onselectimage('<?php echo $item->product_id ?>','<?php echo $item->serial_no ?>')" data-type="<?php echo $item->serial_no ?>">
+                          <h3 class="item-details-title"><?php echo  $text = html_escape($item->product_name); ?></h3>
                         </div>
                       </div>
-
+                    </div>
                   <?php }
                   } ?>
 
@@ -163,12 +158,11 @@
               </div>
               <input class="form-control" type="hidden" name="invoice_no" id="invoice_no" required value="<?php echo html_escape($invoice_no); ?>" readonly />
             </div>
-
-
-
           </div>
+          
+          <input type="hidden" value="Tracking" id="FoodPand_Tracking">
 
-          <div class="d-flex align-items-center mb-3">
+          <div class="d-flex align-items-center mb-3" id="food_tracking" style="display: none !important;">
             <div class="form-group"><label>FoodPand Tracking</label></div>
             <div class="form-group" style="margin-left: 10px">
               <select class="form-control select" id="food_panda" style="border-radius: 7px">
@@ -181,7 +175,6 @@
               <input type="text" name="tracking_number" id="tracking_nmbr" class="form-control" placeholder="food panda tracking" style="display: none;border-radius: 5px;">
             </div>
           </div>
-
 
           <input type="hidden" name="csrf_test_name" id="" value="<?php echo $this->security->get_csrf_hash(); ?>">
 
@@ -512,43 +505,47 @@
           <tbody>
             <tr>
               <td class="text-center">Submit Invoice</td>
-              <td class="text-center">ctrl+s</td>
+              <td class="text-center">shift+alt+s</td>
             </tr>
             <tr>
               <td class="text-center">Add New Customer</td>
-              <td class="text-center">shif+c</td>
+              <td class="text-center">shif+alt+c</td>
             </tr>
             <tr>
               <td class="text-center">Full Paid</td>
-              <td class="text-center">shif+f</td>
+              <td class="text-center">shif+alt+f</td>
             </tr>
             <tr>
               <td class="text-center">Today's Sale List</td>
-              <td class="text-center">shif+l</td>
+              <td class="text-center">shif+alt+t</td>
             </tr>
             <tr>
               <td class="text-center">New Sale</td>
-              <td class="text-center">shif+n</td>
+              <td class="text-center">shif+alt+n</td>
             </tr>
             <tr>
               <td class="text-center">Open Calculator</td>
-              <td class="text-center">alt+c</td>
+              <td class="text-center">F4</td>
             </tr>
             <tr>
               <td class="text-center">Search Old Customer</td>
-              <td class="text-center">alt+n</td>
+              <td class="text-center">alt+b</td>
             </tr>
             <tr>
               <td class="text-center">Invoice Discount</td>
-              <td class="text-center">ctrl+d</td>
+              <td class="text-center">shift+alt+q</td>
             </tr>
             <tr>
               <td class="text-center">Shipping Cost</td>
-              <td class="text-center">alt+s</td>
+              <td class="text-center">alt+n</td>
             </tr>
             <tr>
               <td class="text-center">Paid Amount</td>
               <td class="text-center">alt+p</td>
+            </tr>
+            <tr>
+              <td class="text-center">Show Tracking Order</td>
+              <td class="text-center">F2</td>
             </tr>
           </tbody>
         </table>
